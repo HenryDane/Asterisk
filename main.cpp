@@ -12,6 +12,7 @@ using namespace std;
 double timerval = 0;
 double time_character = 0;
 double time_entity = 0;
+double time_rocket = 0;
 
 // enemy defs
 entity entities[MAX_ENTITIES];
@@ -25,16 +26,33 @@ int screen[S_WIDTH * S_HEIGHT];
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
 
-// character health
+// character data
 int health = 500;
-
-// character experience
 float experience = 0;
-
 int rockets = 50;
 int rounds = 10000;
 int credits = 1000;
 int fuel = 10000;
+
+// engine data
+int flux = 500;
+int fuel_r = 500;
+int durability = 500;
+int response = 500;
+int flux_clamp = 1000;
+int emission_clamp = 1000;
+int themal_clamp = 1000;
+
+// ship data
+float vx = 0;
+float vy = 0;
+float vz = 0;
+float x = 0;
+float y = 0;
+float z = 0;
+int thrust_clamp;
+int afterburn_clamp;
+float thrust;
 
 // character location
 int character_x = 12;
@@ -50,14 +68,14 @@ int sector_y = 4;
 int level = 0;
 
 // game state
-// -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup
+// -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup, 8: dock, 10: at warp
 int state = -1;
 
 // texture
 sf::RenderTexture windowTexture;
 
 int main(){
-//    asteriod_direction = 0;
+//    asteriod_direction = 0;default: r.setTexture(&empty_sector);
 
     // set up events
     sf::Event event;
@@ -114,119 +132,169 @@ int main(){
         elapsed = clock.restart();
         time_entity += elapsed.asMilliseconds();
         time_character += elapsed.asMilliseconds();
+        time_rocket += elapsed.asMilliseconds();
 
         // handle events
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) return 0;
         while (window.pollEvent(event)){
             // close window if needed
             if (event.type == sf::Event::Closed) window.close();
-
             // check keys (released to avoid repeated keypresses
             if (event.type == sf::Event::KeyReleased) {
-
-                // state handling
-                if (event.key.code == sf::Keyboard::Num1) {
-                    // main menu
-                    if (state > -2 ) state = 0;
-                } else if (event.key.code == sf::Keyboard::Num2) {
-                    // view ssf::RectangleShape r(sf::Vector2f(16, 16));tate
-                    if (state > -2 ) state = 1;
-                } else if (event.key.code == sf::Keyboard::Num3) {
-                    // view state
-                    if (state > -2 ) state = 5;
-                } else if (event.key.code == sf::Keyboard::Num4) {
-                    // view state
-                    if (state > -2 ) state = 7;
-                    // reset jump to settings
-                    jump_x = sector_x;
-                    jump_y = sector_y;
-                    jump_s = sector_s;
-                } else if (event.key.code == sf::Keyboard::Num0) {
-                    // logo mode
-                    if (state > -2 ) state = -1;
-//                    generate_level();
-                }
-
-                // movement handling
-                if (event.key.code == sf::Keyboard::W){
-                    jump_y--;
-                    if (jump_y > 9) jump_y = 9;
-                    if (jump_y < 0) jump_y = 0;
-                } else if (event.key.code == sf::Keyboard::A){
-                    jump_x--;
-                    if (jump_x > 9) jump_x = 9;
-                    if (jump_x < 0) jump_x = 0;
-                } else if (event.key.code == sf::Keyboard::S){
-                    jump_y++;
-                    if (jump_y > 9) jump_y = 9;
-                    if (jump_y < 0) jump_y = 0;
-                } else if (event.key.code == sf::Keyboard::D){
-                    jump_x++;
-                    if (jump_x > 9) jump_x = 9;
-                    if (jump_x < 0) jump_x = 0;
-                } else if (event.key.code == sf::Keyboard::Q){
-                    jump_s++;
-                    if (jump_s > 3) jump_s = 0;
-                    if (jump_s < 0) jump_s = 3;
-                } else if (event.key.code == sf::Keyboard::E) {
-                    jump_s--;
-                    if (jump_s > 3) jump_s = 0;
-                    if (jump_s < 0) jump_s = 3;
-                } else if (event.key.code == sf::Keyboard::Tilde && state == 7){
-                    sector_x = jump_x;
-                    sector_y = jump_y;
-                    sector_s = jump_s;// for moving towards the edge of the screen
-                    build_terrain(sector_x, sector_y, sector_s);
-                    state = 0;
-                }
-
-                // navigation handling
-                if (event.key.code == sf::Keyboard::BackSpace){
-                    facing = -10;
-                } else if(event.key.code == sf::Keyboard::Down){
-                    //if ((get_terrain(character_x, character_y + 1)) == 0){
-                    if (character_y + 1 < HEIGHT){
-                        facing = 2;
-                    }
-                } else if (event.key.code == sf::Keyboard::Up){
-                    //if ((get_terrain(character_x, character_y - 1)) == 0) {
-                    if (character_y - 1 > 0){
-                        facing = 0;
-                    }
-                } else if (event.key.code == sf::Keyboard::Left){
-                    //if ((get_terrain(character_x - 1, character_y)) == 0) {
-                    if (character_x - 1 > 0){
-                        facing = 3;
-                    }
-                } else if (event.key.code == sf::Keyboard::Right){
-                    //if ((get_terrain(character_x + 1, character_y)) == 0) {
-                    if (character_x + 1 < WIDTH){
-                        facing = 1;
-                    }
-                } else if (event.key.code == sf::Keyboard::Space){
-                    // TODO: add shooting and state checks
-                    if (state > -2 ) state = 0;
-                }
-
-                // rotate by 45 deg
-                if (event.key.shift){
-                    facing += 4;
-                } else if (event.key.code == sf::Keyboard::Z){
-                    facing -= 4;
+                // handle key presses
+                switch(event.key.code){
+                    case sf::Keyboard::Num1:
+                        if (state > -2 ) state = 0;
+                        break;
+                    case sf::Keyboard::Num2:
+                        if (state > -2 ) state = 1;
+                        break;
+                    case sf::Keyboard::Num3:
+                        if (state > -2 ) state = 5;
+                        break;
+                    case sf::Keyboard::Num4:
+                        if (state > -2 ) state = 7;
+                        jump_x = sector_x;
+                        jump_y = sector_y;
+                        jump_s = sector_s;
+                        break;
+                    case sf::Keyboard::Num0:
+                        state = -1;
+                        break;
+                    case sf::Keyboard::W:
+                        if (state == 7){
+                            jump_y--;
+                            if (jump_y > 9) jump_y = 9;
+                            if (jump_y < 0) jump_y = 0;
+                        } else if (state == 0) {
+                            facing = 0;
+                        } else if (state == 11){
+                            if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::A:
+                        if (state == 7){
+                            jump_x--;
+                            if (jump_y > 9) jump_y = 9;
+                            if (jump_y < 0) jump_y = 0;
+                        } else if (state == 0) {
+                            facing = 3;
+                        } else if (state == 11){
+                            if(fuel_r - CONFIG_INCREMENT_AMOUNT >= 0) fuel_r -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::S:
+                        if (state == 7){
+                            jump_y++;
+                            if (jump_y > 9) jump_y = 9;
+                            if (jump_y < 0) jump_y = 0;
+                        } else if (state == 0) {
+                            facing = 2;
+                        } else if (state == 11){
+                            if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::D:
+                        if (state == 7){
+                            jump_x++;
+                            if (jump_y > 9) jump_y = 9;
+                            if (jump_y < 0) jump_y = 0;
+                        } else if (state == 0) {
+                            facing = 1;
+                        } else if (state == 11){
+                            if(flux_clamp - CONFIG_INCREMENT_AMOUNT >= 0) flux_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::Q:
+                        if (state == 7){
+                            jump_s++;
+                            if (jump_s > 3) jump_s = 0;
+                            if (jump_s < 0) jump_s = 3;
+                        } else if (state == 0){
+                            facing = -10;
+                        } else if (state == 11){
+                            if(fuel_r + CONFIG_INCREMENT_AMOUNT <= 1000) fuel_r += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::E:
+                        if (state == 7){
+                            jump_s--;
+                            if (jump_s > 3) jump_s = 0;
+                            if (jump_s < 0) jump_s = 3;
+                        } else if (state == 11){
+                            if(flux_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) flux_clamp += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::F:
+                        if (state == 11){
+                            if(emission_clamp - CONFIG_INCREMENT_AMOUNT >= 0) emission_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::R:
+                        if (state == 11){
+                            if(emission_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) emission_clamp += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::T:
+                        if (state == 11){
+                            if(themal_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) themal_clamp += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::G:
+                        if (state == 11){
+                            if(themal_clamp - CONFIG_INCREMENT_AMOUNT >= 0) themal_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sf::Keyboard::Tilde:
+                        if (state == 7){
+                            sector_x = jump_x;
+                            sector_y = jump_y;
+                            sector_s = jump_s;// for moving towards the edge of the screen
+                            build_terrain(sector_x, sector_y, sector_s);
+                            state = 10;
+                        }
+                        break;
+                    case sf::Keyboard::Space:
+                        if (state == -1){
+                            state = 1;
+                        } else if (state == 0){
+                            const char* dat = "!!!";
+                            entities[num_entities].type = 5;
+                            entities[num_entities].x = character_x;
+                            entities[num_entities].y = character_y;
+                            for (int k = 0; k < 3; k++){
+                                entities[num_entities].data[k] = dat[k];
+                            }
+                            entities[num_entities].id = id_entity_last;
+                            entities[num_entities].vx = ((facing == 1) ? 1 : 0) + ((facing == 3) ? -1 : 0);
+                            entities[num_entities].vy = ((facing == 2) ? 1 : 0) + ((facing == 0) ? -1 : 0);
+                            num_entities++;
+                            id_entity_last++;
+                        }
+                        break;
+                    case sf::Keyboard::Z:
+                        facing +=4;
+                        break;
+                    case sf::Keyboard::X:
+                        facing -=4;
+                        break;
+                    case sf::Keyboard::Return:
+                        if (state == 7){
+                            state = 11;
+                        } else if (state == 8){
+                            state = 0;
+                        } else {
+                            state = 8;
+                        }
+                        break;
+                    default:
+                        break;
+                        // do nothing
                 }
             }
         }
 
-        // exit
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-            return 0;
-        }
-
-        //update everything
-        if (state == 0){
-            update_entities();
-        }
-
-        // draw screen
+        // draw screen and do stuff
         switch(state){
             case -2:
                 // game over?
@@ -236,6 +304,7 @@ int main(){
                 draw_logo();
                 break;
             case 0:
+                update_entities();
             case 2:
                 display(0, false);
                 break;
@@ -248,13 +317,19 @@ int main(){
             case 7:
                 draw_prewarp(jump_x, jump_y, jump_s);
                 break;
+            case 10:
+                draw_warp(jump_x, jump_y, jump_s);
+                break;
+            case 11:
+                draw_engine_config();
+                break;
             default:
                 cleardisplay(false);
                 break;
         }
 
         // display main texture
-        windowTexture.setSmooth(true);
+        // windowTexture.setSmooth(true);
         windowTexture.display();
         const sf::Texture& texture = windowTexture.getTexture();
         sf::Sprite sprite(texture);

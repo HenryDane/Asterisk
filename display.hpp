@@ -10,6 +10,8 @@ void draw_menu(int type);
 void draw_self();
 void draw_prewarp(int x, int y, int s);
 void draw_logo();
+void draw_warp(int x, int y, int s);
+void draw_engine_config();
 
 // main display
 void display(bool update, int state);

@@ -9,14 +9,33 @@ void update_entities(){
     if (time_entity > TIME_ENTITY ){
         time_entity = 0;
         for (int i = 0; i < num_entities; i++){
-            if (entities[i].x >= WIDTH - 1 || entities[i].x <= 0) entities[i].vx = - entities[i].vx;
-            if (entities[i].y >= HEIGHT - 1 || entities[i].y <= 0) entities[i].vy = - entities[i].vy;
-            entities[i].x += entities[i].vx;
-            entities[i].y += entities[i].vy;
+            if (entities[i].type != 5 && entities[i].type >= 0){
+                if (entities[i].x >= WIDTH - 1 || entities[i].x <= 0) entities[i].vx = - entities[i].vx;
+                if (entities[i].y >= HEIGHT - 1 || entities[i].y <= 0) entities[i].vy = - entities[i].vy;
+                entities[i].x += entities[i].vx;
+                entities[i].y += entities[i].vy;
 
-            if (entities[i].x == character_x && entities[i].y == character_y){
-                cout << "COLLISION !!";
-                state = -2;
+                if (entities[i].x == character_x && entities[i].y == character_y && (entities[i].type == 1 || entities[i].type == 3)){
+                    cout << "COLLISION !!";
+                    state = -2;
+                }
+            }
+        }
+    }
+
+    if (time_rocket > TIME_ROCKET){
+        time_rocket = 0;
+        for (int i = 0; i < num_entities; i++){
+            if (entities[i].type == 5){
+                if (entities[i].x >= WIDTH - 1 || entities[i].x <= 0) entities[i].type = -10;
+                if (entities[i].y >= HEIGHT - 1 || entities[i].y <= 0) entities[i].type = -10;
+                entities[i].x += entities[i].vx;
+                entities[i].y += entities[i].vy;
+
+                if (entities[i].x == character_x && entities[i].y == character_y && (entities[i].type == 5)){
+                    cout << "COLLISION !!";
+                    state = -2;
+                }
             }
         }
     }

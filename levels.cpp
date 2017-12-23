@@ -85,7 +85,7 @@ void search_and_build(const tile_data * tiledata){
                         entities[num_entities].id = id_entity_last;
                         entities[num_entities].x = rand() % WIDTH;
                         entities[num_entities].y = rand() % HEIGHT;
-                        entities[num_entities].type = 1;
+                        entities[num_entities].type = 3;
                         for (int k = 0; k < 16; k++){
                             entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
                         }

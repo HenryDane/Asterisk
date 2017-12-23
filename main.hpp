@@ -6,9 +6,11 @@ struct entity{
     int vx;
     int vy;
     char data[16];
-    int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet
+    int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet, 5 = rocketr
     int id;
 };
+
+#define CONFIG_INCREMENT_AMOUNT 50
 
 #define PAD_LEFT 128
 #define PAD_RIGHT 128
@@ -26,6 +28,7 @@ struct entity{
 // entity timing constants milliseconds)
 #define TIME_CHARACTER 760
 #define TIME_ENTITY 1000
+#define TIME_ROCKET 200
 
 // max entities
 #define MAX_ENTITIES 64
@@ -34,6 +37,7 @@ struct entity{
 extern double timerval;
 extern double time_character;
 extern double time_entity;
+extern double time_rocket;
 
 // entity defs
 extern entity entities[MAX_ENTITIES];
@@ -60,6 +64,26 @@ extern int sector_x;
 extern int sector_y;
 extern int sector_s;
 extern int level;
+
+// engine data
+extern int flux;
+extern int fuel_r;
+extern int durability;
+extern int respons;
+extern int flux_clamp;
+extern int emission_clamp;
+extern int themal_clamp;
+
+// ship data
+extern float vx;
+extern float vy;
+extern float vz;
+extern float x;
+extern float y;
+extern float z;
+extern int thrust_clamp;
+extern int afterburn_clamp;
+extern float thrust;
 
 
 // main window texture handle
