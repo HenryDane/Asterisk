@@ -1,18 +1,17 @@
 # Asterisk
 Asteroid + risk
 
-## TODO
-- Entity AIs
-- Multiple timing systems 
-- Fix icons on at warp screen
-- Convert all resources to homebreq compat format
+## TODO List
+Things to do in order:
+1. Fix movement and view/screens, add docking
+2. Add combat mode navigation
+3. Add warp screen, warp mechanics
+4. Add more levels
+5. Fix graphics so everything is prettier
+
+Things to do at any time:
 - Clean up code
-- Add combat map and functionality
-- Add station docking and functionality
-- Add collision detection for entities
-- Add new asteroid tiles
-- Add support for viewing mode
-- Add support for upgrading mode
-- Add combat system
-- Fix diagonal movement
+- Convert to format suitable to homebrew machine
+- Resource clean-up
+- Add music
 
