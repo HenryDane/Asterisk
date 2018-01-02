@@ -14,4 +14,5 @@ Asteroid + risk
 - Add support for viewing mode
 - Add support for upgrading mode
 - Add combat system
+- Fix diagonal movement
 
