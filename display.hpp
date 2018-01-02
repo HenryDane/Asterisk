@@ -12,6 +12,7 @@ void draw_prewarp(int x, int y, int s);
 void draw_logo();
 void draw_warp(int x, int y, int s);
 void draw_engine_config();
+void draw_dock();
 
 // main display
 void display(bool update, int state);

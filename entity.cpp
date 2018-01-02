@@ -27,13 +27,13 @@ void update_entities(){
         time_rocket = 0;
         for (int i = 0; i < num_entities; i++){
             if (entities[i].type == 5){
-                if (entities[i].x >= WIDTH - 1 || entities[i].x <= 0) entities[i].type = -10;
-                if (entities[i].y >= HEIGHT - 1 || entities[i].y <= 0) entities[i].type = -10;
+                if (entities[i].x >= WIDTH + 1 || entities[i].x <= -1) entities[i].type = -10;
+                if (entities[i].y >= HEIGHT + 1 || entities[i].y <= -1) entities[i].type = -10;
                 entities[i].x += entities[i].vx;
                 entities[i].y += entities[i].vy;
 
-                if (entities[i].x == character_x && entities[i].y == character_y && (entities[i].type == 5)){
-                    cout << "COLLISION !!";
+                if (entities[i].x == character_x && entities[i].y == character_y && entities[i].type == 6){
+                    cout << "COLLISION !!!!";
                     state = -2;
                 }
             }

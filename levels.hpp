@@ -22,6 +22,7 @@ const level_data * level_X_S_N_level_data is a variable length array of data for
             2: enemy
             3: debris
         if the type is 1 or 3 then the last value, char num, must be the number of the asteroids or debris wanted.
+        if the type is 4 then the last value, char num represents the mass of the star / 1000;
 const tile_data level_0_0_tile_data[10] is the data for viewing at the pre-warp level. There must be 10 and only ten entries that have detailed info.
         If an undefined tile is warped to (meaning there is no corresponding tile_data object for it, an empty asteroid field will be generated,
             along with suitable "flavor" material
@@ -32,6 +33,8 @@ const tile_data level_0_0_tile_data[10] is the data for viewing at the pre-warp 
 LEVEL 0 DATA - Epsilon Quadrant
 ===================================================================================================
 */
+
+
 const int level_0_0[10][10] = { { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                                 { 0, 5, 0, 5, 0, 3, 0, 0, 0, 0},
                                 { 0, 1, 0, 3, 3, 0, 0, 0, 0, 0},

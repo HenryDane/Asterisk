@@ -759,38 +759,39 @@ void draw_self(){
 
     sprintf(tim, "Health: %d / 500", health);
     text.setString(tim);
-    text.setPosition(PAD_LEFT + 16, PAD_TOP + 32);
+    text.setPosition(PAD_LEFT + 160, PAD_TOP + 32);
     windowTexture.draw(text);
 
     sprintf(tim, "Experience: %d / 5000", experience);
     text.setString(tim);
-    text.setPosition(PAD_LEFT + 16, PAD_TOP + 64);
+    text.setPosition(PAD_LEFT + 160, PAD_TOP + 48);
     windowTexture.draw(text);
 
     sprintf(tim, "Remaining fuel: %d / 10000", fuel);
     text.setString(tim);
-    text.setPosition(PAD_LEFT + 16, PAD_TOP + 96);
+    text.setPosition(PAD_LEFT + 160, PAD_TOP + 64);
     windowTexture.draw(text);
 
     sprintf(tim, "Rockets: %d / 50", rockets);
     text.setString(tim);
-    text.setPosition(PAD_LEFT + 16, PAD_TOP + 128);
+    text.setPosition(PAD_LEFT + 160, PAD_TOP + 80);
     windowTexture.draw(text);
 
     sprintf(tim, "Rounds: %d / 50000", rounds);
     text.setString(tim);
-    text.setPosition(PAD_LEFT + 16, PAD_TOP + 160);
+    text.setPosition(PAD_LEFT + 160, PAD_TOP + 96);
     windowTexture.draw(text);
 
     sprintf(tim, "Credits: %d", credits);
     text.setString(tim);
-    text.setPosition(PAD_LEFT + 16, PAD_TOP + 196);
+    text.setPosition(PAD_LEFT + 160, PAD_TOP + 112);
     windowTexture.draw(text);
 
     windowTexture.display();
 }
 
 void draw_menu(int type){
+    char tim[80];
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
     sf::Font font;
@@ -814,21 +815,70 @@ void draw_menu(int type){
     };
     windowTexture.draw(line, 4, sf::Lines);
 
-    text.setString("Viewing: Station 195-2-B");
+    char dat[16];
+    for (int i = 0; i < 16; i++){
+        dat[i] = level_0_0_tile_data[selected_object % 10].data[i];
+    }
+    sprintf(tim, "Viewing: %s", dat);
+    text.setString(tim);
     text.setPosition(PAD_LEFT, PAD_TOP);
     windowTexture.draw(text);
 
-    text.setString("  Size: 127 Crew, 143 Persons");
-    text.setPosition(PAD_LEFT, PAD_TOP + 32);
-    windowTexture.draw(text);
+    for(int i = 0; i < level_0_0_tile_data[selected_object % 10].num_level_data; i++){
+        char dat[16];
+        for (int j = 0; j < 16; j++){
+            dat[j] = level_0_0_tile_data[selected_object % 10].flight_data[i].data[j];
+        }
+        sprintf(tim, "  %s", dat);
+        text.setString(tim);
+        text.setPosition(PAD_LEFT, PAD_TOP + 16 * (i + 1));
+        windowTexture.draw(text);
+    }
 
+/*
     text.setString("  Weight: 12000 metric tons");
-    text.setPosition(PAD_LEFT, PAD_TOP + 64);
+    text.setPosition(PAD_LEFT, PAD_TOP + 48);
     windowTexture.draw(text);
 
     text.setString("  -- Neutral Station --");
-    text.setPosition(PAD_LEFT, PAD_TOP + 96);
+    text.setPosition(PAD_LEFT, PAD_TOP + 64);
     windowTexture.draw(text);
+*/
+    text.setString("Your ship: ");
+    text.setPosition(PAD_LEFT + 400, PAD_TOP);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Health: %d / 500", health);
+    text.setString(tim);
+    text.setPosition(PAD_LEFT + 400, PAD_TOP + 32);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Experience: %d / 5000", experience);
+    text.setString(tim);
+    text.setPosition(PAD_LEFT + 400, PAD_TOP + 48);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Remaining fuel: %d / 10000", fuel);
+    text.setString(tim);
+    text.setPosition(PAD_LEFT + 400, PAD_TOP + 64);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Rockets: %d / 50", rockets);
+    text.setString(tim);
+    text.setPosition(PAD_LEFT + 400, PAD_TOP + 80);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Rounds: %d / 50000", rounds);
+    text.setString(tim);
+    text.setPosition(PAD_LEFT + 400, PAD_TOP + 96);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Credits: %d", credits);
+    text.setString(tim);
+    text.setPosition(PAD_LEFT + 400, PAD_TOP + 112);
+    windowTexture.draw(text);
+
+    windowTexture.display();
 }
 
 void display(bool update, int state){
@@ -872,6 +922,9 @@ void display(bool update, int state){
             case 3:
                 r.setTexture(&debris);
                 break;
+            case 5:
+                r.setTexture(&rockets_tex);
+                break;
             default:
                 r.setTexture(&debug);
         }
@@ -906,4 +959,17 @@ void draw_logo(){
     r.setTexture(&logo);
     windowTexture.draw(r);
     windowTexture.display();
+}
+
+void draw_dock(){
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    sf::Text text;
+    sf::Font font;
+    char tim[80];
+    if (!font.loadFromFile("res/telegrama_raw.ttf"));
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setColor(sf::Color::White);
+
+    cleardisplay(false);
 }

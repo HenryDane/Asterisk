@@ -67,6 +67,8 @@ int sector_y = 4;
 
 int level = 0;
 
+int selected_object = 0;
+
 // game state
 // -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup, 8: dock, 10: at warp
 int state = -1;
@@ -170,6 +172,8 @@ int main(){
                             facing = 0;
                         } else if (state == 11){
                             if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 1 || state == 5){
+                            selected_object++;
                         }
                         break;
                     case sf::Keyboard::A:
@@ -214,6 +218,8 @@ int main(){
                             facing = -10;
                         } else if (state == 11){
                             if(fuel_r + CONFIG_INCREMENT_AMOUNT <= 1000) fuel_r += CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 1 || state == 5){
+                            selected_object -= (selected_object - 1 > -1) ? 1 : 0;
                         }
                         break;
                     case sf::Keyboard::E:
@@ -256,7 +262,7 @@ int main(){
                         break;
                     case sf::Keyboard::Space:
                         if (state == -1){
-                            state = 1;
+                            state = 0;
                         } else if (state == 0){
                             const char* dat = "!!!";
                             entities[num_entities].type = 5;
@@ -283,9 +289,15 @@ int main(){
                             state = 11;
                         } else if (state == 8){
                             state = 0;
-                        } else {
+                        } else if (state == 11){
+                            state = 7;
+                        } else if (state == 0){
                             state = 8;
                         }
+                        break;
+                    case sf::Keyboard::Tab:
+                        cout << "STATE: " << state << " FACING: " << facing << " SEL OBJ:" << selected_object << endl;
+                        cout << "    ID_LAST: " << id_entity_last << " NUM_ENTITY: " << num_entities << endl;
                         break;
                     default:
                         break;
@@ -309,10 +321,8 @@ int main(){
                 display(0, false);
                 break;
             case 1:
-                draw_menu(0);
-                break;
             case 5:
-                draw_self();
+                draw_menu(0);
                 break;
             case 7:
                 draw_prewarp(jump_x, jump_y, jump_s);
@@ -322,6 +332,9 @@ int main(){
                 break;
             case 11:
                 draw_engine_config();
+                break;
+            case 8:
+                draw_dock();
                 break;
             default:
                 cleardisplay(false);

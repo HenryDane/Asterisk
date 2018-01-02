@@ -6,7 +6,7 @@ struct entity{
     int vx;
     int vy;
     char data[16];
-    int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet, 5 = rocketr
+    int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet, 5 = rocket (player), 6 = rocket (other)
     int id;
 };
 
@@ -85,6 +85,7 @@ extern int thrust_clamp;
 extern int afterburn_clamp;
 extern float thrust;
 
+extern int selected_object;
 
 // main window texture handle
 extern sf::RenderTexture windowTexture;
