@@ -13,6 +13,8 @@ double timerval = 0;
 double time_character = 0;
 double time_entity = 0;
 double time_rocket = 0;
+double time_warp = 0;
+int ticks_at_warp = 0;
 
 // enemy defs
 entity entities[MAX_ENTITIES];
@@ -27,7 +29,7 @@ int screen[S_WIDTH * S_HEIGHT];
 int displaystate = 0;
 
 // character data
-int health = 500;
+int health = 1000;
 float experience = 0;
 int rockets = 50;
 int rounds = 10000;
@@ -60,6 +62,7 @@ int character_y = 12;
 int dx = 0;
 int dy = 0;
 int facing = 0;
+bool tilted = false;
 
 int sector_s = 3;
 int sector_x = 5;
@@ -68,6 +71,16 @@ int sector_y = 4;
 int level = 0;
 
 int selected_object = 0;
+
+int e1_g = 8;
+int e1_y = 9;
+int e2_g = 8;
+int e2_y = 9;
+int e3_g = 8;
+int e3_y = 9;
+int e4_g = 8;
+int e4_y = 9;
+int ticks_for_warp;
 
 // game state
 // -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup, 8: dock, 10: at warp
@@ -135,6 +148,7 @@ int main(){
         time_entity += elapsed.asMilliseconds();
         time_character += elapsed.asMilliseconds();
         time_rocket += elapsed.asMilliseconds();
+        time_warp += (state == 10) ? elapsed.asMilliseconds() : 0;
 
         // handle events
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) return 0;
@@ -146,16 +160,16 @@ int main(){
                 // handle key presses
                 switch(event.key.code){
                     case sf::Keyboard::Num1:
-                        if (state > -2 ) state = 0;
+                        if (state > -2 && state != 10) state = 0;
                         break;
                     case sf::Keyboard::Num2:
-                        if (state > -2 ) state = 1;
+                        if (state > -2 && state != 10 ) state = 1;
                         break;
                     case sf::Keyboard::Num3:
-                        if (state > -2 ) state = 5;
+                        if (state > -2 && state != 10 ) state = 5;
                         break;
                     case sf::Keyboard::Num4:
-                        if (state > -2 ) state = 7;
+                        if (state > -2 && state != 10 ) state = 7;
                         jump_x = sector_x;
                         jump_y = sector_y;
                         jump_s = sector_s;
@@ -179,8 +193,8 @@ int main(){
                     case sf::Keyboard::A:
                         if (state == 7){
                             jump_x--;
-                            if (jump_y > 9) jump_y = 9;
-                            if (jump_y < 0) jump_y = 0;
+                            if (jump_x > 9) jump_x = 9;
+                            if (jump_x < 0) jump_x = 0;
                         } else if (state == 0) {
                             facing = 3;
                         } else if (state == 11){
@@ -201,8 +215,8 @@ int main(){
                     case sf::Keyboard::D:
                         if (state == 7){
                             jump_x++;
-                            if (jump_y > 9) jump_y = 9;
-                            if (jump_y < 0) jump_y = 0;
+                            if (jump_x > 9) jump_x = 9;
+                            if (jump_x < 0) jump_x = 0;
                         } else if (state == 0) {
                             facing = 1;
                         } else if (state == 11){
@@ -258,6 +272,7 @@ int main(){
                             sector_s = jump_s;// for moving towards the edge of the screen
                             build_terrain(sector_x, sector_y, sector_s);
                             state = 10;
+                            ticks_for_warp = sector_s + sector_x + sector_y + 10;
                         }
                         break;
                     case sf::Keyboard::Space:
@@ -279,10 +294,7 @@ int main(){
                         }
                         break;
                     case sf::Keyboard::Z:
-                        facing +=4;
-                        break;
-                    case sf::Keyboard::X:
-                        facing -=4;
+                        tilted = !tilted;
                         break;
                     case sf::Keyboard::Return:
                         if (state == 7){
@@ -329,6 +341,16 @@ int main(){
                 break;
             case 10:
                 draw_warp(jump_x, jump_y, jump_s);
+                if (time_warp > 500){
+                    time_warp = 0;
+                    update_warp_interface();
+                    ticks_at_warp++;
+                    if (ticks_at_warp > ticks_for_warp){
+                        state = 0;
+                        ticks_at_warp = 0;
+                    }
+
+                }
                 break;
             case 11:
                 draw_engine_config();
@@ -342,7 +364,6 @@ int main(){
         }
 
         // display main texture
-        // windowTexture.setSmooth(true);
         windowTexture.display();
         const sf::Texture& texture = windowTexture.getTexture();
         sf::Sprite sprite(texture);

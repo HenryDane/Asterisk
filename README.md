@@ -15,3 +15,12 @@ Things to do at any time:
 - Resource clean-up
 - Add music
 
+For right now:
+- Add engine flares
+- Expand levels
+- Add viewer mode
+- Fix facing interpret
+- Turn engines on and off
+  - Track engine wear, add repair option
+- Prettify HUD
+

@@ -65,6 +65,8 @@ extern int sector_y;
 extern int sector_s;
 extern int level;
 
+extern bool tilted;
+
 // engine data
 extern int flux;
 extern int fuel_r;
@@ -92,3 +94,13 @@ extern sf::RenderTexture windowTexture;
 
 // game state
 extern int state;
+
+// engine stuff
+extern int e1_g;
+extern int e1_y;
+extern int e2_g;
+extern int e2_y;
+extern int e3_g;
+extern int e3_y;
+extern int e4_g;
+extern int e4_y;

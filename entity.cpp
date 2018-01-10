@@ -41,9 +41,14 @@ void update_entities(){
     }
 
     // draw character
+    int facing_t = facing;
+    if (tilted){
+        facing_t += 4;
+    }
     if (time_character > TIME_CHARACTER){
         time_character = 0;
-        switch(facing){
+
+        switch(facing_t){
             case 0: character_y--; break;
             case 1: character_x++; break;
             case 2: character_y++; break;
@@ -60,4 +65,15 @@ void update_entities(){
         if (character_y > HEIGHT - 1) character_y = HEIGHT;
         if (character_y < 0) character_y = 0;
     }
+}
+
+void update_warp_interface(void){
+    e1_g = rand() % 9;
+    e1_y = 9;
+    e2_g = rand() % 9;
+    e2_y = 9;
+    e3_g = rand() % 9;
+    e3_y = 9;
+    e4_g = rand() % 9;
+    e4_y = 9;
 }

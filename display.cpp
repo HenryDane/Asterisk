@@ -4,7 +4,6 @@
 using namespace std;
 
 // texture definitions
-// TODO: need 45* character textures
 sf::Texture character_t;
 sf::Texture character_l;
 sf::Texture character_b;
@@ -31,6 +30,17 @@ sf::Texture green;
 sf::Texture red;
 sf::Texture yellow;
 sf::Texture star;
+sf::Texture heart;
+sf::Texture critical;
+sf::Texture full_health;
+sf::Texture bronze;
+sf::Texture silver;
+sf::Texture gold;
+sf::Texture purple_heart;
+sf::Texture exhaust_top;
+sf::Texture exhaust_bottom;
+sf::Texture exhaust_left;
+sf::Texture exhaust_right;
 
 int g_state = 0;
 
@@ -71,6 +81,18 @@ int init_displays(void){
     if(!yellow.loadFromFile("res/yellow.png")) return -1;
     if(!green.loadFromFile("res/green.png")) return -1;
     if(!star.loadFromFile("res/yellow.png")) return -1;
+    if(!heart.loadFromFile("res/full_health.png")) return -1;
+    if(!critical.loadFromFile("res/heart_low.png")) return -1;
+    if(!full_health.loadFromFile("res/heart.png")) return -1;
+    if(!purple_heart.loadFromFile("res/purple.png")) return -1;
+    if(!gold.loadFromFile("res/bronze.png")) return -1;
+    if(!silver.loadFromFile("res/silver.png")) return -1;
+    if(!bronze.loadFromFile("res/gold.png")) return -1;
+    if(!exhaust_bottom.loadFromFile("res/exhaust_bot.png")) return -1;
+    if(!exhaust_left.loadFromFile("res/exhaust_lef.png")) return -1;
+    if(!exhaust_right.loadFromFile("res/exhaust_rig.png")) return -1;
+    if(!exhaust_top.loadFromFile("res/exhaust_top.png")) return -1;
+
     return 0;
 }
 
@@ -102,15 +124,6 @@ void draw_engine_config(){
     text.setString("Engine Configuration Window");
     text.setPosition(32, 32);
     windowTexture.draw(text);
-
-    static int e1_g = 8;
-    static int e1_y = 9;
-    static int e2_g = 8;
-    static int e2_y = 9;
-    static int e3_g = 8;
-    static int e3_y = 9;
-    static int e4_g = 8;
-    static int e4_y = 9;
 
     text.setColor(sf::Color::Green);
     text.setString("E1");
@@ -418,15 +431,6 @@ void draw_prewarp(int x, int y, int s){
     text.setPosition(368, 480);
     windowTexture.draw(text);
 
-    static int e1_g = 8;
-    static int e1_y = 9;
-    static int e2_g = 8;
-    static int e2_y = 9;
-    static int e3_g = 8;
-    static int e3_y = 9;
-    static int e4_g = 8;
-    static int e4_y = 9;
-
     text.setColor(sf::Color::Green);
     text.setString("E1");
     text.setPosition(32, 368);
@@ -664,15 +668,6 @@ void draw_warp(int x, int y, int s){
     text.setPosition(368, 480);
     windowTexture.draw(text);
 
-    static int e1_g = 1;
-    static int e1_y = 2;
-    static int e2_g = 1;
-    static int e2_y = 2;
-    static int e3_g = 3;
-    static int e3_y = 7;
-    static int e4_g = 2;
-    static int e4_y = 3;
-
     text.setColor(sf::Color::Green);
     text.setString("E1");
     text.setPosition(32, 368);
@@ -907,33 +902,57 @@ void display(bool update, int state){
     }
     windowTexture.draw(r);
 
+    switch(facing % 4){
+        case 0:
+            r.setTexture(&exhaust_top);
+            r.setPosition(character_x * 16, (character_y + 1) * 16);
+            break;
+        case 1:
+            r.setTexture(&exhaust_right);
+            r.setPosition((character_x - 1) * 16, (character_y) * 16);
+            break;
+        case 2:
+            r.setTexture(&exhaust_bottom);
+            r.setPosition(character_x * 16, (character_y - 1) * 16);
+            break;
+        case 3:
+            r.setTexture(&exhaust_left);
+            r.setPosition((character_x + 1) * 16, character_y * 16);
+            break;
+    }
+    windowTexture.draw(r);
+
     // draw entities
     for (int i = 0; i < num_entities; i++){
-        switch(entities[i].type){
-            case 0:
-                r.setTexture(&station);
-                break;
-            case 1:
-                r.setTexture(&asteriod_1);
-                break;
-            case 2:
-                r.setTexture(&enemy_t);
-                break;
-            case 3:
-                r.setTexture(&debris);
-                break;
-            case 5:
-                r.setTexture(&rockets_tex);
-                break;
-            default:
-                r.setTexture(&debug);
+        if (entities[i].type >= 0){
+            switch(entities[i].type){
+                case 0:
+                    r.setTexture(&station);
+                    break;
+                case 1:
+                    r.setTexture(&asteriod_1);
+                    break;
+                case 2:
+                    r.setTexture(&enemy_t);
+                    break;
+                case 3:
+                    r.setTexture(&debris);
+                    break;
+                case 5:
+                    r.setTexture(&rockets_tex);
+                    break;
+                default:
+                    r.setTexture(&debug);
+            }
+        } else {
+            r.setTexture(&wall);
         }
         r.setPosition(entities[i].x * 16, entities[i].y * 16);
         windowTexture.draw(r);
     }
 
     // draw text stuff
-    sprintf(tim, "Health: %d / 500", health);
+    /*sprintf(tim, "Health: %d / 500", health);
     text.setString(tim);
     text.setPosition(816, 16);
     windowTexture.draw(text);
@@ -948,6 +967,54 @@ void display(bool update, int state){
     sprintf(tim, "At: s%d (%d , %d)", sector_s, sector_x, sector_y);
     text.setString(tim);
     text.setPosition(816, 64);
+    windowTexture.draw(text);*/
+
+    text.setString("HEALTH: ");
+    text.setPosition(816, 16);
+    windowTexture.draw(text);
+    r.setTexture(&heart);
+    if (health >= 250){
+        r.setPosition(960,16);
+        windowTexture.draw(r);
+    } else {
+        r.setTexture(&critical);
+        r.setPosition(960,16);
+        windowTexture.draw(r);
+    }
+    if (health >= 500){
+        r.setPosition(944,16);
+        windowTexture.draw(r);
+    }
+    if (health >= 750){
+        r.setPosition(928,16);
+        windowTexture.draw(r);
+    }
+    r.setTexture(&full_health);
+    if (health >= 900){
+        r.setPosition(912,16);
+        windowTexture.draw(r);
+    }
+
+    text.setString("RANK: ");
+    text.setPosition(816, 32);
+    windowTexture.draw(text);
+    r.setTexture(&bronze);
+    r.setPosition(912,32);
+    windowTexture.draw(r);
+
+    sprintf(tim, "FUEL: %d / 10K", fuel);
+    text.setString(tim);
+    text.setPosition(816, 48);
+    windowTexture.draw(text);
+
+    sprintf(tim, "SECT: %d", sector_s);
+    text.setString(tim);
+    text.setPosition(816,80);
+    windowTexture.draw(text);
+
+    sprintf(tim, "COORD: (%d, %d)", sector_x, sector_y);
+    text.setString(tim);
+    text.setPosition(816,96);
     windowTexture.draw(text);
 
     // make it good fam
