@@ -4,6 +4,43 @@
 #include <iostream>
 using namespace std;
 
+typedef struct coord{
+    int x;
+    int y;
+};
+
+void fire_missile(int ix, int iy, int vx, int vy, int type){
+    cout << "FIRED MISSILE" << endl;
+    const char* dat = "!!!";
+    entities[num_entities].type = type;
+    entities[num_entities].x = ix;
+    entities[num_entities].y = iy;
+    for (int k = 0; k < 3; k++){
+        entities[num_entities].data[k] = dat[k];
+    }
+    entities[num_entities].id = id_entity_last;
+    entities[num_entities].vx = vx;
+    entities[num_entities].vy = vy;
+    num_entities++;
+    id_entity_last++;
+}
+
+coord enemy_think_1(int address){
+    // roll to fire missile
+    if (rand() % 10 < 5){
+        // compute missile direction
+        coord m = {(character_x > entities[address].x) ? 1 : -1 , (character_y > entities[address].y) ? 1 : -1};
+
+        // add missile
+        fire_missile(entities[address].x, entities[address].y, m.x, m.y, 5);
+    }
+
+    //return dx, dy
+    coord d = {(character_x > entities[address].x) ? -1 : 1 , (character_y > entities[address].y) ? 1 : -1};
+    coord n = { 0, 0};
+    return ( (((unsigned) (character_x - entities[address].x)) < 10) && (((unsigned) (character_y - entities[address].y)) < 10)) ? d : n;
+}
+
 void update_entities(){
     // draw entities
     if (time_entity > TIME_ENTITY ){
@@ -12,8 +49,15 @@ void update_entities(){
             if (entities[i].type != 5 && entities[i].type >= 0){
                 if (entities[i].x >= WIDTH - 1 || entities[i].x <= 0) entities[i].vx = - entities[i].vx;
                 if (entities[i].y >= HEIGHT - 1 || entities[i].y <= 0) entities[i].vy = - entities[i].vy;
-                entities[i].x += entities[i].vx;
-                entities[i].y += entities[i].vy;
+                if (entities[i].type == 2){
+                    coord t = enemy_think_1(i);
+                    entities[i].x += t.x;
+                    entities[i].y += t.y;
+                    cout << "TICKED ENTITY: " << i << " WITH VX: " << t.x << " WITH VY: " << t.y << endl;
+                } else {
+                    entities[i].x += entities[i].vx;
+                    entities[i].y += entities[i].vy;
+                }
 
                 if (entities[i].x == character_x && entities[i].y == character_y && (entities[i].type == 1 || entities[i].type == 3)){
                     cout << "COLLISION !!";
@@ -47,7 +91,7 @@ void update_entities(){
     }
     if (time_character > TIME_CHARACTER){
         time_character = 0;
-
+        fuel--;
         switch(facing_t){
             case 0: character_y--; break;
             case 1: character_x++; break;

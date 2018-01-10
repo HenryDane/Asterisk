@@ -273,24 +273,14 @@ int main(){
                             build_terrain(sector_x, sector_y, sector_s);
                             state = 10;
                             ticks_for_warp = sector_s + sector_x + sector_y + 10;
+                            fuel -= ticks_for_warp * 3;
                         }
                         break;
                     case sf::Keyboard::Space:
                         if (state == -1){
                             state = 0;
                         } else if (state == 0){
-                            const char* dat = "!!!";
-                            entities[num_entities].type = 5;
-                            entities[num_entities].x = character_x;
-                            entities[num_entities].y = character_y;
-                            for (int k = 0; k < 3; k++){
-                                entities[num_entities].data[k] = dat[k];
-                            }
-                            entities[num_entities].id = id_entity_last;
-                            entities[num_entities].vx = ((facing == 1) ? 1 : 0) + ((facing == 3) ? -1 : 0);
-                            entities[num_entities].vy = ((facing == 2) ? 1 : 0) + ((facing == 0) ? -1 : 0);
-                            num_entities++;
-                            id_entity_last++;
+                            fire_missile(character_x, character_y, ((facing == 1) ? 1 : 0) + ((facing == 3) ? -1 : 0), ((facing == 2) ? 1 : 0) + ((facing == 0) ? -1 : 0), 5);
                         }
                         break;
                     case sf::Keyboard::Z:

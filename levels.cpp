@@ -48,8 +48,8 @@ void search_and_build(const tile_data * tiledata){
                     cout << " Y: " << tiledata[i].flight_data[j].y << endl;
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
                         entities[num_entities].id = id_entity_last;
-                        entities[num_entities].x = tiledata[i].flight_data[j].x;
-                        entities[num_entities].y = tiledata[i].flight_data[j].y;
+                        entities[num_entities].x = rand() % WIDTH;
+                        entities[num_entities].y = rand() % HEIGHT;
                         entities[num_entities].type = 1;
                         for (int k = 0; k < 16; k++){
                             entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
