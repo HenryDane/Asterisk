@@ -10,6 +10,14 @@ struct entity{
     int id;
 };
 
+struct map_tile{
+    int type;
+    bool fire;
+    bool water;
+    bool toxic;
+    bool mined;
+};
+
 #define CONFIG_INCREMENT_AMOUNT 50
 
 #define PAD_LEFT 128
@@ -51,6 +59,8 @@ extern int screen[];
 // character attrs
 extern int character_x;
 extern int character_y;
+extern int ship_x;
+extern int ship_y;
 extern int dx; // for moving towards the edge of the screen
 extern int dy; // for moving towards the edge of the screen
 extern int facing;

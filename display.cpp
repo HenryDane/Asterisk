@@ -111,6 +111,40 @@ void cleardisplay(bool _debug){
     }
 }
 
+void draw_warp_alt(){
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    for( int i = 0; i < HEIGHT; i++){
+        for (int j = 0; j < HEIGHT; j++){
+            r.setPosition(i * 16, j * 16);
+            r.setTexture(&debug);
+            windowTexture.draw(r);
+        }
+    }
+}
+
+void draw_rouge(){
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    for (int i = 0; i < HEIGHT; i++){
+        for (int j = 0; j < HEIGHT; j++){
+            r.setPosition(i * 16, j * 16);
+            switch (map_test[(i + character_x) % 16][(j + character_y) % 16]){
+                case 0:
+                    r.setTexture(&wall);
+                    break;
+                case 1:
+                    r.setTexture(&asteriod_2);
+                    break;
+                default:
+                    r.setTexture(&system_texture);
+            }
+            windowTexture.draw(r);
+        }
+    }
+    r.setPosition(25 * 16, 17 * 16);
+    r.setTexture(&green);
+    windowTexture.draw(r);
+}
+
 void draw_engine_config(){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
@@ -251,72 +285,88 @@ void draw_prewarp(int x, int y, int s){
 
     // pick default texture
     r.setTexture(&empty_sector);
-    for (int i = 1; i < 11; i++){
-        for (int j = 1; j < 11; j++){
-            // draw sector 1
-            switch(level_0_0[i - 1][j - 1]){
-                case 0: r.setTexture(&empty_sector); break;
-                case 1: r.setTexture(&station); break;
-                case 2: r.setTexture(&ice_field); break;
-                case 3: r.setTexture(&nebula); break;
-                case 4: r.setTexture(&system_texture); break;
-                // case 5: r.setTexture(&star); break;
-                default: r.setTexture(&empty_sector);
+    for (int i = 0; i < 30; i+=3){
+        for (int j = 0; j < 30; j+=3){
+            // draw sector 0
+            switch (s){
+                case 0:
+                    switch(level_0_0[i / 3 ][j / 3]){
+                        case 0: r.setTexture(&empty_sector); break;
+                        case 1: r.setTexture(&station); break;
+                        case 2: r.setTexture(&ice_field); break;
+                        case 3: r.setTexture(&nebula); break;
+                        case 4: r.setTexture(&system_texture); break;
+                        // case 5: r.setTexture(&star); break;
+                        default: r.setTexture(&empty_sector);
+                    }
+                    for (int n = 0; n < 3; n++){
+                        for (int m = 0; m < 3; m++){
+                            r.setPosition(((i + n) * 16) , (j + m) * 16 + 16);
+                            windowTexture.draw(r);
+                        }
+                    }
+                    break;
+                case 1:
+                    // draw sector 1
+                    switch(level_0_1[i / 3 ][j / 3]){
+                        case 0: r.setTexture(&empty_sector); break;
+                        case 1: r.setTexture(&station); break;
+                        case 2: r.setTexture(&ice_field); break;
+                        case 3: r.setTexture(&nebula); break;
+                        case 4: r.setTexture(&system_texture); break;
+                        // case 5: r.setTexture(&star); break;
+                        default: r.setTexture(&empty_sector);
+                    }
+                    for (int n = 0; n < 3; n++){
+                        for (int m = 0; m < 3; m++){
+                            r.setPosition(((i + n) * 16) , (j + m) * 16 + 16);
+                            windowTexture.draw(r);
+                        }
+                    }
+                    break;
+                case 2:
+                    // draw sector 2
+                    switch(level_0_2[i / 3 ][j / 3]){
+                        case 0: r.setTexture(&empty_sector); break;
+                        case 1: r.setTexture(&station); break;
+                        case 2: r.setTexture(&ice_field); break;
+                        case 3: r.setTexture(&nebula); break;
+                        case 4: r.setTexture(&system_texture); break;
+                        // case 5: r.setTexture(&star); break;
+                        default: r.setTexture(&empty_sector);
+                    }
+                    for (int n = 0; n < 3; n++){
+                        for (int m = 0; m < 3; m++){
+                            r.setPosition(((i + n) * 16) , (j + m) * 16 + 16);
+                            windowTexture.draw(r);
+                        }
+                    }
+                    break;
+                case 3:
+                     // draw sector 3
+                    switch(level_0_3[i / 3 ][j / 3]){
+                        case 0: r.setTexture(&empty_sector); break;
+                        case 1: r.setTexture(&station); break;
+                        case 2: r.setTexture(&ice_field); break;
+                        case 3: r.setTexture(&nebula); break;
+                        case 4: r.setTexture(&system_texture); break;
+                        // case 5: r.setTexture(&star); break;
+                        default: r.setTexture(&empty_sector);
+                    }
+                    for (int n = 0; n < 3; n++){
+                        for (int m = 0; m < 3; m++){
+                            r.setPosition(((i + n) * 16) , (j + m) * 16 + 16);
+                            windowTexture.draw(r);
+                        }
+                    }
+                    break;
+                default : cout << "REEEEEEE" << endl;
             }
-            r.setPosition((i * 16) , j * 16);
-            windowTexture.draw(r);
-
-            // draw sector 1
-            switch(level_0_1[i - 1][j - 1]){
-                case 0: r.setTexture(&empty_sector); break;
-                case 1: r.setTexture(&station); break;
-                case 2: r.setTexture(&ice_field); break;
-                case 3: r.setTexture(&nebula); break;
-                case 4: r.setTexture(&system_texture); break;
-                // case 5: r.setTexture(&star); break;
-                default: r.setTexture(&empty_sector);
-            }
-            r.setPosition((i + 11) * 16 , j * 16);
-            windowTexture.draw(r);
-
-            // draw sector 3
-            switch(level_0_3[i - 1][j - 1]){
-                case 0: r.setTexture(&empty_sector); break;
-                case 1: r.setTexture(&station); break;
-                case 2: r.setTexture(&ice_field); break;
-                case 3: r.setTexture(&nebula); break;
-                case 4: r.setTexture(&system_texture); break;
-                // case 5: r.setTexture(&star); break;
-                default: r.setTexture(&empty_sector);
-            }
-            r.setPosition(i * 16 , (j + 11) * 16);
-            windowTexture.draw(r);
-
-            // draw sector 2
-            switch(level_0_2[i - 1][j - 1]){
-                case 0: r.setTexture(&empty_sector); break;
-                case 1: r.setTexture(&station); break;
-                case 2: r.setTexture(&ice_field); break;
-                case 3: r.setTexture(&nebula); break;
-                case 4: r.setTexture(&system_texture); break;
-                // case 5: r.setTexture(&star); break;
-                default: r.setTexture(&empty_sector);
-            }
-            r.setPosition((i + 11) * 16 , (j + 11) * 16);
-            windowTexture.draw(r);
         }
     }
 
     // draw jump position
-    if (s == 0) {
-        r.setPosition((x + 1) * 16, (y + 1) * 16);
-    } else if (s == 1){
-        r.setPosition((x + 1) * 16 + 176, (y + 1) * 16);
-    } else if (s == 2){
-        r.setPosition((x + 1) * 16 + 176, (y + 1) * 16 + 176);
-    } else if (s == 3){
-        r.setPosition((x + 1) * 16, (y + 1) * 16 + 176);
-    }
+    r.setPosition(x * 48 + 16, y * 48 + 16);
     r.setTexture(&character_t);
     windowTexture.draw(r);
 
@@ -374,80 +424,79 @@ void draw_prewarp(int x, int y, int s){
             break;
     }
     text.setString(temp_data);
-    text.setPosition(368, 112);
+    text.setPosition(496, 128);
     windowTexture.draw(text);
 
 
     // draw cuttent position
-    if (sector_s == 0) {
-        r.setPosition((sector_x + 1) * 16, (sector_y+ 1) * 16);
-    } else if (sector_s == 1){
-        r.setPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16);
-    } else if (sector_s == 2){
-        r.setPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16 + 176);
-    } else if (sector_s == 3){
-        r.setPosition((sector_x + 1) * 16, (sector_y + 1) * 16 + 176);
+    if (sector_s == s) {
+        r.setPosition(sector_x * 48 + 16, sector_y * 48 + 16);
     }
     r.setTexture(&enemy_t);
     windowTexture.draw(r);
 
     // draw text
     text.setString("Warp Config System v12.81.20392");
-    text.setPosition(368, 16);
+    text.setPosition(496, 16);
     windowTexture.draw(text);
     text.setString("Quadrant: Epsilon");
-    text.setPosition(368, 48);
+    text.setPosition(496, 48);
     windowTexture.draw(text);
-    sprintf(tim, "Jump Sector: %d - %d - %d    Current Sector: %d - %d - %d", s, x, y, sector_s, sector_x, sector_y);
+    sprintf(tim, "Jump Sector: %d - %d - %d", s, x, y);
     text.setString(tim);
-    text.setPosition(368, 64);
+    text.setPosition(496, 64);
+    windowTexture.draw(text);
+    sprintf(tim, "Current Sector: %d - %d - %d", sector_s, sector_x, sector_y);
+    text.setString(tim);
+    text.setPosition(496, 80);
     windowTexture.draw(text);
     text.setString("Warp Engine Integrity: 87%");
-    text.setPosition(368, 80);
+    text.setPosition(496, 96);
     windowTexture.draw(text);
     text.setString("[WASD] to move jump to coords");
-    text.setPosition(368, 528);
+    text.setPosition(496, 304);
     windowTexture.draw(text);
     text.setString("[~] to confirm jump");
-    text.setPosition(368, 544);
+    text.setPosition(496, 320);
     windowTexture.draw(text);
 
     text.setString("Engine Status:");
-    text.setPosition(368, 368);
+    text.setPosition(496, 192);
     windowTexture.draw(text);
     text.setString("[Enter] to configure");
-    text.setPosition(368, 384);
+    text.setPosition(496, 208);
     windowTexture.draw(text);
     text.setString("Fuel: 9678 / 10000");
-    text.setPosition(368, 416);
+    text.setPosition(496, 224);
     windowTexture.draw(text);
     text.setString("Peak Flux: 0.6772 ABCD");
-    text.setPosition(368, 432);
+    text.setPosition(496, 240);
     windowTexture.draw(text);
     text.setString("Reserved Flux: 10.2821");
-    text.setPosition(368, 448);
+    text.setPosition(496, 256);
     windowTexture.draw(text);
     text.setString("Time Per Cycle: 1h 17m 57s");
-    text.setPosition(368, 480);
+    text.setPosition(496, 272);
     windowTexture.draw(text);
 
     text.setColor(sf::Color::Green);
     text.setString("E1");
-    text.setPosition(32, 368);
+    text.setPosition(496, 368);
     windowTexture.draw(text);
     text.setString("E2");
-    text.setPosition(112, 368);
+    text.setPosition(576, 368);
     windowTexture.draw(text);
     text.setString("E3");
-    text.setPosition(192, 368);
+    text.setPosition(656, 368);
     windowTexture.draw(text);
     text.setString("E4");
-    text.setPosition(272, 368);
+    text.setPosition(736, 368);
     windowTexture.draw(text);
     text.setColor(sf::Color::White);
+
     for(int i = 0; i < 2; i++){
         for (int j = 0; j < 10; j++){
-            r.setPosition(32 + 16 * i, 400 + j * 16);
+            r.setPosition(496 + 16 * i, 400 + j * 16);
             if ( j >= e1_y) {
                 r.setTexture(&red);
             } else if (j >= e1_g && j < e1_y){
@@ -456,7 +505,7 @@ void draw_prewarp(int x, int y, int s){
                 r.setTexture(&green);
             }
             windowTexture.draw(r);
-            r.setPosition(112 + 16 * i, 400 + j * 16);
+            r.setPosition(576 + 16 * i, 400 + j * 16);
             if ( j >= e2_y) {
                 r.setTexture(&red);
             } else if (j >= e2_g && j < e2_y){
@@ -465,7 +514,7 @@ void draw_prewarp(int x, int y, int s){
                 r.setTexture(&green);
             }
             windowTexture.draw(r);
-            r.setPosition(192 + 16 * i, 400 + j * 16);
+            r.setPosition(656 + 16 * i, 400 + j * 16);
             if ( j >= e3_y) {
                 r.setTexture(&red);
             } else if (j >= e3_g && j < e3_y){
@@ -474,7 +523,7 @@ void draw_prewarp(int x, int y, int s){
                 r.setTexture(&green);
             }
             windowTexture.draw(r);
-            r.setPosition(272 + 16 * i, 400 + j * 16);
+            r.setPosition(736 + 16 * i, 400 + j * 16);
             if ( j >= e4_y) {
                 r.setTexture(&red);
             } else if (j >= e4_g && j < e4_y){
@@ -485,7 +534,6 @@ void draw_prewarp(int x, int y, int s){
             windowTexture.draw(r);
         }
     }
-
     // make it good fam
     windowTexture.display();
 }
@@ -830,15 +878,6 @@ void draw_menu(int type){
         windowTexture.draw(text);
     }
 
-/*
-    text.setString("  Weight: 12000 metric tons");
-    text.setPosition(PAD_LEFT, PAD_TOP + 48);
-    windowTexture.draw(text);
-
-    text.setString("  -- Neutral Station --");
-    text.setPosition(PAD_LEFT, PAD_TOP + 64);
-    windowTexture.draw(text);
-*/
     text.setString("Your ship: ");
     text.setPosition(PAD_LEFT + 400, PAD_TOP);
     windowTexture.draw(text);
@@ -892,7 +931,7 @@ void display(bool update, int state){
     sf::RectangleShape r(sf::Vector2f(16, 16));
 
     // draw character
-    r.setPosition(character_x * 16, character_y * 16);
+    r.setPosition(ship_x * 16, ship_y * 16);
     switch(facing % 4){
         case 0: r.setTexture(&character_t); break;
         case 1: r.setTexture(&character_r); break;
@@ -905,19 +944,19 @@ void display(bool update, int state){
     switch(facing % 4){
         case 0:
             r.setTexture(&exhaust_top);
-            r.setPosition(character_x * 16, (character_y + 1) * 16);
+            r.setPosition(ship_x * 16, (ship_y + 1) * 16);
             break;
         case 1:
             r.setTexture(&exhaust_right);
-            r.setPosition((character_x - 1) * 16, (character_y) * 16);
+            r.setPosition((ship_x - 1) * 16, (ship_y) * 16);
             break;
         case 2:
             r.setTexture(&exhaust_bottom);
-            r.setPosition(character_x * 16, (character_y - 1) * 16);
+            r.setPosition(ship_x * 16, (ship_y - 1) * 16);
             break;
         case 3:
             r.setTexture(&exhaust_left);
-            r.setPosition((character_x + 1) * 16, character_y * 16);
+            r.setPosition((ship_x + 1) * 16, ship_y * 16);
             break;
     }
     windowTexture.draw(r);
@@ -950,24 +989,6 @@ void display(bool update, int state){
         r.setPosition(entities[i].x * 16, entities[i].y * 16);
         windowTexture.draw(r);
     }
-
-    // draw text stuff
-    /*sprintf(tim, "Health: %d / 500", health);
-    text.setString(tim);
-    text.setPosition(816, 16);
-    windowTexture.draw(text);
-    sprintf(tim, "Experience: %d / 5000", experience);
-    text.setString(tim);
-    text.setPosition(816, 32);
-    windowTexture.draw(text);
-    sprintf(tim, "Remaining fuel: %d / 10000", fuel);
-    text.setString(tim);
-    text.setPosition(816, 48);
-    windowTexture.draw(text);
-    sprintf(tim, "At: s%d (%d , %d)", sector_s, sector_x, sector_y);
-    text.setString(tim);
-    text.setPosition(816, 64);
-    windowTexture.draw(text);*/
 
     text.setString("HEALTH: ");
     text.setPosition(816, 16);

@@ -29,16 +29,16 @@ coord enemy_think_1(int address){
     // roll to fire missile
     if (rand() % 10 < 5){
         // compute missile direction
-        coord m = {(character_x > entities[address].x) ? 1 : -1 , (character_y > entities[address].y) ? 1 : -1};
+        coord m = {(ship_x > entities[address].x) ? 1 : -1 , (ship_y > entities[address].y) ? 1 : -1};
 
         // add missile
         fire_missile(entities[address].x, entities[address].y, m.x, m.y, 5);
     }
 
     //return dx, dy
-    coord d = {(character_x > entities[address].x) ? -1 : 1 , (character_y > entities[address].y) ? 1 : -1};
+    coord d = {(ship_x > entities[address].x) ? -1 : 1 , (ship_y > entities[address].y) ? 1 : -1};
     coord n = { 0, 0};
-    return ( (((unsigned) (character_x - entities[address].x)) < 10) && (((unsigned) (character_y - entities[address].y)) < 10)) ? d : n;
+    return ( (((unsigned) (ship_x - entities[address].x)) < 10) && (((unsigned) (ship_y - entities[address].y)) < 10)) ? d : n;
 }
 
 void update_entities(){
@@ -59,7 +59,7 @@ void update_entities(){
                     entities[i].y += entities[i].vy;
                 }
 
-                if (entities[i].x == character_x && entities[i].y == character_y && (entities[i].type == 1 || entities[i].type == 3)){
+                if (entities[i].x == ship_x && entities[i].y == ship_y && (entities[i].type == 1 || entities[i].type == 3)){
                     cout << "COLLISION !!";
                     state = -2;
                 }
@@ -76,7 +76,7 @@ void update_entities(){
                 entities[i].x += entities[i].vx;
                 entities[i].y += entities[i].vy;
 
-                if (entities[i].x == character_x && entities[i].y == character_y && entities[i].type == 6){
+                if (entities[i].x == ship_x && entities[i].y == ship_y && entities[i].type == 6){
                     cout << "COLLISION !!!!";
                     state = -2;
                 }
@@ -93,21 +93,21 @@ void update_entities(){
         time_character = 0;
         fuel--;
         switch(facing_t){
-            case 0: character_y--; break;
-            case 1: character_x++; break;
-            case 2: character_y++; break;
-            case 3: character_x--; break;
-            case 4: character_y--; character_x++; break;
-            case 5: character_x++; character_y++; break;
-            case 6: character_y++; character_x--; break;
-            case 7: character_x--; character_y--; break;
-            default: break;
+            case 0: ship_y--; break;
+            case 1: ship_x++; break;
+            case 2: ship_y++; break;
+            case 3: ship_x--; break;
+            case 4: ship_y--; ship_x++; break;
+            case 5: ship_x++; ship_y++; break;
+            case 6: ship_y++; ship_x--; break;
+            case 7: ship_x--; ship_y--; break;
+            default: fuel++; break;
         }
 
-        if (character_x > WIDTH - 1) character_x = WIDTH;
-        if (character_x < 0) character_x = 0;
-        if (character_y > HEIGHT - 1) character_y = HEIGHT;
-        if (character_y < 0) character_y = 0;
+        if (ship_x > WIDTH - 1) ship_x = WIDTH;
+        if (ship_x < 0) ship_x = 0;
+        if (ship_y > HEIGHT - 1) ship_y = HEIGHT;
+        if (ship_y < 0) ship_y = 0;
     }
 }
 

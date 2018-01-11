@@ -56,7 +56,9 @@ int thrust_clamp;
 int afterburn_clamp;
 float thrust;
 
-// character location
+// character location for ship
+int ship_x = 0;
+int ship_y = 0;
 int character_x = 12;
 int character_y = 12;
 int dx = 0;
@@ -177,6 +179,9 @@ int main(){
                     case sf::Keyboard::Num0:
                         state = -1;
                         break;
+                    case sf::Keyboard::Num5:
+                        state = 16; // rouge like
+                        break;
                     case sf::Keyboard::W:
                         if (state == 7){
                             jump_y--;
@@ -188,6 +193,8 @@ int main(){
                             if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 1 || state == 5){
                             selected_object++;
+                        } else if (state == 16) {
+                            character_y--;
                         }
                         break;
                     case sf::Keyboard::A:
@@ -199,6 +206,8 @@ int main(){
                             facing = 3;
                         } else if (state == 11){
                             if(fuel_r - CONFIG_INCREMENT_AMOUNT >= 0) fuel_r -= CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 16) {
+                            character_x--;
                         }
                         break;
                     case sf::Keyboard::S:
@@ -210,6 +219,8 @@ int main(){
                             facing = 2;
                         } else if (state == 11){
                             if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 16) {
+                            character_y++;
                         }
                         break;
                     case sf::Keyboard::D:
@@ -221,6 +232,8 @@ int main(){
                             facing = 1;
                         } else if (state == 11){
                             if(flux_clamp - CONFIG_INCREMENT_AMOUNT >= 0) flux_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 16) {
+                            character_x++;
                         }
                         break;
                     case sf::Keyboard::Q:
@@ -280,7 +293,7 @@ int main(){
                         if (state == -1){
                             state = 0;
                         } else if (state == 0){
-                            fire_missile(character_x, character_y, ((facing == 1) ? 1 : 0) + ((facing == 3) ? -1 : 0), ((facing == 2) ? 1 : 0) + ((facing == 0) ? -1 : 0), 5);
+                            fire_missile(ship_x, ship_y, ((facing == 1) ? 1 : 0) + ((facing == 3) ? -1 : 0), ((facing == 2) ? 1 : 0) + ((facing == 0) ? -1 : 0), 5);
                         }
                         break;
                     case sf::Keyboard::Z:
@@ -347,6 +360,9 @@ int main(){
                 break;
             case 8:
                 draw_dock();
+                break;
+            case 16:
+                draw_rouge();
                 break;
             default:
                 cleardisplay(false);
