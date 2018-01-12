@@ -122,12 +122,111 @@ void draw_warp_alt(){
     }
 }
 
+void draw_stats(){
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setColor(sf::Color::White);
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    char tim[80];
+
+    text.setString("HEALTH: ");
+    text.setPosition(816, 16);
+    windowTexture.draw(text);
+    r.setTexture(&heart);
+    if (health >= 250){
+        r.setPosition(960,16);
+        windowTexture.draw(r);
+    } else {
+        r.setTexture(&critical);
+        r.setPosition(960,16);
+        windowTexture.draw(r);
+    }
+    if (health >= 500){
+        r.setPosition(944,16);
+        windowTexture.draw(r);
+    }
+    if (health >= 750){
+        r.setPosition(928,16);
+        windowTexture.draw(r);
+    }
+    r.setTexture(&full_health);
+    if (health >= 900){
+        r.setPosition(912,16);
+        windowTexture.draw(r);
+    }
+
+    text.setString("RANK: ");
+    text.setPosition(816, 32);
+    windowTexture.draw(text);
+    r.setTexture(&bronze);
+    r.setPosition(912,32);
+    windowTexture.draw(r);
+
+    sprintf(tim, "FUEL: %d / 10K", fuel);
+    text.setString(tim);
+    text.setPosition(816, 48);
+    windowTexture.draw(text);
+
+    sprintf(tim, "SECT: %d", sector_s);
+    text.setString(tim);
+    text.setPosition(816,80);
+    windowTexture.draw(text);
+
+    sprintf(tim, "COORD: (%d, %d)", sector_x, sector_y);
+    text.setString(tim);
+    text.setPosition(816,96);
+    windowTexture.draw(text);
+}
+
+void draw_inventory(){
+    // graphics setup
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setColor(sf::Color::White);
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    char tim[80];
+
+    text.setString("INVENTORY: ");
+    text.setPosition(576, 16);
+    windowTexture.draw(text);
+
+    // loop inventory
+    for(int i = 0; i < num_items; i++){
+        switch(inventory[i].type){
+            case 2:
+                sprintf(tim, "HANDGUN [%s]", inventory[i].data);
+                text.setString(tim);
+                break;
+            case 1:
+                sprintf(tim, "RATION  [%s]", inventory[i].data);
+                text.setString(tim);
+                break;
+            default:
+                text.setString("UNKNOWN [???      ]");
+        }
+        text.setPosition(592, (i + 2) * 16);
+        windowTexture.draw(text);
+    }
+}
+
 void draw_rouge(){
+    sf::Text text;
+    char tim[80];
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setColor(sf::Color::White);
     sf::RectangleShape r(sf::Vector2f(16, 16));
     for (int i = 0; i < HEIGHT; i++){
         for (int j = 0; j < HEIGHT; j++){
             r.setPosition(i * 16, j * 16);
-            switch (map_test[(i + character_x) % 16][(j + character_y) % 16]){
+            /*switch (map_test[((i + character_x ) > 0 && (i + character_x) < 32) ? (i + character_x) : 0]
+                            [((j + character_y ) > 0 && (j + character_y) < 32) ? (j + character_y) : 0]){*/
+            switch (((i + character_x ) >= 0 && (i + character_x) < 32 && (j + character_y ) >= 0 && (j + character_y) < 32) ? map_test[character_x + i][character_y + j] : -1){
+                case -1:
+                    r.setTexture(&debug);
+                    break;
                 case 0:
                     r.setTexture(&wall);
                     break;
@@ -140,17 +239,22 @@ void draw_rouge(){
             windowTexture.draw(r);
         }
     }
-    r.setPosition(25 * 16, 17 * 16);
+
+    draw_stats();
+    draw_inventory();
+
+    r.setPosition(15 * 16, 15 * 16);
     r.setTexture(&green);
     windowTexture.draw(r);
+
+    // make it good fam
+    windowTexture.display();
 }
 
 void draw_engine_config(){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
-    sf::Font font;
     char tim[80];
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -276,9 +380,7 @@ void draw_engine_config(){
 void draw_prewarp(int x, int y, int s){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
-    sf::Font font;
     char tim[80];
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -541,9 +643,7 @@ void draw_prewarp(int x, int y, int s){
 void draw_warp(int x, int y, int s){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
-    sf::Font font;
     char tim[80];
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -778,9 +878,7 @@ void draw_warp(int x, int y, int s){
 void draw_self(){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
-    sf::Font font;
     char tim[80];
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -837,8 +935,6 @@ void draw_menu(int type){
     char tim[80];
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
-    sf::Font font;
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -1052,9 +1148,7 @@ void draw_logo(){
 void draw_dock(){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
-    sf::Font font;
     char tim[80];
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);

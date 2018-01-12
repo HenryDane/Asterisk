@@ -57,10 +57,10 @@ int afterburn_clamp;
 float thrust;
 
 // character location for ship
-int ship_x = 0;
-int ship_y = 0;
-int character_x = 12;
-int character_y = 12;
+int ship_x = 12;
+int ship_y = 12;
+int character_x = 0;
+int character_y = 0;
 int dx = 0;
 int dy = 0;
 int facing = 0;
@@ -84,12 +84,19 @@ int e4_g = 8;
 int e4_y = 9;
 int ticks_for_warp;
 
+item inventory[3] = {{0,2,false,"Glock    ", 5},
+                     {1,1,false,"Generic  ", 7},
+                     {2,3,false,"Glock    ", 5}};
+int num_items = 3;
+
 // game state
 // -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup, 8: dock, 10: at warp
 int state = -1;
 
 // texture
 sf::RenderTexture windowTexture;
+
+sf::Font font;
 
 int main(){
 //    asteriod_direction = 0;default: r.setTexture(&empty_sector);
@@ -130,7 +137,6 @@ int main(){
 
     // generate font
     sf::Text text;
-    sf::Font font;
     if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
@@ -191,10 +197,15 @@ int main(){
                             facing = 0;
                         } else if (state == 11){
                             if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
+                            if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 1 || state == 5){
                             selected_object++;
                         } else if (state == 16) {
-                            character_y--;
+                            if (character_y > -15) {
+                                if (map_test[character_x + 15][character_y - 1 + 15] != 1) {
+                                    character_y--;
+                                }
+                            }
                         }
                         break;
                     case sf::Keyboard::A:
@@ -207,7 +218,11 @@ int main(){
                         } else if (state == 11){
                             if(fuel_r - CONFIG_INCREMENT_AMOUNT >= 0) fuel_r -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 16) {
-                            character_x--;
+                            if (character_x > -15) {
+                                if (map_test[character_x - 1 + 15][character_y + 15] != 1) {
+                                    character_x--;
+                                }
+                            }
                         }
                         break;
                     case sf::Keyboard::S:
@@ -220,7 +235,9 @@ int main(){
                         } else if (state == 11){
                             if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 16) {
-                            character_y++;
+                            if (map_test[character_x + 15][character_y + 1 + 15] != 1) {
+                                character_y++;
+                            }
                         }
                         break;
                     case sf::Keyboard::D:
@@ -233,7 +250,11 @@ int main(){
                         } else if (state == 11){
                             if(flux_clamp - CONFIG_INCREMENT_AMOUNT >= 0) flux_clamp -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 16) {
-                            character_x++;
+                            if (character_x < 16){
+                                if (map_test[character_x + 1 + 15][character_y + 15] != 1) {
+                                    character_x++;
+                                }
+                            }
                         }
                         break;
                     case sf::Keyboard::Q:
@@ -286,7 +307,7 @@ int main(){
                             build_terrain(sector_x, sector_y, sector_s);
                             state = 10;
                             ticks_for_warp = sector_s + sector_x + sector_y + 10;
-                            fuel -= ticks_for_warp * 3;
+                            fuel -= ticks_for_warp * 3; // compute ticks
                         }
                         break;
                     case sf::Keyboard::Space:
@@ -313,6 +334,7 @@ int main(){
                     case sf::Keyboard::Tab:
                         cout << "STATE: " << state << " FACING: " << facing << " SEL OBJ:" << selected_object << endl;
                         cout << "    ID_LAST: " << id_entity_last << " NUM_ENTITY: " << num_entities << endl;
+                        cout << "    C_X: " << character_x << " C_Y: " << character_y << " S_X: " << ship_x << " S_Y: " << ship_y << endl;
                         break;
                     default:
                         break;

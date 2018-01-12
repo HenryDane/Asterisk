@@ -18,6 +18,14 @@ struct map_tile{
     bool mined;
 };
 
+struct item{
+    int id;
+    int type;
+    bool unuseable;
+    char data[10];
+    int data_len;
+};
+
 #define CONFIG_INCREMENT_AMOUNT 50
 
 #define PAD_LEFT 128
@@ -74,7 +82,10 @@ extern int sector_x;
 extern int sector_y;
 extern int sector_s;
 extern int level;
+extern item inventory[]; // inventory list
+extern int num_items;    // number of items
 
+// check for angled movement
 extern bool tilted;
 
 // engine data
@@ -97,10 +108,14 @@ extern int thrust_clamp;
 extern int afterburn_clamp;
 extern float thrust;
 
+// ???
 extern int selected_object;
 
 // main window texture handle
 extern sf::RenderTexture windowTexture;
+
+// main font handle
+extern sf::Font font;
 
 // game state
 extern int state;
