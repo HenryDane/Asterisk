@@ -66,11 +66,12 @@ int dy = 0;
 int facing = 0;
 bool tilted = false;
 
-int sector_s = 3;
-int sector_x = 5;
-int sector_y = 4;
+int sector_s = 0;
+int sector_x = 0;
+int sector_y = 0;
 
 int level = 0;
+int location = 0;
 
 int selected_object = 0;
 

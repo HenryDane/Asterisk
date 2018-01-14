@@ -1,5 +1,60 @@
 #include <SFML/Graphics.hpp>
 
+struct item_npc{
+    int id;
+    int type;
+    char * data;
+    int data_len;
+};
+
+struct NPC{
+    int id;
+    int health; // of 1000
+    int type;
+    int inventory_size;
+    const item_npc * inventory; // make to a fixed size? npcs probably dont need to have working inventories
+    bool is_merchant;
+    bool is_ablaze;
+    bool is_alive;
+};
+
+struct map_tile{
+    int type;
+    bool fire;
+    bool has_NPC;
+    NPC resident;
+};
+
+// flavor text
+struct flavor_text {
+    char personnell[16];
+    int weight;
+    char alignment[16];
+};
+
+// for flight level view
+struct level_data {
+    int x;
+    int y;
+    char data[16];
+    bool persistent;
+    int type;
+    unsigned int num;
+    bool map_exists;
+    int map_id;
+    int map_w;
+    int map_h;
+};
+
+// for info on each tile in sector
+struct tile_data {
+    int x;
+    int y;
+    char data[16];
+    int num_level_data;
+    const level_data * flight_data;
+};
+
 struct entity{
     int x;
     int y;
@@ -8,14 +63,6 @@ struct entity{
     char data[16];
     int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet, 5 = rocket (player), 6 = rocket (other)
     int id;
-};
-
-struct map_tile{
-    int type;
-    bool fire;
-    bool water;
-    bool toxic;
-    bool mined;
 };
 
 struct item{
@@ -81,7 +128,8 @@ extern int credits;
 extern int sector_x;
 extern int sector_y;
 extern int sector_s;
-extern int level;
+extern int level; // level id for space view
+extern int location; // location on level for rouge: -1 for none loaded
 extern item inventory[]; // inventory list
 extern int num_items;    // number of items
 
@@ -129,3 +177,15 @@ extern int e3_g;
 extern int e3_y;
 extern int e4_g;
 extern int e4_y;
+
+// map definitions
+extern const int level_0_0[10][10];
+extern const tile_data level_0_0_tile_data[10];
+extern const int level_0_1[10][10];
+extern const tile_data level_0_1_tile_data[10];
+extern const int level_0_2[10][10];
+extern const tile_data level_0_2_tile_data[10];
+extern const int level_0_3[10][10];
+extern const tile_data level_0_3_tile_data[10];
+
+extern const int map_test[32][32];
