@@ -6,6 +6,7 @@
 #include "terrain.hpp"
 #include "entity.hpp"
 #include "levels.hpp"
+#include "map.hpp"
 using namespace std;
 
 // timer
@@ -91,7 +92,11 @@ item inventory[3] = {{0,2,false,"Glock    ", 5},
 int num_items = 3;
 
 // game state
-// -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup, 8: dock, 10: at warp
+/*
+-1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self,
+6: mod self confirm, 7: warp setup, 8: dock, 10: at warp, 16: rogue, 17: quest/talk, 18: cutscene
+
+*/
 int state = -1;
 
 // texture
@@ -108,11 +113,12 @@ int main(){
     // initalize rand
     srand (time(NULL));
 
-    cout << "sizeof: " << sizeof(level_0_0_tile_data) << endl;
+    init_maps();
+
+    cout << "sizeof: " << sizeof(rogue_map_master) << endl;
 
     // create window
     sf::RenderWindow window(sf::VideoMode(S_WIDTH, S_HEIGHT), "Asterisk");
-    sf::RectangleShape rectangle(sf::Vector2f(S_WIDTH, S_HEIGHT));
 
     // prevent repress
     window.setKeyRepeatEnabled(false);
@@ -146,6 +152,13 @@ int main(){
     int jump_x = 0;
     int jump_y = 0;
     int jump_s = 0;
+
+    // init cache_map
+    //cached_map = rogue_map_master[0].mapdat;
+    master_index = 0;
+    cached_map = rogue_map_master[master_index].mapdat;
+    character_x = rogue_map_master[master_index].coord.x;
+    character_y = rogue_map_master[master_index].coord.y;
 
     // main loop
     while (window.isOpen()){
@@ -198,14 +211,11 @@ int main(){
                             facing = 0;
                         } else if (state == 11){
                             if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
-                            if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 1 || state == 5){
                             selected_object++;
                         } else if (state == 16) {
-                            if (character_y > -15) {
-                                if (map_test[character_x + 15][character_y - 1 + 15] != 1) {
+                            if (character_y - 1 >= 0 && check_next_step(character_x, character_y - 1)) {
                                     character_y--;
-                                }
                             }
                         }
                         break;
@@ -219,10 +229,8 @@ int main(){
                         } else if (state == 11){
                             if(fuel_r - CONFIG_INCREMENT_AMOUNT >= 0) fuel_r -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 16) {
-                            if (character_x > -15) {
-                                if (map_test[character_x - 1 + 15][character_y + 15] != 1) {
+                            if (character_x - 1 >= 0  && check_next_step(character_x - 1, character_y)) {
                                     character_x--;
-                                }
                             }
                         }
                         break;
@@ -236,7 +244,7 @@ int main(){
                         } else if (state == 11){
                             if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 16) {
-                            if (map_test[character_x + 15][character_y + 1 + 15] != 1) {
+                            if (character_y + 1 < cached_map.h  && check_next_step(character_x, character_y + 1)) {
                                 character_y++;
                             }
                         }
@@ -251,10 +259,8 @@ int main(){
                         } else if (state == 11){
                             if(flux_clamp - CONFIG_INCREMENT_AMOUNT >= 0) flux_clamp -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == 16) {
-                            if (character_x < 16){
-                                if (map_test[character_x + 1 + 15][character_y + 15] != 1) {
-                                    character_x++;
-                                }
+                            if (character_x + 1 < cached_map.w  && check_next_step(character_x + 1, character_y)){
+                                character_x++;
                             }
                         }
                         break;
@@ -325,17 +331,43 @@ int main(){
                         if (state == 7){
                             state = 11;
                         } else if (state == 8){
-                            state = 0;
+                            state = 0; // undock
                         } else if (state == 11){
-                            state = 7;
+                            state = 7; // warp config
                         } else if (state == 0){
-                            state = 8;
+                            state = 8; // dock
+
+                            // search for everything nearby and go to the first thing we find
+                            // see issue #14
+
+                            // check if found object has a map, if yes then load it and go to state 16 else make error msg and wait for toggle to state 0
+                        } else if (state == 19 || state == 18 || state == 17) {
+                            state = 16;
                         }
                         break;
                     case sf::Keyboard::Tab:
                         cout << "STATE: " << state << " FACING: " << facing << " SEL OBJ:" << selected_object << endl;
                         cout << "    ID_LAST: " << id_entity_last << " NUM_ENTITY: " << num_entities << endl;
                         cout << "    C_X: " << character_x << " C_Y: " << character_y << " S_X: " << ship_x << " S_Y: " << ship_y << endl;
+                        if ( state == 16 ){
+                            for (int i = 0; i < cached_map.w * cached_map.h; i++) {
+                                cout << " [" << cached_map.tile_type[i] << "] ";
+                            }
+                            cout << endl;
+                        }
+                        break;
+                    case sf::Keyboard::Equal:
+                        if (event.key.shift){
+                            master_index ++;
+                        }
+                        break;
+                    case sf::Keyboard::Dash:
+                        master_index--;
+                        break;
+                    case sf::Keyboard::BackSpace:
+                        cached_map = rogue_map_master[master_index].mapdat;
+                        character_x = rogue_map_master[master_index].coord.x;
+                        character_y = rogue_map_master[master_index].coord.y;
                         break;
                     default:
                         break;
@@ -382,10 +414,28 @@ int main(){
                 draw_engine_config();
                 break;
             case 8:
-                draw_dock();
+                draw_dock(); // should not have any graphics unless there is an error
                 break;
             case 16:
                 draw_rouge();
+                break;
+            case 17:
+                // quest
+                text.setString("QUEST");
+                text.setPosition(0,0);
+                windowTexture.draw(text);
+                break;
+            case 18:
+                // cutscene
+                text.setString("CUTSCENE");
+                text.setPosition(0,0);
+                windowTexture.draw(text);
+                break;
+            case 19:
+                // merchant mode;
+                text.setString("MERCHANT");
+                text.setPosition(0,0);
+                windowTexture.draw(text);
                 break;
             default:
                 cleardisplay(false);

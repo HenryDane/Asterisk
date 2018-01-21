@@ -41,6 +41,10 @@ sf::Texture exhaust_top;
 sf::Texture exhaust_bottom;
 sf::Texture exhaust_left;
 sf::Texture exhaust_right;
+sf::Texture floor_tex;
+sf::Texture fern;
+sf::Texture npc_tex;
+sf::Texture black;
 
 int g_state = 0;
 
@@ -92,6 +96,10 @@ int init_displays(void){
     if(!exhaust_left.loadFromFile("res/exhaust_lef.png")) return -1;
     if(!exhaust_right.loadFromFile("res/exhaust_rig.png")) return -1;
     if(!exhaust_top.loadFromFile("res/exhaust_top.png")) return -1;
+    if(!floor_tex.loadFromFile("res/floor.png")) return -1;
+    if(!fern.loadFromFile("res/fern.png")) return -1;
+    if(!npc_tex.loadFromFile("res/npc_generic.png")) return -1;
+    if(!black.loadFromFile("res/black.png")) return -1;
 
     return 0;
 }
@@ -231,21 +239,26 @@ void draw_rouge(){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     for (int i = 0; i < HEIGHT; i++){
         for (int j = 0; j < HEIGHT; j++){
-            r.setPosition(i * 16, j * 16);
-            /*switch (map_test[((i + character_x ) > 0 && (i + character_x) < 32) ? (i + character_x) : 0]
-                            [((j + character_y ) > 0 && (j + character_y) < 32) ? (j + character_y) : 0]){*/
-            switch (((i + character_x ) >= 0 && (i + character_x) < 32 && (j + character_y ) >= 0 && (j + character_y) < 32) ? map_test[character_x + i][character_y + j] : -1){
-                case -1:
-                    r.setTexture(&debug);
-                    break;
-                case 0:
-                    r.setTexture(&wall);
-                    break;
-                case 1:
-                    r.setTexture(&asteriod_2);
-                    break;
-                default:
-                    r.setTexture(&system_texture);
+            r.setPosition((i) * 16, (j) * 16);
+            if (rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id <= 0) {
+                switch (((i - 15 + character_x) >= 0 && (i - 15 + character_x ) < cached_map.w && (j - 15 + character_y ) >= 0 && (j - 15 + character_y  ) < cached_map.h) ? cached_map.tile_type[(i - 15 + character_x)  + (j - 15 + character_y) * cached_map.w] : -1){
+                    case -1:
+                        r.setTexture(&black);
+                        break;
+                    case 0:
+                        r.setTexture(&floor_tex);
+                        break;
+                    case 1:
+                        r.setTexture(&wall);
+                        break;
+                    case 5:
+                        r.setTexture(&fern);
+                        break;
+                    default:
+                        r.setTexture(&system_texture);
+                }
+            } else {
+                r.setTexture(&npc_tex);
             }
             windowTexture.draw(r);
         }

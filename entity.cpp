@@ -121,3 +121,26 @@ void update_warp_interface(void){
     e4_g = rand() % 9;
     e4_y = 9;
 }
+
+bool check_next_step(int x, int y){
+    if (rogue_npc_master[master_index](x, y).id > 0) {
+        if (!rogue_npc_master[master_index](x, y).is_merchant){
+            if (rogue_npc_master[master_index](x, y).quest_id > 0 ){
+                state = 17;  // go to NPC screen for quest/ talk screen
+            } else if (rogue_npc_master[master_index](x, y).quest_id < 0) {
+                state = 18; // go to cutscene
+            }
+            return false;
+        } else {
+            state = 19; // go to merchant mode
+            return false;
+        }
+    }
+
+    switch (cached_map.tile_type[ x + cached_map.w * y ]){
+        case 1:
+            return false;
+        default:
+            return true;
+    }
+}

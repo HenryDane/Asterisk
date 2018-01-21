@@ -1,28 +1,47 @@
 #include <SFML/Graphics.hpp>
 
-struct item_npc{
-    int id;
-    int type;
-    char * data;
-    int data_len;
+typedef struct coord_t {
+    int x;
+    int y;
 };
 
-struct NPC{
+typedef struct npc_item_t{
     int id;
+    int type;
+    char data [16];
+    int data_len; // could be one byte
+};
+
+typedef struct npc_t{
+    int id; // -1 if the npc is null
     int health; // of 1000
     int type;
     int inventory_size;
-    const item_npc * inventory; // make to a fixed size? npcs probably dont need to have working inventories
+    const npc_item_t inventory [16]; // make to a fixed size? npcs probably dont need to have working inventories
     bool is_merchant;
     bool is_ablaze;
     bool is_alive;
+    int quest_id; // 0 for no quest, negative numbers trigger cutscene of corresponding number but positive
+    int x;
+    int y;
 };
 
-struct map_tile{
-    int type;
-    bool fire;
-    bool has_NPC;
-    NPC resident;
+// function pointer typedef
+typedef npc_t (*npc_function_ft) (unsigned int x, unsigned int y);
+
+
+typedef struct map_t {
+    unsigned int w; // can be one byte
+    unsigned int h; // can be one byte
+    int tile_type [32 * 32]; // can be one byte
+    bool on_fire [32 * 32];
+    bool under_water [32 * 32];
+};
+
+
+typedef struct map_master {
+    const map_t mapdat;
+    const coord_t coord;
 };
 
 // flavor text
@@ -87,6 +106,9 @@ struct item{
 // screen sizing
 #define S_WIDTH 1024
 #define S_HEIGHT 576
+
+// number of maps
+#define NUM_MAPS 2
 
 // entity timing constants milliseconds)
 #define TIME_CHARACTER 760
@@ -188,4 +210,7 @@ extern const tile_data level_0_2_tile_data[10];
 extern const int level_0_3[10][10];
 extern const tile_data level_0_3_tile_data[10];
 
-extern const int map_test[32][32];
+extern map_t cached_map;
+extern int master_index;
+extern map_master rogue_map_master[ NUM_MAPS ];
+extern npc_function_ft rogue_npc_master[NUM_MAPS];
