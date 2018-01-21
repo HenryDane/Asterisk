@@ -127,6 +127,20 @@ bool check_next_step(int x, int y){
         if (!rogue_npc_master[master_index](x, y).is_merchant){
             if (rogue_npc_master[master_index](x, y).quest_id > 0 ){
                 state = 17;  // go to NPC screen for quest/ talk screen
+                npc_t t = rogue_npc_master[master_index](x, y);
+                npc_last.health = t.health;
+                npc_last.id = t.id;
+                for (int i = 0; i < t.inventory_size; i++){
+                    npc_last.inventory[i] = t.inventory[i];
+                }
+                npc_last.inventory_size = t.inventory_size;
+                npc_last.is_ablaze = t.is_ablaze;
+                npc_last.is_alive = t.is_alive;
+                npc_last.is_merchant = t.is_merchant;
+                npc_last.quest_id = t.quest_id;
+                npc_last.type = t.type;
+                npc_last.x = t.x;
+                npc_last.y = t.y;
             } else if (rogue_npc_master[master_index](x, y).quest_id < 0) {
                 state = 18; // go to cutscene
             }

@@ -225,9 +225,19 @@ void draw_inventory(){
     windowTexture.draw(text);
 
     i++;
-    text.setString("-[No Active Quests]");
-    text.setPosition(576, (i + 2) * 16);
-    windowTexture.draw(text);
+    if (num_active_quests == 0){
+        text.setString("-[No Active Quests]");
+        text.setPosition(576, (i + 2) * 16);
+        windowTexture.draw(text);
+    } else {
+        for (int j = 0; j < num_active_quests; j++){
+            char tmp[80];
+            sprintf(tmp, "%s [%d]", quest_registry[npc_last.quest_id].title, quest_registry[npc_last.quest_id].id);
+            text.setString(tmp);
+            text.setPosition(576, (++i + 2) * 16);
+            windowTexture.draw(text);
+        }
+    }
 }
 
 void draw_rouge(){

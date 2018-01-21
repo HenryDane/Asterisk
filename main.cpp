@@ -91,6 +91,10 @@ item inventory[3] = {{0,2,false,"Glock    ", 5},
                      {2,3,false,"Glock    ", 5}};
 int num_items = 3;
 
+int num_active_quests = 0;
+
+npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };  // initalize npc for states 17, 18, 19
+
 // game state
 /*
 -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self,
@@ -154,11 +158,13 @@ int main(){
     int jump_s = 0;
 
     // init cache_map
-    //cached_map = rogue_map_master[0].mapdat;
     master_index = 0;
     cached_map = rogue_map_master[master_index].mapdat;
     character_x = rogue_map_master[master_index].coord.x;
     character_y = rogue_map_master[master_index].coord.y;
+
+    // init quests
+    num_active_quests = 0; // no active quests
 
     // main loop
     while (window.isOpen()){
@@ -369,6 +375,38 @@ int main(){
                         character_x = rogue_map_master[master_index].coord.x;
                         character_y = rogue_map_master[master_index].coord.y;
                         break;
+                    case sf::Keyboard::Y:
+                        if (state == 17) {
+                            if (num_active_quests + 1 < NUM_QUESTS_MAX){
+                                // search for copies
+                                bool found = false;
+                                for (int i = 0; i < num_active_quests + 1; i++){
+                                    cout << "LOOKED: NPCQID:" << quest_registry[npc_last.quest_id].id << " AQID:" << active_quests[i].quest.id << endl;
+                                    if (quest_registry[npc_last.quest_id].id == active_quests[i].quest.id){
+                                        found = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!found){
+                                    // if no duplicates, add to quest list
+                                    active_quests[++num_active_quests] = {quest_registry[npc_last.quest_id], 0, false};
+                                } else {
+                                    // complete check
+
+                                    // increment check
+                                }
+                                state = 16;
+                            } else {
+                                cout << "FAILED TO ADD, NAQ:" << num_active_quests << " NAQ+1:" << num_active_quests + 1 << " NAQM:" << NUM_QUESTS_MAX << endl;
+                            }
+                        }
+                        break;
+                    case sf::Keyboard::N:
+                        if (state == 17 || state == 18 || state == 19) {
+                            state = 16;
+                        }
+                        break;
                     default:
                         break;
                         // do nothing
@@ -424,6 +462,23 @@ int main(){
                 text.setString("QUEST");
                 text.setPosition(0,0);
                 windowTexture.draw(text);
+                if (npc_last.id > 0){
+                    char tmp[80];
+                    char tmp_t342[32] = "hello world";
+                    for (int i = 0; i < quest_registry[npc_last.quest_id].title_len; i++){
+                        tmp_t342[i] = quest_registry[npc_last.quest_id].title[i];
+                    }
+                    sprintf(tmp, "NPC [ID: %d] HAS QUEST [%s]. DO YOU ACCEPT [y / n]?", npc_last.id, tmp_t342);
+                    text.setString(tmp);
+                    text.setPosition(0,16);
+                    windowTexture.draw(text);
+                }
+
+                if (num_active_quests + 1 > NUM_QUESTS_MAX ){
+                    text.setString("YOU CAN NOT ACCEPT ANY MORE QUESTS");
+                    text.setPosition(0,32);
+                    windowTexture.draw(text);
+                }
                 break;
             case 18:
                 // cutscene

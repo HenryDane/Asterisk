@@ -17,8 +17,8 @@ const map_t example_map = {4,
                              false, false, false, false} };
 const coord_t example_map_start = {3, 2};
 npc_t example_map_npc ( unsigned int x, unsigned int y ){
-    npc_t a = {1432, 988, 7, 1, {5763, 42, "Legendary", 9}, true, false, true, 1, 0 };
-    npc_t b = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false , -1, -1};
+    npc_t a = {1432, 988, 7, 1, {5763, 42, "Legendary", 9}, false, false, true, 1, 1, 0 };
+    npc_t b = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1};
     if (x == 2 && y == 3){
         return a;
     }
@@ -44,8 +44,8 @@ const map_t test_map = {6,
                         false, false, false, false} };
 const coord_t test_map_start = {3, 2};
 npc_t test_map_npc ( unsigned int x, unsigned int y ){
-    npc_t a = {9107, 988, 7, 1, {5763, 42, "Legendary", 9}, true, false, true, 5, 5 };
-    npc_t b = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, -1, -1 };
+    npc_t a = {9107, 988, 7, 1, {5763, 42, "Legendary", 9}, true, false, true, 1, 5, 5 };
+    npc_t b = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };
     if (x == 2 && y == 3){
         return a;
     }

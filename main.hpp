@@ -5,6 +5,52 @@ typedef struct coord_t {
     int y;
 };
 
+struct item{
+    int id;
+    int type;
+    bool unuseable;
+    char data[10];
+    int data_len;
+};
+
+// does not yet support giving/taking items
+typedef struct quest_dialogue_t {
+    char * data;
+    int dat_len;
+    int image_id; // -1 for black, 0 for no change
+};
+
+// function pointer typedefs
+typedef bool (*quest_validate_ft) (void); // checks if step is complete
+typedef void (*quest_assign_ft) (void); // assigns step (may do nothing)
+
+typedef struct quest_dialogue_block_t {
+    int id; // must be positive
+    const quest_dialogue_t * dialogue_list; // length of list must be same as num_dialogue
+    int num_dialogue; //
+};
+
+typedef struct quest_t{
+    int id;
+    char title[32];
+    int title_len;
+    char issuer[32];
+    int issuer_len;
+    const quest_dialogue_block_t * dialogue;
+    quest_validate_ft * validation_functions; // length of list must be same as num_stages
+    quest_assign_ft * assignment_functions; // length of list must be same as num_stages
+    int num_stages;
+    int reward_exp;
+    int reward_credits;
+    item reward_item;
+};
+
+typedef struct quest_active_t{
+    quest_t quest;
+    int block_index;
+    bool complete; // if true, will be removed at some point
+};
+
 typedef struct npc_item_t{
     int id;
     int type;
@@ -17,7 +63,7 @@ typedef struct npc_t{
     int health; // of 1000
     int type;
     int inventory_size;
-    const npc_item_t inventory [16]; // make to a fixed size? npcs probably dont need to have working inventories
+    npc_item_t inventory [16]; // make to a fixed size? npcs probably dont need to have working inventories
     bool is_merchant;
     bool is_ablaze;
     bool is_alive;
@@ -26,9 +72,8 @@ typedef struct npc_t{
     int y;
 };
 
-// function pointer typedef
-typedef npc_t (*npc_function_ft) (unsigned int x, unsigned int y);
-
+// function pointer typedefs
+typedef npc_t (*npc_function_ft) (unsigned int x, unsigned int y); // gets npc at point
 
 typedef struct map_t {
     unsigned int w; // can be one byte
@@ -84,14 +129,6 @@ struct entity{
     int id;
 };
 
-struct item{
-    int id;
-    int type;
-    bool unuseable;
-    char data[10];
-    int data_len;
-};
-
 #define CONFIG_INCREMENT_AMOUNT 50
 
 #define PAD_LEFT 128
@@ -109,6 +146,10 @@ struct item{
 
 // number of maps
 #define NUM_MAPS 2
+
+// number of quests
+#define NUM_QUESTS 1
+#define NUM_QUESTS_MAX 4
 
 // entity timing constants milliseconds)
 #define TIME_CHARACTER 760
@@ -210,7 +251,19 @@ extern const tile_data level_0_2_tile_data[10];
 extern const int level_0_3[10][10];
 extern const tile_data level_0_3_tile_data[10];
 
-extern map_t cached_map;
-extern int master_index;
-extern map_master rogue_map_master[ NUM_MAPS ];
-extern npc_function_ft rogue_npc_master[NUM_MAPS];
+// for going to quest/cutscene/etc mode
+extern npc_t npc_last;
+
+// map stuffs
+extern map_t cached_map; // map for use when walkin around, needs to be loaded when player moves around
+extern int master_index; // current map id (index inside rogue_map_master
+extern map_master rogue_map_master[ NUM_MAPS ]; // main registry of maps
+extern npc_function_ft rogue_npc_master[NUM_MAPS]; // main registry of NPCs (this is an array of pointers to functions)
+
+// quest stuffs
+extern quest_active_t active_quests [NUM_QUESTS_MAX]; // list of active quests
+extern int num_active_quests;
+extern quest_t quest_registry[ NUM_QUESTS + 1 ];
+
+// cutscene stuffs
+
