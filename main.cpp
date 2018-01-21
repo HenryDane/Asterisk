@@ -94,8 +94,8 @@ int num_items = 3;
 // game state
 /*
 -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self,
-6: mod self confirm, 7: warp setup, 8: dock, 10: at warp, 16: rogue, 17: quest/talk, 18: cutscene
-
+6: mod self confirm, 7: warp setup, 8: dock, 10: at warp, 16: rogue, 17: quest/talk, 18: cutscene,
+19: trade interface
 */
 int state = -1;
 

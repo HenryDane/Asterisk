@@ -109,7 +109,7 @@ void cleardisplay(bool _debug){
     if (_debug){
         r.setTexture(&debug);
     } else {
-        r.setTexture(&wall);
+        r.setTexture(&black);
     }
     for (int i = 0; i < WIDTH; i++){
         for (int j = 0; j <  HEIGHT; j++){
