@@ -1,4 +1,3 @@
-#include "struct.hpp"
 #include "main.hpp"
 #include <iostream>
 using namespace std;
