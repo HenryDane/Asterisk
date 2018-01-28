@@ -2,6 +2,7 @@
 #include "terrain.h"
 #include "display.h"
 #include <stdio.h>
+#include <stdlib.h>
 //#include <iostream>
 //using namespace std;
 
@@ -12,7 +13,7 @@ typedef struct {
 
 void fire_missile(int ix, int iy, int vx, int vy, int type){
 //    cout << "FIRED MISSILE" << endl;
-    print("FIRED MISSILE \n");
+    printf("FIRED MISSILE \n");
     const char* dat = "!!!";
     entities[num_entities].type = type;
     entities[num_entities].x = ix;

@@ -1,5 +1,6 @@
 #include "main.h"
 #include "levels.h"
+#include "quest.h"
 #include <stdio.h>
 //using namespace std;
 
@@ -47,6 +48,14 @@ sfTexture* npc_tex;
 sfTexture* black;
 
 int g_state = 0;
+
+void rsetTexture(sfRectangleShape* r, sfTexture* texture){
+    sfRectangleShape_setTexture(r, texture, sfTrue);
+}
+
+void rsetPosition(sfRectangleShape* r, int x, int y){
+    sfRectangleShape_setPosition(r, (sfVector2f) {x, y});
+}
 
 int init_displays(void){
 	for (int i = 0; i < S_HEIGHT * S_WIDTH; i++){
@@ -105,18 +114,18 @@ int init_displays(void){
 }
 
 void cleardisplay(bool _debug){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     //sf::RectangleShape r(sf::Vector2f(16, 16));
     if (_debug){
-        //rsetTexture( debug);
+        //rsetTexture(r,  debug);
         sfRectangleShape_setTexture(r, debug, sfTrue);
     } else {
-        //rsetTexture( black);
+        //rsetTexture(r,  black);
         sfRectangleShape_setTexture(r, black, sfTrue);
     }
     for (int i = 0; i < WIDTH; i++){
         for (int j = 0; j <  HEIGHT; j++){
-            //rsetPosition(i * 16, j * 16);
+            //rsetPosition( r, i * 16, j * 16);
             sfRectangleShape_setPosition(r, (sfVector2f) {i * 16, j * 16});
             //sfRenderWindow_drawRectangleShape(window, r, NULL);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
@@ -125,45 +134,45 @@ void cleardisplay(bool _debug){
 }
 
 void draw_stats(){
-    sfText* text;
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    //sfText_setColor(text, sfWhite);
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     char tim[80];
 
     sfText_setString(text, "HEALTH: ");
     sfText_setPosition(text, (sfVector2f) {816, 16});
     //sfRenderWindow_drawText(window, text, NULL);
     sfRenderWindow_drawText(window, text, NULL);
-    rsetTexture( heart);
+    rsetTexture(r,  heart);
     if (health >= 250){
-        rsetPosition(960,16);
+        rsetPosition( r, 960,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     } else {
-        rsetTexture( critical);
-        rsetPosition(960,16);
+        rsetTexture(r,  critical);
+        rsetPosition( r, 960,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
     if (health >= 500){
-        rsetPosition(944,16);
+        rsetPosition( r, 944,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
     if (health >= 750){
-        rsetPosition(928,16);
+        rsetPosition( r, 928,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
-    rsetTexture( full_health);
+    rsetTexture(r,  full_health);
     if (health >= 900){
-        rsetPosition(912,16);
+        rsetPosition( r, 912,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
 
     sfText_setString(text, "RANK: ");
     sfText_setPosition(text, (sfVector2f) {816, 32});
     sfRenderWindow_drawText(window, text, NULL);
-    rsetTexture( bronze);
-    rsetPosition(912,32);
+    rsetTexture(r,  bronze);
+    rsetPosition( r, 912,32);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     sprintf(tim, "FUEL: %d / 10K", fuel);
@@ -184,11 +193,11 @@ void draw_stats(){
 
 void draw_inventory(){
     // graphics setup
-    sfText* text;
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    //sfText_setColor(text, sfWhite);
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     char tim[80];
 
     sfText_setString(text, "INVENTORY: ");
@@ -236,15 +245,15 @@ void draw_inventory(){
 }
 
 void draw_rouge(){
-    sfText* text;
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
-    char tim[80];
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    //sfText_setColor(text, sfWhite);
+//    char tim[80];
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     for (int i = 0; i < HEIGHT; i++){
         for (int j = 0; j < HEIGHT; j++){
-            rsetPosition((i) * 16, (j) * 16);
+            rsetPosition( r, (i) * 16, (j) * 16);
             if (rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id <= 0) {
                 int tdat = -1;
                 if (((i - 15 + character_x) >= 0 && (i - 15 + character_x ) < cached_map.w) &&
@@ -254,22 +263,22 @@ void draw_rouge(){
 
                 switch (tdat){
                     case -1:
-                        rsetTexture( black);
+                        rsetTexture(r,  black);
                         break;
                     case 0:
-                        rsetTexture( floor_tex);
+                        rsetTexture(r,  floor_tex);
                         break;
                     case 1:
-                        rsetTexture( wall);
+                        rsetTexture(r,  wall);
                         break;
                     case 5:
-                        rsetTexture( fern);
+                        rsetTexture(r,  fern);
                         break;
                     default:
-                        rsetTexture( system_texture);
+                        rsetTexture(r,  system_texture);
                 }
             } else {
-                rsetTexture( npc_tex);
+                rsetTexture(r,  npc_tex);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
@@ -278,8 +287,8 @@ void draw_rouge(){
     draw_stats();
     draw_inventory();
 
-    rsetPosition(15 * 16, 15 * 16);
-    rsetTexture( green);
+    rsetPosition( r, 15 * 16, 15 * 16);
+    rsetTexture(r,  green);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     // make it good fam
@@ -287,18 +296,18 @@ void draw_rouge(){
 }
 
 void draw_engine_config(){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
-    sfText* text;
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
-    char tim[80];
+    //sfText_setColor(text, sfWhite);
+//    char tim[80];
 
     sfText_setString(text, "Engine Configuration Window");
     sfText_setPosition(text, (sfVector2f) {32, 32});
     sfRenderWindow_drawText(window, text, NULL);
 
-    sfText_setColor( text, sfGreen);
+    //sfText_setColor( text, sfGreen);
     sfText_setString(text, "E1");
     sfText_setPosition(text, (sfVector2f) {32, 368});
     sfRenderWindow_drawText(window, text, NULL);
@@ -311,43 +320,43 @@ void draw_engine_config(){
     sfText_setString(text, "E4");
     sfText_setPosition(text, (sfVector2f) {272, 368});
     sfRenderWindow_drawText(window, text, NULL);
-    sfText_setColor( text, sfWhite);
+    //sfText_setColor( text, sfWhite);
     for(int i = 0; i < 2; i++){
         for (int j = 0; j < 10; j++){
-            rsetPosition(32 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 32 + 16 * i, 400 + j * 16);
             if ( j >= e1_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e1_g && j < e1_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(112 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 112 + 16 * i, 400 + j * 16);
             if ( j >= e2_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e2_g && j < e2_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(192 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 192 + 16 * i, 400 + j * 16);
             if ( j >= e3_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e3_g && j < e3_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(272 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 272 + 16 * i, 400 + j * 16);
             if ( j >= e4_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e4_g && j < e4_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
@@ -373,39 +382,39 @@ void draw_engine_config(){
     sfRenderWindow_drawText(window, text, NULL);
     for (int i = 2; i < 20; i++){
         if(i - 1 < fuel_r / 55){
-            rsetTexture( green);
+            rsetTexture(r,  green);
         } else {
-            rsetTexture( red);
+            rsetTexture(r,  red);
         }
-        rsetPosition(i * 16, 80);
+        rsetPosition( r, i * 16, 80);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
         if(i - 1 < durability / 55){
-            rsetTexture( green);
+            rsetTexture(r,  green);
         } else {
-            rsetTexture( red);
+            rsetTexture(r,  red);
         }
-        rsetPosition(i * 16, 128);
+        rsetPosition( r, i * 16, 128);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
         if(i - 1 < flux_clamp / 55){
-            rsetTexture( green);
+            rsetTexture(r,  green);
         } else {
-            rsetTexture( red);
+            rsetTexture(r,  red);
         }
-        rsetPosition(i * 16, 176);
+        rsetPosition( r, i * 16, 176);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
         if(i - 1 < emission_clamp / 55){
-            rsetTexture( green);
+            rsetTexture(r,  green);
         } else {
-            rsetTexture( red);
+            rsetTexture(r,  red);
         }
-        rsetPosition(i * 16, 224);
+        rsetPosition( r, i * 16, 224);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
         if(i - 1 < themal_clamp / 55){
-            rsetTexture( green);
+            rsetTexture(r,  green);
         } else {
-            rsetTexture( red);
+            rsetTexture(r,  red);
         }
-        rsetPosition(i * 16, 272);
+        rsetPosition( r, i * 16, 272);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
 
@@ -414,74 +423,74 @@ void draw_engine_config(){
 }
 
 void draw_prewarp(int x, int y, int s){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
-    sfText* text;
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
+    //sfText_setColor(text, sfWhite);
     char tim[80];
 
     // pick default texture
-    rsetTexture( empty_sector);
+    rsetTexture(r,  empty_sector);
     for (int i = 1; i < 11; i++){
         for (int j = 1; j < 11; j++){
             // draw sector 1
             switch(level_0_0[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition((i * 16) , j * 16);
+            rsetPosition( r, (i * 16) , j * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
 
             // draw sector 1
             switch(level_0_1[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition((i + 11) * 16 , j * 16);
+            rsetPosition( r, (i + 11) * 16 , j * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
 
             // draw sector 3
             switch(level_0_3[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition(i * 16 , (j + 11) * 16);
+            rsetPosition( r, i * 16 , (j + 11) * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
 
             // draw sector 2
             switch(level_0_2[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition((i + 11) * 16 , (j + 11) * 16);
+            rsetPosition( r, (i + 11) * 16 , (j + 11) * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
     }
 
     // draw jump position
     if (s == 0) {
-        rsetPosition((x + 1) * 16, (y + 1) * 16);
+        rsetPosition( r, (x + 1) * 16, (y + 1) * 16);
     } else if (s == 1){
-        rsetPosition((x + 1) * 16 + 176, (y + 1) * 16);
+        rsetPosition( r, (x + 1) * 16 + 176, (y + 1) * 16);
     } else if (s == 2){
-        rsetPosition((x + 1) * 16 + 176, (y + 1) * 16 + 176);
+        rsetPosition( r, (x + 1) * 16 + 176, (y + 1) * 16 + 176);
     } else if (s == 3){
-        rsetPosition((x + 1) * 16, (y + 1) * 16 + 176);
+        rsetPosition( r, (x + 1) * 16, (y + 1) * 16 + 176);
     }
-    rsetTexture( character_t);
+    rsetTexture(r,  character_t);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     // initalize temp
@@ -544,15 +553,15 @@ void draw_prewarp(int x, int y, int s){
 
     // draw cuttent position
     if (sector_s == 0) {
-        rsetPosition((sector_x + 1) * 16, (sector_y+ 1) * 16);
+        rsetPosition( r, (sector_x + 1) * 16, (sector_y+ 1) * 16);
     } else if (sector_s == 1){
-        rsetPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16);
+        rsetPosition( r, (sector_x + 1) * 16 + 176, (sector_y + 1) * 16);
     } else if (sector_s == 2){
-        rsetPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16 + 176);
+        rsetPosition( r, (sector_x + 1) * 16 + 176, (sector_y + 1) * 16 + 176);
     } else if (sector_s == 3){
-        rsetPosition((sector_x + 1) * 16, (sector_y + 1) * 16 + 176);
+        rsetPosition( r, (sector_x + 1) * 16, (sector_y + 1) * 16 + 176);
     }
-    rsetTexture( enemy_t);
+    rsetTexture(r,  enemy_t);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     // draw text
@@ -589,7 +598,7 @@ void draw_prewarp(int x, int y, int s){
     sfText_setPosition(text, (sfVector2f) {368, 480});
     sfRenderWindow_drawText(window, text, NULL);
 
-    sfText_setColor( text, sfGreen);
+    //sfText_setColor( text, sfGreen);
     sfText_setString(text, "E1");
     sfText_setPosition(text, (sfVector2f) {32, 368});
     sfRenderWindow_drawText(window, text, NULL);
@@ -602,43 +611,43 @@ void draw_prewarp(int x, int y, int s){
     sfText_setString(text, "E4");
     sfText_setPosition(text, (sfVector2f) {272, 368});
     sfRenderWindow_drawText(window, text, NULL);
-    sfText_setColor( text, sfWhite);
+    //sfText_setColor( text, sfWhite);
     for(int i = 0; i < 2; i++){
         for (int j = 0; j < 10; j++){
-            rsetPosition(32 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 32 + 16 * i, 400 + j * 16);
             if ( j >= e1_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e1_g && j < e1_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(112 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 112 + 16 * i, 400 + j * 16);
             if ( j >= e2_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e2_g && j < e2_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(192 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 192 + 16 * i, 400 + j * 16);
             if ( j >= e3_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e3_g && j < e3_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(272 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 272 + 16 * i, 400 + j * 16);
             if ( j >= e4_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e4_g && j < e4_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
@@ -650,74 +659,74 @@ void draw_prewarp(int x, int y, int s){
 }
 
 void draw_warp(int x, int y, int s){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     char tim[80];
-    sfText* text;
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
+    //sfText_setColor(text, sfWhite);
 
     // pick default texture
-    rsetTexture( empty_sector);
+    rsetTexture(r,  empty_sector);
     for (int i = 1; i < 11; i++){
         for (int j = 1; j < 11; j++){
             // draw sector 1
             switch(level_0_0[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition((i * 16) , j * 16);
+            rsetPosition( r, (i * 16) , j * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
 
             // draw sector 1
             switch(level_0_1[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition((i + 11) * 16 , j * 16);
+            rsetPosition( r, (i + 11) * 16 , j * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
 
             // draw sector 3
             switch(level_0_3[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition(i * 16 , (j + 11) * 16);
+            rsetPosition( r, i * 16 , (j + 11) * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
 
             // draw sector 2
             switch(level_0_2[i - 1][j - 1]){
-                case 0: rsetTexture( empty_sector); break;
-                case 1: rsetTexture( station); break;
-                case 2: rsetTexture( ice_field); break;
-                case 3: rsetTexture( nebula); break;
-                case 4: rsetTexture( system_texture); break;
+                case 0: rsetTexture(r,  empty_sector); break;
+                case 1: rsetTexture(r,  station); break;
+                case 2: rsetTexture(r,  ice_field); break;
+                case 3: rsetTexture(r,  nebula); break;
+                case 4: rsetTexture(r,  system_texture); break;
             }
-            rsetPosition((i + 11) * 16 , (j + 11) * 16);
+            rsetPosition( r, (i + 11) * 16 , (j + 11) * 16);
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
     }
 
     // draw jump position
     if (s == 0) {
-        rsetPosition((x + 1) * 16, (y + 1) * 16);
+        rsetPosition( r, (x + 1) * 16, (y + 1) * 16);
     } else if (s == 1){
-        rsetPosition((x + 1) * 16 + 176, (y + 1) * 16);
+        rsetPosition( r, (x + 1) * 16 + 176, (y + 1) * 16);
     } else if (s == 2){
-        rsetPosition((x + 1) * 16 + 176, (y + 1) * 16 + 176);
+        rsetPosition( r, (x + 1) * 16 + 176, (y + 1) * 16 + 176);
     } else if (s == 3){
-        rsetPosition((x + 1) * 16, (y + 1) * 16 + 176);
+        rsetPosition( r, (x + 1) * 16, (y + 1) * 16 + 176);
     }
-    rsetTexture( character_t);
+    rsetTexture(r,  character_t);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     // initalize temp
@@ -780,15 +789,15 @@ void draw_warp(int x, int y, int s){
 
     // draw cuttent position
     if (sector_s == 0) {
-        rsetPosition((sector_x + 1) * 16, (sector_y+ 1) * 16);
+        rsetPosition( r, (sector_x + 1) * 16, (sector_y+ 1) * 16);
     } else if (sector_s == 1){
-        rsetPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16);
+        rsetPosition( r, (sector_x + 1) * 16 + 176, (sector_y + 1) * 16);
     } else if (sector_s == 2){
-        rsetPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16 + 176);
+        rsetPosition( r, (sector_x + 1) * 16 + 176, (sector_y + 1) * 16 + 176);
     } else if (sector_s == 3){
-        rsetPosition((sector_x + 1) * 16, (sector_y + 1) * 16 + 176);
+        rsetPosition( r, (sector_x + 1) * 16, (sector_y + 1) * 16 + 176);
     }
-    rsetTexture( enemy_t);
+    rsetTexture(r,  enemy_t);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     // draw text
@@ -825,7 +834,7 @@ void draw_warp(int x, int y, int s){
     sfText_setPosition(text, (sfVector2f) {368, 480});
     sfRenderWindow_drawText(window, text, NULL);
 
-    sfText_setColor( text, sfGreen);
+    //sfText_setColor( text, sfGreen);
     sfText_setString(text, "E1");
     sfText_setPosition(text, (sfVector2f) {32, 368});
     sfRenderWindow_drawText(window, text, NULL);
@@ -838,43 +847,43 @@ void draw_warp(int x, int y, int s){
     sfText_setString(text, "E4");
     sfText_setPosition(text, (sfVector2f) {272, 368});
     sfRenderWindow_drawText(window, text, NULL);
-    sfText_setColor( text, sfWhite);
+    //sfText_setColor( text, sfWhite);
     for(int i = 0; i < 2; i++){
         for (int j = 0; j < 10; j++){
-            rsetPosition(32 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 32 + 16 * i, 400 + j * 16);
             if ( j >= e1_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e1_g && j < e1_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(112 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 112 + 16 * i, 400 + j * 16);
             if ( j >= e2_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e2_g && j < e2_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(192 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 192 + 16 * i, 400 + j * 16);
             if ( j >= e3_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e3_g && j < e3_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
-            rsetPosition(272 + 16 * i, 400 + j * 16);
+            rsetPosition( r, 272 + 16 * i, 400 + j * 16);
             if ( j >= e4_y) {
-                rsetTexture( red);
+                rsetTexture(r,  red);
             } else if (j >= e4_g && j < e4_y){
-                rsetTexture( yellow);
+                rsetTexture(r,  yellow);
             } else {
-                rsetTexture( green);
+                rsetTexture(r,  green);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
@@ -886,11 +895,11 @@ void draw_warp(int x, int y, int s){
 }
 
 void draw_self(){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
-    sfText* text;
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
+    //sfText_setColor(text, sfWhite);
     char tim[80];
 
     cleardisplay(false);
@@ -945,16 +954,16 @@ void draw_self(){
 
 void draw_menu(int type){
     char tim[80];
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
-    sfText* text;
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
+    //sfText_setColor(text, sfWhite);
 
     cleardisplay(false);
 
-    rsetPosition(S_WIDTH - PAD_RIGHT - 32, PAD_TOP + 16);
-    rsetTexture( station);
+    rsetPosition( r, S_WIDTH - PAD_RIGHT - 32, PAD_TOP + 16);
+    rsetTexture(r,  station);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     /* whatever then
@@ -1027,45 +1036,45 @@ void draw_menu(int type){
 }
 
 void display(bool update, int state){
-    sfText* text;
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
+    //sfText_setColor(text, sfWhite);
     char tim[80];
 
     // clear display
     cleardisplay(false);
 
     // rectangle template
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
 
     // draw character
-    rsetPosition(ship_x * 16, ship_y * 16);
+    rsetPosition( r, ship_x * 16, ship_y * 16);
     switch(facing % 4){
-        case 0: rsetTexture( character_t); break;
-        case 1: rsetTexture( character_r); break;
-        case 2: rsetTexture( character_b); break;
-        case 3: rsetTexture( character_l); break;
-        default: rsetTexture( character_t);
+        case 0: rsetTexture(r,  character_t); break;
+        case 1: rsetTexture(r,  character_r); break;
+        case 2: rsetTexture(r,  character_b); break;
+        case 3: rsetTexture(r,  character_l); break;
+        default: rsetTexture(r,  character_t);
     }
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     switch(facing % 4){
         case 0:
-            rsetTexture( exhaust_top);
-            rsetPosition(ship_x * 16, (ship_y + 1) * 16);
+            rsetTexture(r,  exhaust_top);
+            rsetPosition( r, ship_x * 16, (ship_y + 1) * 16);
             break;
         case 1:
-            rsetTexture( exhaust_right);
-            rsetPosition((ship_x - 1) * 16, (ship_y) * 16);
+            rsetTexture(r,  exhaust_right);
+            rsetPosition( r, (ship_x - 1) * 16, (ship_y) * 16);
             break;
         case 2:
-            rsetTexture( exhaust_bottom);
-            rsetPosition(ship_x * 16, (ship_y - 1) * 16);
+            rsetTexture(r,  exhaust_bottom);
+            rsetPosition( r, ship_x * 16, (ship_y - 1) * 16);
             break;
         case 3:
-            rsetTexture( exhaust_left);
-            rsetPosition((ship_x + 1) * 16, ship_y * 16);
+            rsetTexture(r,  exhaust_left);
+            rsetPosition( r, (ship_x + 1) * 16, ship_y * 16);
             break;
     }
     sfRenderWindow_drawRectangleShape(window, r, NULL);
@@ -1075,61 +1084,61 @@ void display(bool update, int state){
         if (entities[i].type >= 0){
             switch(entities[i].type){
                 case 0:
-                    rsetTexture( station);
+                    rsetTexture(r,  station);
                     break;
                 case 1:
-                    rsetTexture( asteriod_1);
+                    rsetTexture(r,  asteriod_1);
                     break;
                 case 2:
-                    rsetTexture( enemy_t);
+                    rsetTexture(r,  enemy_t);
                     break;
                 case 3:
-                    rsetTexture( debris);
+                    rsetTexture(r,  debris);
                     break;
                 case 5:
-                    rsetTexture( rockets_tex);
+                    rsetTexture(r,  rockets_tex);
                     break;
                 default:
-                    rsetTexture( debug);
+                    rsetTexture(r,  debug);
             }
         } else {
-            rsetTexture( wall);
+            rsetTexture(r,  wall);
         }
-        rsetPosition(entities[i].x * 16, entities[i].y * 16);
+        rsetPosition( r, entities[i].x * 16, entities[i].y * 16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
 
     sfText_setString(text, "HEALTH: ");
     sfText_setPosition(text, (sfVector2f) {816, 16});
     sfRenderWindow_drawText(window, text, NULL);
-    rsetTexture( heart);
+    rsetTexture(r,  heart);
     if (health >= 250){
-        rsetPosition(960,16);
+        rsetPosition( r, 960,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     } else {
-        rsetTexture( critical);
-        rsetPosition(960,16);
+        rsetTexture(r,  critical);
+        rsetPosition( r, 960,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
     if (health >= 500){
-        rsetPosition(944,16);
+        rsetPosition( r, 944,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
     if (health >= 750){
-        rsetPosition(928,16);
+        rsetPosition( r, 928,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
-    rsetTexture( full_health);
+    rsetTexture(r,  full_health);
     if (health >= 900){
-        rsetPosition(912,16);
+        rsetPosition( r, 912,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
 
     sfText_setString(text, "RANK: ");
     sfText_setPosition(text, (sfVector2f) {816, 32});
     sfRenderWindow_drawText(window, text, NULL);
-    rsetTexture( bronze);
-    rsetPosition(912,32);
+    rsetTexture(r,  bronze);
+    rsetPosition( r, 912,32);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
     sprintf(tim, "FUEL: %d / 10K", fuel);
@@ -1153,19 +1162,19 @@ void display(bool update, int state){
 }
 
 void draw_logo(){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {S_WIDTH, S_HEIGHT});
-    rsetTexture( logo);
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {S_WIDTH, S_HEIGHT});
+    rsetTexture(r,  logo);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
     //windowTexture.display();
 }
 
 void draw_dock(){
-    sfRectangleShape* r; sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
-    sfText* text;
+    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    sfText* text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 16);
-    sfText_setColor(text, sfWhite);
-    char tim[80];
+    //sfText_setColor(text, sfWhite);
+//    char tim[80];
 
     cleardisplay(false);
 }

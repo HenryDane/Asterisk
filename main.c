@@ -2,6 +2,7 @@
 //#include <iostream>
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 //#include <fstream>
 #include "main.h"
 #include "display.h"
@@ -10,6 +11,8 @@
 #include "levels.h"
 #include "map.h"
 //using namespace std;
+
+sfRenderWindow* window;
 
 // timer
 double timerval = 0;
@@ -126,6 +129,10 @@ bool build_game_data(){
 }
 */
 
+void textsetPosition(sfText* text, int x, int y){
+    sfText_setPosition(text, (sfVector2f) {x, y});
+}
+
 int main(){
 //    asteriod_direction = 0;default: r.setTexture(&empty_sector);
 
@@ -140,12 +147,12 @@ int main(){
     //cout << "sizeof: " << sizeof(rogue_map_master) << endl;
 
     // create window
-    sfVideoMode mode = {800, 600, 32};
+    sfVideoMode mode = {S_WIDTH, S_HEIGHT, 32};
     window = sfRenderWindow_create(mode, "Asterisk I", sfResize | sfClose, NULL);
     if (!window)
         return 1;
 
-    font = sfFont_createFromFile("arial.ttf");
+    font = sfFont_createFromFile("res/telegrama_raw.ttf");
     if (!font)
         return 1;
 
@@ -192,11 +199,15 @@ int main(){
 
     // init quests
     num_active_quests = 0; // no active quests
-
+    sfColor color_blk;
+    color_blk.r = 0;
+    color_blk.g = 0;
+    color_blk.b = 0;
+    color_blk.a = 255;
     // main loop
     while (sfRenderWindow_isOpen(window)){
         // clean texture
-        sfRenderWindow_clear(window, sfBlack);
+        sfRenderWindow_clear(window, color_blk);
 
         // update timer
         elapsed = sfClock_restart(clock);
@@ -491,7 +502,7 @@ int main(){
             case 17:
                 // quest
                 sfText_setString(text, "QUEST");
-                textsetPosition(0,0);
+                textsetPosition( text, 0,0);
                 sfRenderWindow_drawText(window, text, NULL);
                 if (npc_last.id > 0){
                     char tmp[80];
@@ -501,26 +512,26 @@ int main(){
                     }
                     sprintf(tmp, "NPC [ID: %d] HAS QUEST [%s]. DO YOU ACCEPT [y / n]?", npc_last.id, tmp_t342);
                     sfText_setString(text, tmp);
-                    textsetPosition(0,16);
+                    textsetPosition( text, 0,16);
                     sfRenderWindow_drawText(window, text, NULL);
                 }
 
                 if (num_active_quests + 1 > NUM_QUESTS_MAX ){
                     sfText_setString(text, "YOU CAN NOT ACCEPT ANY MORE QUESTS");
-                    textsetPosition(0,32);
+                    textsetPosition( text, 0,32);
                     sfRenderWindow_drawText(window, text, NULL);
                 }
                 break;
             case 18:
                 // cutscene
                 sfText_setString(text, "CUTSCENE");
-                textsetPosition(0,0);
+                textsetPosition( text, 0,0);
                 sfRenderWindow_drawText(window, text, NULL);
                 break;
             case 19:
                 // merchant mode;
                 sfText_setString(text, "MERCHANT");
-                textsetPosition(0,0);
+                textsetPosition( text, 0,0);
                 sfRenderWindow_drawText(window, text, NULL);
 
                 //cout << "FOUND IVEN OF SIZE: " << npc_last.inventory_size << endl;
@@ -529,10 +540,10 @@ int main(){
                         default:
                             sfText_setString(text, "[DEFAULT ITEM]");
                     }
-                    textsetPosition(32, (l + 1) * 16);
+                    textsetPosition( text, 32, (l + 1) * 16);
                     sfRenderWindow_drawText(window, text, NULL);
                     sfText_setString(text, npc_last.inventory[i].data);
-                    textsetPosition(32, (l + 2) * 16);
+                    textsetPosition( text, 32, (l + 2) * 16);
                     sfRenderWindow_drawText(window, text, NULL);
                     l += 3;
                 }

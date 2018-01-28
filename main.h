@@ -33,7 +33,7 @@ typedef void (*quest_assign_ft) (void); // assigns step (may do nothing)
 
 typedef struct {
     int id; // must be positive
-    const quest_dialogue_t * dialogue_list; // length of list must be same as num_dialogue
+    quest_dialogue_t * dialogue_list; // length of list must be same as num_dialogue
     int num_dialogue; //
 } quest_dialogue_block_t;
 
@@ -43,7 +43,7 @@ typedef struct {
     int title_len;
     char issuer[32];
     int issuer_len;
-    const quest_dialogue_block_t * dialogue;
+    quest_dialogue_block_t * dialogue;
     quest_validate_ft * validation_functions; // length of list must be same as num_stages
     quest_assign_ft * assignment_functions; // length of list must be same as num_stages
     int num_stages;
@@ -92,8 +92,8 @@ typedef struct  {
 
 
 typedef struct {
-    const map_t mapdat;
-    const coord_t coord;
+    map_t mapdat;
+    coord_t coord;
 } map_master;
 
 // flavor text

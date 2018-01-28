@@ -52,15 +52,21 @@ npc_t test_map_npc ( unsigned int x, unsigned int y ){
     return b;
 }
 
+int master_index = 0;
+map_t cached_map;
+map_master rogue_map_master[NUM_MAPS];
+npc_function_ft rogue_npc_master[NUM_MAPS];
+
 void init_maps(){
-    int master_index = 0;
 
     // do nothing
-    map_t cached_map = example_map;
+    cached_map = example_map;
 
     // set up master record for maps
-    map_master rogue_map_master[NUM_MAPS] = {{ example_map, example_map_start }, { test_map, test_map_start } }  ;
+    rogue_map_master[0] = (map_master) { example_map, example_map_start };
+    rogue_map_master[1] = (map_master) { test_map, test_map_start };
 
     // set up master record for NPC functions
-    npc_function_ft rogue_npc_master[NUM_MAPS] = {example_map_npc, test_map_npc};
+    rogue_npc_master[0] = example_map_npc;
+    rogue_npc_master[1] = test_map_npc;
 }
