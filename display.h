@@ -21,7 +21,7 @@ void display(bool update, int state);
 
 // util functions
 void push_space(int space);
-void print(int x, int y, char * c, int len);
+void print_display(int x, int y, char * c, int len);
 int init_displays(void);
 int get_terrain(int x, int y);
 void set_terrain(int x, int y, int t);

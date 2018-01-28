@@ -1,13 +1,15 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
+#include <SFML/Graphics.h>
+//#include <iostream>
+#include <stdio.h>
 #include <time.h>
-#include "main.hpp"
-#include "display.hpp"
-#include "terrain.hpp"
-#include "entity.hpp"
-#include "levels.hpp"
-#include "map.hpp"
-using namespace std;
+//#include <fstream>
+#include "main.h"
+#include "display.h"
+#include "terrain.h"
+#include "entity.h"
+#include "levels.h"
+#include "map.h"
+//using namespace std;
 
 // timer
 double timerval = 0;
@@ -86,7 +88,7 @@ int e4_g = 8;
 int e4_y = 9;
 int ticks_for_warp;
 
-item inventory[3] = {{0,2,false,"Glock    ", 5},
+item_t inventory[3] = {{0,2,false,"Glock    ", 5},
                      {1,1,false,"Generic  ", 7},
                      {2,3,false,"Glock    ", 5}};
 int num_items = 3;
@@ -96,61 +98,86 @@ int num_active_quests = 0;
 npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };  // initalize npc for states 17, 18, 19
 
 // game state
-/*
--1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self,
-6: mod self confirm, 7: warp setup, 8: dock, 10: at warp, 16: rogue, 17: quest/talk, 18: cutscene,
-19: trade interface
-*/
+//-1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self,
+//6: mod self confirm, 7: warp setup, 8: dock, 10: at warp, 16: rogue, 17: quest/talk, 18: cutscene,
+//19: trade interface
+
 int state = -1;
 
 // texture
-sf::RenderTexture windowTexture;
+//sfRenderTexture* windowTexture;
 
-sf::Font font;
+sfFont* font;
+
+/* needs to be written for C and needs to actually do stuff
+bool build_game_data(){
+    // reads in game file data
+//    ifstream game_file;
+    game_file.open("game_data.txt");
+
+    if(!game_file){
+        cout << "Failed to read game data" << endl;
+        return false;
+    }
+
+    // loop for reading game data
+
+    return true;
+}
+*/
 
 int main(){
 //    asteriod_direction = 0;default: r.setTexture(&empty_sector);
 
     // set up events
-    sf::Event event;
+    sfEvent event;
 
     // initalize rand
     srand (time(NULL));
 
     init_maps();
 
-    cout << "sizeof: " << sizeof(rogue_map_master) << endl;
+    //cout << "sizeof: " << sizeof(rogue_map_master) << endl;
 
     // create window
-    sf::RenderWindow window(sf::VideoMode(S_WIDTH, S_HEIGHT), "Asterisk");
+    sfVideoMode mode = {800, 600, 32};
+    window = sfRenderWindow_create(mode, "Asterisk I", sfResize | sfClose, NULL);
+    if (!window)
+        return 1;
+
+    font = sfFont_createFromFile("arial.ttf");
+    if (!font)
+        return 1;
 
     // prevent repress
-    window.setKeyRepeatEnabled(false);
+    // window.setKeyRepeatEnabled(false);
 
     // time stuff
-    sf::Clock clock;
-    sf::Time elapsed;
+    sfClock* clock = sfClock_create();
+    sfTime elapsed;
 
-    // prepare window texture
-    if(!windowTexture.create(S_WIDTH, S_HEIGHT)){
+    // prepare window texture (now we just directly use the window instead)
+    /*if(!windowTexture.create(S_WIDTH, S_HEIGHT)){
         cout << "Failed to build main window texture" << endl;
         return -5;
-    }
+    } */
     //windowTexture.draw(rectangle2);
 
     // init textures
     if (init_displays() < 0) { return -3; }
 
     // generate level
-    cout << "TERRAIN ..." << endl;
+    //cout << "TERRAIN ..." << endl;
+    printf("BUILDING TERRAIN . . . /n");
     build_terrain(5, 4, 3);
-    cout << "DONE" << endl;
+    // cout << "DONE" << endl;
+    printf("DONE /n");
 
     // generate font
-    sf::Text text;
-    if (!font.loadFromFile("res/telegrama_raw.ttf"));
-    text.setFont(font);
-    text.setCharacterSize(16);
+    sfText* text = sfText_create();
+    //if (!font.loadFromFile("res/telegrama_raw.ttf"));
+    sfText_setFont(text, font);
+    sfText_setCharacterSize(text, 16);
 
     // init jump position;
     int jump_x = 0;
@@ -167,48 +194,51 @@ int main(){
     num_active_quests = 0; // no active quests
 
     // main loop
-    while (window.isOpen()){
+    while (sfRenderWindow_isOpen(window)){
         // clean texture
-        windowTexture.clear();
+        sfRenderWindow_clear(window, sfBlack);
 
         // update timer
-        elapsed = clock.restart();
-        time_entity += elapsed.asMilliseconds();
-        time_character += elapsed.asMilliseconds();
-        time_rocket += elapsed.asMilliseconds();
-        time_warp += (state == 10) ? elapsed.asMilliseconds() : 0;
+        elapsed = sfClock_restart(clock);
+        time_entity += sfTime_asMilliseconds(elapsed);
+        time_character += sfTime_asMilliseconds(elapsed);
+        time_rocket += sfTime_asMilliseconds(elapsed);
+        time_warp += (state == 10) ? sfTime_asMilliseconds(elapsed) : 0;
 
         // handle events
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) return 0;
-        while (window.pollEvent(event)){
+        //if( (sfKeyEscape)) return 0;
+        while (sfRenderWindow_pollEvent(window, &event)){
             // close window if needed
-            if (event.type == sf::Event::Closed) window.close();
+            if (event.type == sfEvtClosed)
+                sfRenderWindow_close(window);
             // check keys (released to avoid repeated keypresses
-            if (event.type == sf::Event::KeyReleased) {
+            if (event.type == sfEvtKeyReleased) {
                 // handle key presses
                 switch(event.key.code){
-                    case sf::Keyboard::Num1:
+                    case sfKeyEscape:
+                        return 0;
+                    case sfKeyNum1:
                         if (state > -2 && state != 10) state = 0;
                         break;
-                    case sf::Keyboard::Num2:
+                    case sfKeyNum2:
                         if (state > -2 && state != 10 ) state = 1;
                         break;
-                    case sf::Keyboard::Num3:
+                    case sfKeyNum3:
                         if (state > -2 && state != 10 ) state = 5;
                         break;
-                    case sf::Keyboard::Num4:
+                    case sfKeyNum4:
                         if (state > -2 && state != 10 ) state = 7;
                         jump_x = sector_x;
                         jump_y = sector_y;
                         jump_s = sector_s;
                         break;
-                    case sf::Keyboard::Num0:
+                    case sfKeyNum0:
                         state = -1;
                         break;
-                    case sf::Keyboard::Num5:
+                    case sfKeyNum5:
                         state = 16; // rouge like
                         break;
-                    case sf::Keyboard::W:
+                    case sfKeyW:
                         if (state == 7){
                             jump_y--;
                             if (jump_y > 9) jump_y = 9;
@@ -225,7 +255,7 @@ int main(){
                             }
                         }
                         break;
-                    case sf::Keyboard::A:
+                    case sfKeyA:
                         if (state == 7){
                             jump_x--;
                             if (jump_x > 9) jump_x = 9;
@@ -240,7 +270,7 @@ int main(){
                             }
                         }
                         break;
-                    case sf::Keyboard::S:
+                    case sfKeyS:
                         if (state == 7){
                             jump_y++;
                             if (jump_y > 9) jump_y = 9;
@@ -255,7 +285,7 @@ int main(){
                             }
                         }
                         break;
-                    case sf::Keyboard::D:
+                    case sfKeyD:
                         if (state == 7){
                             jump_x++;
                             if (jump_x > 9) jump_x = 9;
@@ -270,7 +300,7 @@ int main(){
                             }
                         }
                         break;
-                    case sf::Keyboard::Q:
+                    case sfKeyQ:
                         if (state == 7){
                             jump_s++;
                             if (jump_s > 3) jump_s = 0;
@@ -283,7 +313,7 @@ int main(){
                             selected_object -= (selected_object - 1 > -1) ? 1 : 0;
                         }
                         break;
-                    case sf::Keyboard::E:
+                    case sfKeyE:
                         if (state == 7){
                             jump_s--;
                             if (jump_s > 3) jump_s = 0;
@@ -292,27 +322,27 @@ int main(){
                             if(flux_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) flux_clamp += CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
-                    case sf::Keyboard::F:
+                    case sfKeyF:
                         if (state == 11){
                             if(emission_clamp - CONFIG_INCREMENT_AMOUNT >= 0) emission_clamp -= CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
-                    case sf::Keyboard::R:
+                    case sfKeyR:
                         if (state == 11){
                             if(emission_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) emission_clamp += CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
-                    case sf::Keyboard::T:
+                    case sfKeyT:
                         if (state == 11){
                             if(themal_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) themal_clamp += CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
-                    case sf::Keyboard::G:
+                    case sfKeyG:
                         if (state == 11){
                             if(themal_clamp - CONFIG_INCREMENT_AMOUNT >= 0) themal_clamp -= CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
-                    case sf::Keyboard::Tilde:
+                    case sfKeyTilde:
                         if (state == 7){
                             sector_x = jump_x;
                             sector_y = jump_y;
@@ -323,17 +353,17 @@ int main(){
                             fuel -= ticks_for_warp * 3; // compute ticks
                         }
                         break;
-                    case sf::Keyboard::Space:
+                    case sfKeySpace:
                         if (state == -1){
                             state = 0;
                         } else if (state == 0){
                             fire_missile(ship_x, ship_y, ((facing == 1) ? 1 : 0) + ((facing == 3) ? -1 : 0), ((facing == 2) ? 1 : 0) + ((facing == 0) ? -1 : 0), 5);
                         }
                         break;
-                    case sf::Keyboard::Z:
+                    case sfKeyZ:
                         tilted = !tilted;
                         break;
-                    case sf::Keyboard::Return:
+                    case sfKeyReturn:
                         if (state == 7){
                             state = 11;
                         } else if (state == 8){
@@ -351,8 +381,8 @@ int main(){
                             state = 16;
                         }
                         break;
-                    case sf::Keyboard::Tab:
-                        cout << "STATE: " << state << " FACING: " << facing << " SEL OBJ:" << selected_object << endl;
+                    case sfKeyTab:
+                        /*cout << "STATE: " << state << " FACING: " << facing << " SEL OBJ:" << selected_object << endl;
                         cout << "    ID_LAST: " << id_entity_last << " NUM_ENTITY: " << num_entities << endl;
                         cout << "    C_X: " << character_x << " C_Y: " << character_y << " S_X: " << ship_x << " S_Y: " << ship_y << endl;
                         if ( state == 16 ){
@@ -360,28 +390,28 @@ int main(){
                                 cout << " [" << cached_map.tile_type[i] << "] ";
                             }
                             cout << endl;
-                        }
+                        }*/
                         break;
-                    case sf::Keyboard::Equal:
+                    case sfKeyEqual:
                         if (event.key.shift){
                             master_index ++;
                         }
                         break;
-                    case sf::Keyboard::Dash:
+                    case sfKeyDash:
                         master_index--;
                         break;
-                    case sf::Keyboard::BackSpace:
+                    case sfKeyBack:
                         cached_map = rogue_map_master[master_index].mapdat;
                         character_x = rogue_map_master[master_index].coord.x;
                         character_y = rogue_map_master[master_index].coord.y;
                         break;
-                    case sf::Keyboard::Y:
+                    case sfKeyY:
                         if (state == 17) {
                             if (num_active_quests + 1 < NUM_QUESTS_MAX){
                                 // search for copies
                                 bool found = false;
                                 for (int i = 0; i < num_active_quests + 1; i++){
-                                    cout << "LOOKED: NPCQID:" << quest_registry[npc_last.quest_id].id << " AQID:" << active_quests[i].quest.id << endl;
+                                    //cout << "LOOKED: NPCQID:" << quest_registry[npc_last.quest_id].id << " AQID:" << active_quests[i].quest.id << endl;
                                     if (quest_registry[npc_last.quest_id].id == active_quests[i].quest.id){
                                         found = true;
                                         break;
@@ -390,7 +420,7 @@ int main(){
 
                                 if (!found){
                                     // if no duplicates, add to quest list
-                                    active_quests[++num_active_quests] = {quest_registry[npc_last.quest_id], 0, false};
+                                    active_quests[++num_active_quests] = (quest_active_t) {quest_registry[npc_last.quest_id], 0, false};
                                 } else {
                                     // complete check
 
@@ -398,11 +428,11 @@ int main(){
                                 }
                                 state = 16;
                             } else {
-                                cout << "FAILED TO ADD, NAQ:" << num_active_quests << " NAQ+1:" << num_active_quests + 1 << " NAQM:" << NUM_QUESTS_MAX << endl;
+                                //cout << "FAILED TO ADD, NAQ:" << num_active_quests << " NAQ+1:" << num_active_quests + 1 << " NAQM:" << NUM_QUESTS_MAX << endl;
                             }
                         }
                         break;
-                    case sf::Keyboard::N:
+                    case sfKeyN:
                         if (state == 17 || state == 18 || state == 19) {
                             state = 16;
                         }
@@ -414,6 +444,7 @@ int main(){
             }
         }
 
+        int l = 1;
         // draw screen and do stuff
         switch(state){
             case -2:
@@ -459,9 +490,9 @@ int main(){
                 break;
             case 17:
                 // quest
-                text.setString("QUEST");
-                text.setPosition(0,0);
-                windowTexture.draw(text);
+                sfText_setString(text, "QUEST");
+                textsetPosition(0,0);
+                sfRenderWindow_drawText(window, text, NULL);
                 if (npc_last.id > 0){
                     char tmp[80];
                     char tmp_t342[32] = "hello world";
@@ -469,28 +500,42 @@ int main(){
                         tmp_t342[i] = quest_registry[npc_last.quest_id].title[i];
                     }
                     sprintf(tmp, "NPC [ID: %d] HAS QUEST [%s]. DO YOU ACCEPT [y / n]?", npc_last.id, tmp_t342);
-                    text.setString(tmp);
-                    text.setPosition(0,16);
-                    windowTexture.draw(text);
+                    sfText_setString(text, tmp);
+                    textsetPosition(0,16);
+                    sfRenderWindow_drawText(window, text, NULL);
                 }
 
                 if (num_active_quests + 1 > NUM_QUESTS_MAX ){
-                    text.setString("YOU CAN NOT ACCEPT ANY MORE QUESTS");
-                    text.setPosition(0,32);
-                    windowTexture.draw(text);
+                    sfText_setString(text, "YOU CAN NOT ACCEPT ANY MORE QUESTS");
+                    textsetPosition(0,32);
+                    sfRenderWindow_drawText(window, text, NULL);
                 }
                 break;
             case 18:
                 // cutscene
-                text.setString("CUTSCENE");
-                text.setPosition(0,0);
-                windowTexture.draw(text);
+                sfText_setString(text, "CUTSCENE");
+                textsetPosition(0,0);
+                sfRenderWindow_drawText(window, text, NULL);
                 break;
             case 19:
                 // merchant mode;
-                text.setString("MERCHANT");
-                text.setPosition(0,0);
-                windowTexture.draw(text);
+                sfText_setString(text, "MERCHANT");
+                textsetPosition(0,0);
+                sfRenderWindow_drawText(window, text, NULL);
+
+                //cout << "FOUND IVEN OF SIZE: " << npc_last.inventory_size << endl;
+                for (int i = 0; i < npc_last.inventory_size; i++){
+                    switch(npc_last.inventory[i].type){
+                        default:
+                            sfText_setString(text, "[DEFAULT ITEM]");
+                    }
+                    textsetPosition(32, (l + 1) * 16);
+                    sfRenderWindow_drawText(window, text, NULL);
+                    sfText_setString(text, npc_last.inventory[i].data);
+                    textsetPosition(32, (l + 2) * 16);
+                    sfRenderWindow_drawText(window, text, NULL);
+                    l += 3;
+                }
                 break;
             default:
                 cleardisplay(false);
@@ -498,15 +543,15 @@ int main(){
         }
 
         // display main texture
-        windowTexture.display();
-        const sf::Texture& texture = windowTexture.getTexture();
-        sf::Sprite sprite(texture);
-        sprite.setPosition(0,0);
+        //windowTexture.display();
+        //const sf::Texture& texture = windowTexture.getTexture();
+        //sf::Sprite sprite(texture);
+        //sprite.setPosition(0,0);
 
         // tidy up the window
-        window.clear();
-        window.draw(sprite);
-        window.display();
+        //window.clear();
+        //window.draw(sprite);
+        sfRenderWindow_display(window);
     }
 
     return 0;

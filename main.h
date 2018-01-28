@@ -1,36 +1,43 @@
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.h>
 
-typedef struct coord_t {
+// because C is annoying
+typedef enum { false, true } bool;
+
+// because CSFML
+extern sfRenderWindow* window;
+extern sfFont* font; // needs to be loaded in main
+
+typedef struct {
     int x;
     int y;
-};
+} coord_t;
 
-struct item{
+typedef struct {
     int id;
     int type;
     bool unuseable;
     char data[10];
     int data_len;
-};
+} item_t;
 
 // does not yet support giving/taking items
-typedef struct quest_dialogue_t {
+typedef struct {
     char * data;
     int dat_len;
     int image_id; // -1 for black, 0 for no change
-};
+} quest_dialogue_t;
 
 // function pointer typedefs
 typedef bool (*quest_validate_ft) (void); // checks if step is complete
 typedef void (*quest_assign_ft) (void); // assigns step (may do nothing)
 
-typedef struct quest_dialogue_block_t {
+typedef struct {
     int id; // must be positive
     const quest_dialogue_t * dialogue_list; // length of list must be same as num_dialogue
     int num_dialogue; //
-};
+} quest_dialogue_block_t;
 
-typedef struct quest_t{
+typedef struct {
     int id;
     char title[32];
     int title_len;
@@ -42,23 +49,23 @@ typedef struct quest_t{
     int num_stages;
     int reward_exp;
     int reward_credits;
-    item reward_item;
-};
+    item_t reward_item;
+} quest_t;
 
-typedef struct quest_active_t{
+typedef struct {
     quest_t quest;
     int block_index;
     bool complete; // if true, will be removed at some point
-};
+} quest_active_t;
 
-typedef struct npc_item_t{
+typedef struct {
     int id;
     int type;
     char data [16];
     int data_len; // could be one byte
-};
+} npc_item_t;
 
-typedef struct npc_t{
+typedef struct {
     int id; // -1 if the npc is null
     int health; // of 1000
     int type;
@@ -70,34 +77,34 @@ typedef struct npc_t{
     int quest_id; // 0 for no quest, negative numbers trigger cutscene of corresponding number but positive
     int x;
     int y;
-};
+} npc_t;
 
 // function pointer typedefs
 typedef npc_t (*npc_function_ft) (unsigned int x, unsigned int y); // gets npc at point
 
-typedef struct map_t {
+typedef struct  {
     unsigned int w; // can be one byte
     unsigned int h; // can be one byte
-    int tile_type [32 * 32]; // can be one byte
+    int tile_type [32 * 32]; // can be one byte (if negative then is portal to another area)
     bool on_fire [32 * 32];
     bool under_water [32 * 32];
-};
+} map_t;
 
 
-typedef struct map_master {
+typedef struct {
     const map_t mapdat;
     const coord_t coord;
-};
+} map_master;
 
 // flavor text
-struct flavor_text {
+typedef struct {
     char personnell[16];
     int weight;
     char alignment[16];
-};
+} flavor_text;
 
 // for flight level view
-struct level_data {
+typedef struct {
     int x;
     int y;
     char data[16];
@@ -108,18 +115,18 @@ struct level_data {
     int map_id;
     int map_w;
     int map_h;
-};
+} level_data;
 
 // for info on each tile in sector
-struct tile_data {
+typedef struct {
     int x;
     int y;
     char data[16];
     int num_level_data;
     const level_data * flight_data;
-};
+} tile_data;
 
-struct entity{
+typedef struct {
     int x;
     int y;
     int vx;
@@ -127,7 +134,7 @@ struct entity{
     char data[16];
     int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet, 5 = rocket (player), 6 = rocket (other)
     int id;
-};
+} entity;
 
 #define CONFIG_INCREMENT_AMOUNT 50
 
@@ -193,7 +200,7 @@ extern int sector_y;
 extern int sector_s;
 extern int level; // level id for space view
 extern int location; // location on level for rouge: -1 for none loaded
-extern item inventory[]; // inventory list
+extern item_t inventory[]; // inventory list
 extern int num_items;    // number of items
 
 // check for angled movement
@@ -223,10 +230,10 @@ extern float thrust;
 extern int selected_object;
 
 // main window texture handle
-extern sf::RenderTexture windowTexture;
+//extern sfRenderTexture windowTexture;
 
 // main font handle
-extern sf::Font font;
+//extern sfFont font;
 
 // game state
 extern int state;
@@ -266,4 +273,7 @@ extern int num_active_quests;
 extern quest_t quest_registry[ NUM_QUESTS + 1 ];
 
 // cutscene stuffs
+// nothing to see yet
 
+// reads quest, level, npc, map data from file
+bool build_game_data();

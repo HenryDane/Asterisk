@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "main.h"
 
 bool validate_empty(){
     return true;
@@ -20,6 +20,8 @@ const quest_dialogue_block_t example_quest_dialogue_block [3] = { {0, example_di
 
 const quest_t example_quest = {1029, "Example Quest", 13, "Example NPC", 11, example_quest_dialogue_block, ex_val_func, ex_asn_func, 3, 10, 10, {192, 2, true, "ex_quest", 8}};
 
-quest_t quest_registry[NUM_QUESTS + 1] = {example_quest, example_quest};
+void init_quests(){
+    quest_t quest_registry[NUM_QUESTS + 1] = {example_quest, example_quest};
 
-quest_active_t active_quests[ NUM_QUESTS_MAX ] = {{0, "Null Quest", 10, "Null", 4, example_quest_dialogue_block, ex_val_func, ex_asn_func, 3, 10, 10, {192, 2, true, "ex_quest", 8}}, 1000, true};
+    quest_active_t active_quests[ NUM_QUESTS_MAX ] = {{0, "Null Quest", 10, "Null", 4, example_quest_dialogue_block, ex_val_func, ex_asn_func, 3, 10, 10, {192, 2, true, "ex_quest", 8}}, 1000, true};
+}

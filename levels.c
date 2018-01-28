@@ -1,6 +1,7 @@
-#include "main.hpp"
-#include <iostream>
-using namespace std;
+#include "main.h"
+//#include <iostream>
+#include <stdio.h>
+//using namespace std;
 
 
 /*
@@ -168,7 +169,8 @@ const tile_data level_0_3_tile_data[10] = { {1, 1, "Enemy Base 7-m", 1, level_0_
 
 
 void search_and_build(const tile_data * tiledata){
-    cout << "SECTOR: "  << sector_s << endl;
+    //cout << "SECTOR: "  << sector_s << endl;
+    printf("SECTOR: %d /n", sector_s);
 
     // init vairables
     bool exists = false;
@@ -178,21 +180,26 @@ void search_and_build(const tile_data * tiledata){
     for ( ; i < 10; i++){
         if (tiledata[i].x == sector_y && tiledata[i].y == sector_x){
             exists = true;
-            cout << " FOUND W DESC: " << tiledata[i].data  << " I: " << i << endl;
+            //cout << " FOUND W DESC: " << tiledata[i].data  << " I: " << i << endl;
+            printf("FOUND W DESC %d I: %d /n" , tiledata[i].data, i);
             break;
         }
     }
-    cout << "EXISTS " << ((exists) ? 1 : 0) << endl;
+    //cout << "EXISTS " << ((exists) ? 1 : 0) << endl;
+    printf("EXITST: %d \n", ((exists) ? 1 : 0) );
 
     // create entities
     if (exists){
-        cout << "EXISTS!! NUM: " << tiledata[i].num_level_data << " I:" << i << endl;
+        //cout << "EXISTS!! NUM: " << tiledata[i].num_level_data << " I:" << i << endl;
+        printf("EXISTS!! NUM: %d I: %d \n", tiledata[i].num_level_data, i);
         for(int j = 0; j < tiledata[i].num_level_data; j++){
-            cout << "LOOKING AT J:" << j << endl;
+            //cout << "LOOKING AT J:" << j << endl;
+            printf("LOOKING AT J: %d \n", j);
             switch(tiledata[i].flight_data[j].type){
                 case 0: // station
-                    cout << "SPAWN STATION AT X:" << tiledata[i].flight_data[j].x;
-                    cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                   // cout << "SPAWN STATION AT X:" << tiledata[i].flight_data[j].x;
+                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    printf("SPAWN STATION AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
 
                     // create entity listing
                     entities[num_entities].id = id_entity_last;
@@ -208,8 +215,10 @@ void search_and_build(const tile_data * tiledata){
                     id_entity_last++;
                     break;
                 case 1: //asteroid
-                    cout << "SPAWN ASTEROID AT X:" << tiledata[i].flight_data[j].x;
-                    cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    //cout << "SPAWN ASTEROID AT X:" << tiledata[i].flight_data[j].x;
+                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    printf("SPAWN ASTEROID AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
                         entities[num_entities].id = id_entity_last;
                         entities[num_entities].x = rand() % WIDTH;
@@ -227,8 +236,10 @@ void search_and_build(const tile_data * tiledata){
                     }
                     break;
                 case 2: // enemy
-                    cout << "SPAWN ENEMY AT X:" << tiledata[i].flight_data[j].x;
-                    cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    //cout << "SPAWN ENEMY AT X:" << tiledata[i].flight_data[j].x;
+                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    printf("SPAWN ENEMY AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
                         entities[num_entities].id = id_entity_last;
                         entities[num_entities].x = tiledata[i].flight_data[j].x;
@@ -243,8 +254,10 @@ void search_and_build(const tile_data * tiledata){
                     }
                     break;
                 case 3: // debris
-                    cout << "SPAWN DEBRIS AT X:" << tiledata[i].flight_data[j].x;
-                    cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    //cout << "SPAWN DEBRIS AT X:" << tiledata[i].flight_data[j].x;
+                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    printf("SPAWN DEBRIS AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
                         entities[num_entities].id = id_entity_last;
                         entities[num_entities].x = rand() % WIDTH;
@@ -260,10 +273,12 @@ void search_and_build(const tile_data * tiledata){
                     }
                     break;
                 default:
-                    cout << "FAILED WITH: " << tiledata[i].flight_data[j].type << endl;
+                    //cout << "FAILED WITH: " << tiledata[i].flight_data[j].type << endl
+                    printf("FAILED WITH: %d \n" , tiledata[i].flight_data[j].type);
             }
         }
     } else {
-        cout << "SPAWNING NOTHING" << endl;
+        //cout << "SPAWNING NOTHING" << endl;
+        printf("SPAWINING NOTHING \n");
     }
 }
