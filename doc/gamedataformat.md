@@ -60,8 +60,8 @@ Each item is declared as follows:
 # ITEM <id> BEGIN
 $ ITEM_TYPE <item type>
 $ ITEM_USEABLE <true/false>
+$ ITEM_DATA_LEN <length of ITEM_DATA>
 $ ITEM_DATA <string, 10 chars max for flavor>
-$ ITEM_DATA_LEN <length of ITEM_DATA
 # ITEM <id> END
 ```
 
