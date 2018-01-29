@@ -122,7 +122,7 @@ set(SFML_FOUND TRUE) # will be set to false if one of the required modules is no
 foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
     string(TOLOWER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_LOWER)
     string(TOUPPER ${FIND_SFML_COMPONENT} FIND_SFML_COMPONENT_UPPER)
-    set(FIND_SFML_COMPONENT_NAME sfml-${FIND_SFML_COMPONENT_LOWER})
+    set(FIND_SFML_COMPONENT_NAME csfml-${FIND_SFML_COMPONENT_LOWER})
 
     # no suffix for sfml-main, it is always a static library
     if(FIND_SFML_COMPONENT_LOWER STREQUAL "main")
