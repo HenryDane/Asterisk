@@ -66,63 +66,28 @@ sfTexture* textures[NUM_TEXTURES];
 
 int g_state = 0;
 
+// ugly hack #2
 void rsetTexture(sfRectangleShape* r, sfTexture* texture){
     sfRectangleShape_setTexture(r, texture, sfTrue);
 }
 
+// ugly hack #3
 void rsetPosition(sfRectangleShape* r, int x, int y){
     sfRectangleShape_setPosition(r, (sfVector2f) {x, y});
+}
+
+// ugly hack #1 (duplicate)
+void textsetPosition(sfText* text, int x, int y){
+    sfText_setPosition(text, (sfVector2f) {x, y});
 }
 
 int init_displays(void){
     for (int i = 0; i < NUM_TEXTURES; i++){
         char tmp[32];
         sprintf(tmp, "res/%d.png", i);
-        printf("[%d]", tmp);
+        printf("[%d]\n", tmp);
         textures[i] = sfTexture_createFromFile(tmp, NULL);
     }
-
-    /*character_t = sfTexture_createFromFile("res/character-top.png", NULL);
-    character_b = sfTexture_createFromFile("res/character-bottom.png", NULL);
-    character_r = sfTexture_createFromFile("res/character-right.png", NULL);
-    character_l = sfTexture_createFromFile("res/character-left.png", NULL);
-    enemy_t = sfTexture_createFromFile("res/enemy-top.png", NULL);
-    enemy_r = sfTexture_createFromFile("res/enemy-right.png", NULL);
-    enemy_b = sfTexture_createFromFile("res/enemy-bottom.png", NULL);
-    enemy_l = sfTexture_createFromFile("res/enemy-left.png", NULL);
-    asteriod_1 = sfTexture_createFromFile("res/asteriod-1.png", NULL);
-    asteriod_2 = sfTexture_createFromFile("res/asteriod-2.png", NULL);
-    asteriod_3 = sfTexture_createFromFile("res/asteriod-3.png", NULL);
-    textures[DEBUG_TEX] = sfTexture_createFromFile("res/textures[DEBUG_TEX].png", NULL);
-    wall = sfTexture_createFromFile("res/wall.png", NULL);
-    rockets_tex = sfTexture_createFromFile("res/rockets-2.png", NULL);
-    station = sfTexture_createFromFile("res/station.png", NULL);
-    ice_station = sfTexture_createFromFile("res/ice-station.png", NULL);
-    logo = sfTexture_createFromFile("res/logo.png", NULL);
-    empty_sector = sfTexture_createFromFile("res/empty_sector.png", NULL);
-    nebula = sfTexture_createFromFile("res/ice-field.png", NULL);
-    ice_field = sfTexture_createFromFile("res/nebula.png", NULL);
-    system_texture = sfTexture_createFromFile("res/system.png", NULL);
-    debris = sfTexture_createFromFile("res/flak-2.png", NULL);
-    red = sfTexture_createFromFile("res/red.png", NULL);
-    yellow = sfTexture_createFromFile("res/yellow.png", NULL);
-    green = sfTexture_createFromFile("res/green.png", NULL);
-    star = sfTexture_createFromFile("res/yellow.png", NULL);
-    textures[HEART_TEX] = sfTexture_createFromFile("res/textures[FULL_HEALTH_TEX].png", NULL);
-    textures[CRITICAL_TEX] = sfTexture_createFromFile("res/textures[HEART_TEX]_low.png", NULL);
-    textures[FULL_HEALTH_TEX] = sfTexture_createFromFile("res/textures[HEART_TEX].png", NULL);
-    purple_textures[HEART_TEX] = sfTexture_createFromFile("res/purple.png", NULL);
-    gold = sfTexture_createFromFile("res/textures[BRONZE_TEX].png", NULL);
-    silver = sfTexture_createFromFile("res/silver.png", NULL);
-    textures[BRONZE_TEX] = sfTexture_createFromFile("res/gold.png", NULL);
-    exhaust_bottom = sfTexture_createFromFile("res/exhaust_bot.png", NULL);
-    exhaust_left = sfTexture_createFromFile("res/exhaust_lef.png", NULL);
-    exhaust_right = sfTexture_createFromFile("res/exhaust_rig.png", NULL);
-    exhaust_top = sfTexture_createFromFile("res/exhaust_top.png", NULL);
-    floor_tex = sfTexture_createFromFile("res/floor.png", NULL);
-    fern = sfTexture_createFromFile("res/fern.png", NULL);
-    npc_tex = sfTexture_createFromFile("res/npc_generic.png", NULL);
-    textures[BLACK_TEX] = sfTexture_createFromFile("res/textures[BLACK_TEX].png", NULL); */
 
     return 0;
 }
@@ -145,6 +110,98 @@ void cleardisplay(bool _textures[DEBUG_TEX]){
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
     }
+}
+
+void draw_quests(){
+
+}
+
+void draw_cutscene(){
+
+}
+
+void draw_trade( int trade_index ){
+    // merchant mode;
+    // printf("hello \n");
+    sfText* text = sfText_create();
+    sfText_setFont(text, font);
+    sfText_setCharacterSize(text, 16);
+    sfText_setString(text, "MERCHANT");
+    textsetPosition( text, 0,0);
+    sfRenderWindow_drawText(window, text, NULL);
+    char tim[80];
+    sprintf(tim, "CREDITS: $%d", credits);
+    sfText_setString(text, tim);
+    textsetPosition( text, 32 * 16,0);
+    sfRenderWindow_drawText(window, text, NULL);
+
+    int l = 0;
+
+    for (int i = 0; i < npc_last.inventory_size; i++){
+        switch(npc_last.inventory[i].type){
+            case 1:
+                sprintf(tim, "Ration : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 2:
+                sprintf(tim, "Handgun : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 3:
+                sprintf(tim, "Wrench : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 4:
+                sprintf(tim, "Ammunition : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 5:
+                sprintf(tim, "Grenade : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 6:
+                sprintf(tim, "Book : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 7:
+                sprintf(tim, "Machine Gun : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 8:
+                sprintf(tim, "Rocket Launcher : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 9:
+                sprintf(tim, "Pick : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            case 10:
+                sprintf(tim, "Medkit : %s", inventory[i].data);
+                sfText_setString(text, tim);
+                break;
+            default:
+                sfText_setString(text, "Invalid Item!");
+        }
+        textsetPosition( text, 32, (l + 1) * 16);
+        sfRenderWindow_drawText(window, text, NULL);
+
+        if (i == trade_index){
+            sfText_setString(text,"->");
+            textsetPosition(text, 0, (l + 1) * 16);
+            sfRenderWindow_drawText(window, text, NULL);
+        }
+
+        sprintf(tim, "%s ($%d)", npc_last.inventory[i].data, npc_last.inventory[i].cost);
+        sfText_setString(text, tim);
+        textsetPosition( text, 32, (l + 2) * 16);
+        sfRenderWindow_drawText(window, text, NULL);
+        l += 3;
+    }
+
+    l+=2;
+    sfText_setString(text, "N(Exit) Q(Go Up) E(Go Down) Enter(Purchase)");
+    textsetPosition( text, 32, 544);
+    sfRenderWindow_drawText(window, text, NULL);
 }
 
 void draw_stats(){
@@ -176,7 +233,7 @@ void draw_stats(){
         rsetPosition( r, 928,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
-    rsetTexture(r,  textures[FULL_HEALTH_TEX]);
+    rsetTexture(r, textures[FULL_HEALTH_TEX]);
     if (health >= 900){
         rsetPosition( r, 912,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
@@ -192,6 +249,11 @@ void draw_stats(){
     sprintf(tim, "FUEL: %d / 10K", fuel);
     sfText_setString(text, tim);
     sfText_setPosition(text, (sfVector2f) {816, 48});
+    sfRenderWindow_drawText(window, text, NULL);
+
+    sprintf(tim, "CREDITS: %d ", credits);
+    sfText_setString(text, tim);
+    sfText_setPosition(text, (sfVector2f) {816, 64});
     sfRenderWindow_drawText(window, text, NULL);
 }
 

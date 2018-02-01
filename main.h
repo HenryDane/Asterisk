@@ -63,6 +63,7 @@ typedef struct {
     int type;
     char data [16];
     int data_len; // could be one byte
+    int cost;
 } npc_item_t;
 
 typedef struct {

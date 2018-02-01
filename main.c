@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 #include "main.h"
 #include "display.h"
 #include "entity.h"
@@ -27,7 +28,7 @@ int character_y = 0;
 
 int selected_object = 0;
 
-item_t inventory[3] = {{0,2,false,"Glock    ", 5},
+item_t inventory[16] = {{0,2,false,"Glock    ", 5},
                      {1,1,false,"Generic  ", 7},
                      {2,3,false,"Glock    ", 5}};
 int num_items = 3;
@@ -53,11 +54,6 @@ bool build_game_data(){
 
     // loop for reading game data
     return true;
-}
-
-// ugly hack #1
-void textsetPosition(sfText* text, int x, int y){
-    sfText_setPosition(text, (sfVector2f) {x, y});
 }
 
 int main(){
@@ -105,6 +101,8 @@ int main(){
     // init quests
     num_active_quests = 0; // no active quests
 
+    int trade_index = 0;
+
     // because csfml wont do colors idk why
     sfColor color_blk;
     color_blk.r = 0;
@@ -134,6 +132,15 @@ int main(){
                     case sfKeyNum5:
                         state = 16; // rouge like
                         break;
+                    case sfKeyQ:
+                        if (state == 19) {
+                            trade_index--;
+                        }
+                        break;
+                    case sfKeyE:
+                        if (state == 19) {
+                            trade_index++;
+                        }
                     case sfKeyW:
                         if (state == 16) {
                             if (character_y - 1 >= 0 && check_next_step(character_x, character_y - 1)) {
@@ -168,7 +175,30 @@ int main(){
                         }
                         break;
                     case sfKeyReturn:
-                        if (state == 19 || state == 18 || state == 17) {
+                        if (state == 19){
+                            if (trade_index >= 0 && trade_index < npc_last.inventory_size ){
+                                if (num_items < 16){
+                                    if (credits - npc_last.inventory[trade_index].cost >= 0){
+                                        credits -= npc_last.inventory[trade_index].cost;
+                                        printf("adding item . . . \n");
+                                        //inventory[num_items] = npc_last.inventory[trade_index];
+                                        strcpy(inventory[num_items].data, npc_last.inventory[trade_index].data);
+                                        // = npc_last.inventory[trade_index].data;
+                                        inventory[num_items].id = npc_last.inventory[trade_index].id;
+                                        inventory[num_items].type = npc_last.inventory[trade_index].type;
+                                        inventory[num_items].data_len = npc_last.inventory[trade_index].data_len;
+                                        inventory[num_items].unuseable = false;
+                                        num_items++;
+                                    } else {
+                                        printf("failed cost check\n");
+                                    }
+                                } else {
+                                    printf("failed item number check\n");
+                                }
+                            } else {
+                                printf("failed array bounds check\n");
+                            }
+                        } else if (state == 18 || state == 17) {
                             state = 16;
                         }
                         break;
@@ -197,7 +227,7 @@ int main(){
                                     printf("LOOKED: NPCQID: %d AQID: %d \n", quest_registry[npc_last.quest_id].id, active_quests[i].quest.id);
                                     if (quest_registry[npc_last.quest_id].id == active_quests[i].quest.id){
                                         found = true;
-                                        printf("DUPLICATE FOUND, NPC ID: %d QUEST ID: %d INDEX: %d \n", npc_last.id, quest_registry[npc_last.quest_id].id, i);
+                                        printf("! DUPLICATE FOUND, NPC ID: %d QUEST ID: %d INDEX: %d \n", npc_last.id, quest_registry[npc_last.quest_id].id, i);
                                         break;
                                     }
                                 }
@@ -206,12 +236,14 @@ int main(){
                                     // if no duplicates, add to quest list
                                     printf("NO DUPL, adding \n");
                                     active_quests[++num_active_quests] = (quest_active_t) {quest_registry[npc_last.quest_id], 0, false};
+                                    state = 16;
                                 } else {
                                     // complete check
                                     printf("DUPL, not adding \n");
+                                    state = 20;
                                     // increment check
                                 }
-                                state = 16;
+                                //state = 16;
                             } else {
                                 //cout << "FAILED TO ADD, NAQ:" << num_active_quests << " NAQ+1:" << num_active_quests + 1 << " NAQM:" << NUM_QUESTS_MAX << endl;
                             }
@@ -230,6 +262,7 @@ int main(){
         }
 
         int l = 1;
+        char tmp[80];
         // draw screen and do stuff
         switch(state){
             case -2:
@@ -247,45 +280,6 @@ int main(){
                 sfText_setString(text, "QUEST");
                 textsetPosition( text, 0,0);
                 sfRenderWindow_drawText(window, text, NULL);
-                if (npc_last.id > 0){
-                    char tmp[80];
-                    char tmp_t342[32] = "hello world";
-                    for (int i = 0; i < quest_registry[npc_last.quest_id].title_len; i++){
-                        tmp_t342[i] = quest_registry[npc_last.quest_id].title[i];
-                    }
-
-                    // check if quest alreay exists
-                    bool found = false;
-                    int i = 1;
-                    for ( ; i < num_active_quests ; i++){
-                        //printf("LOOKED: NPCQID: %d AQID: %d \n", quest_registry[npc_last.quest_id].id, active_quests[i].quest.id);
-                        if (quest_registry[npc_last.quest_id].id == active_quests[i].quest.id){
-                            printf("Found at : %d /n", i);
-                            found = true;
-                            //printf("DUPLICATE FOUND, NPC ID: %d QUEST ID: %d INDEX: %d \n", npc_last.id, quest_registry[npc_last.quest_id].id, i);
-                            break;
-                        }
-                    }
-
-                    if (!found){
-                        sprintf(tmp, "NPC [ID: %d] HAS QUEST [%s]. DO YOU ACCEPT [y / n]?", npc_last.id, tmp_t342);
-                        sfText_setString(text, tmp);
-                        textsetPosition( text, 0,16);
-                        sfRenderWindow_drawText(window, text, NULL);
-                    } else {
-                        for (int k = 0; k < quest_registry[npc_last.quest_id].dialogue[active_quests[i].block_index].num_dialogue; k++){
-                            sfText_setString(text, quest_registry[npc_last.quest_id].dialogue[active_quests[i].block_index].dialogue_list[k].data);
-                            textsetPosition(text, 0, k * 32 + 16);
-                            sfRenderWindow_drawText(window, text, NULL);
-                        }
-                    }
-                }
-
-                if (num_active_quests + 1 > NUM_QUESTS_MAX ){
-                    sfText_setString(text, "YOU CAN NOT ACCEPT ANY MORE QUESTS");
-                    textsetPosition( text, 0,32);
-                    sfRenderWindow_drawText(window, text, NULL);
-                }
                 break;
             case 18:
                 // cutscene
@@ -294,24 +288,13 @@ int main(){
                 sfRenderWindow_drawText(window, text, NULL);
                 break;
             case 19:
-                // merchant mode;
-                sfText_setString(text, "MERCHANT");
-                textsetPosition( text, 0,0);
+                draw_trade(trade_index);
+                break;
+            case 20:
+                sprintf(tmp, "%s", quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0]);
+                sfText_setString(text, tmp);
+                textsetPosition(text, 0, 96);
                 sfRenderWindow_drawText(window, text, NULL);
-
-                //cout << "FOUND IVEN OF SIZE: " << npc_last.inventory_size << endl;
-                for (int i = 0; i < npc_last.inventory_size; i++){
-                    switch(npc_last.inventory[i].type){
-                        default:
-                            sfText_setString(text, "[DEFAULT ITEM]");
-                    }
-                    textsetPosition( text, 32, (l + 1) * 16);
-                    sfRenderWindow_drawText(window, text, NULL);
-                    sfText_setString(text, npc_last.inventory[i].data);
-                    textsetPosition( text, 32, (l + 2) * 16);
-                    sfRenderWindow_drawText(window, text, NULL);
-                    l += 3;
-                }
                 break;
             default:
                 printf("Intercepted bad state %d /n", state);
