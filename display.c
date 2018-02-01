@@ -1,10 +1,26 @@
 #include "main.h"
 #include "quest.h"
 #include <stdio.h>
+#include <string.h>
 //using namespace std;
 
+// texture names
+#define DEBUG_TEX 9
+#define BLACK_TEX 3
+#define HEART_TEX 24
+#define CRITICAL_TEX 28
+#define FULL_HEALTH_TEX 27
+#define BRONZE_TEX 25
+#define FLOOR_TEX 23
+#define WALL_TEX 42
+#define FERN_TEX 19
+#define SYSTEM_TEX 41
+#define NPC_TEX 34
+#define GREEN_TEX 26
+#define LOGO_TEX 32
+
 // texture definitions
-sfTexture* character_t;
+/*sfTexture* character_t;
 sfTexture* character_l;
 sfTexture* character_b;
 sfTexture* character_r;
@@ -15,7 +31,7 @@ sfTexture* enemy_r;
 sfTexture* asteriod_1;
 sfTexture* asteriod_2;
 sfTexture* asteriod_3;
-sfTexture* debug;
+sfTexture* textures[DEBUG_TEX];
 sfTexture* wall;
 sfTexture* rockets_tex;
 sfTexture* station;
@@ -30,13 +46,13 @@ sfTexture* green;
 sfTexture* red;
 sfTexture* yellow;
 sfTexture* star;
-sfTexture* heart;
-sfTexture* critical;
-sfTexture* full_health;
-sfTexture* bronze;
+sfTexture* textures[HEART_TEX];
+sfTexture* textures[CRITICAL_TEX];
+sfTexture* textures[FULL_HEALTH_TEX];
+sfTexture* textures[BRONZE_TEX];
 sfTexture* silver;
 sfTexture* gold;
-sfTexture* purple_heart;
+sfTexture* purple_textures[HEART_TEX];
 sfTexture* exhaust_top;
 sfTexture* exhaust_bottom;
 sfTexture* exhaust_left;
@@ -44,7 +60,9 @@ sfTexture* exhaust_right;
 sfTexture* floor_tex;
 sfTexture* fern;
 sfTexture* npc_tex;
-sfTexture* black;
+sfTexture* textures[BLACK_TEX];*/
+
+sfTexture* textures[NUM_TEXTURES];
 
 int g_state = 0;
 
@@ -57,7 +75,14 @@ void rsetPosition(sfRectangleShape* r, int x, int y){
 }
 
 int init_displays(void){
-    character_t = sfTexture_createFromFile("res/character-top.png", NULL);
+    for (int i = 0; i < NUM_TEXTURES; i++){
+        char tmp[32];
+        sprintf(tmp, "res/%d.png", i);
+        printf("[%d]", tmp);
+        textures[i] = sfTexture_createFromFile(tmp, NULL);
+    }
+
+    /*character_t = sfTexture_createFromFile("res/character-top.png", NULL);
     character_b = sfTexture_createFromFile("res/character-bottom.png", NULL);
     character_r = sfTexture_createFromFile("res/character-right.png", NULL);
     character_l = sfTexture_createFromFile("res/character-left.png", NULL);
@@ -68,7 +93,7 @@ int init_displays(void){
     asteriod_1 = sfTexture_createFromFile("res/asteriod-1.png", NULL);
     asteriod_2 = sfTexture_createFromFile("res/asteriod-2.png", NULL);
     asteriod_3 = sfTexture_createFromFile("res/asteriod-3.png", NULL);
-    debug = sfTexture_createFromFile("res/debug.png", NULL);
+    textures[DEBUG_TEX] = sfTexture_createFromFile("res/textures[DEBUG_TEX].png", NULL);
     wall = sfTexture_createFromFile("res/wall.png", NULL);
     rockets_tex = sfTexture_createFromFile("res/rockets-2.png", NULL);
     station = sfTexture_createFromFile("res/station.png", NULL);
@@ -83,13 +108,13 @@ int init_displays(void){
     yellow = sfTexture_createFromFile("res/yellow.png", NULL);
     green = sfTexture_createFromFile("res/green.png", NULL);
     star = sfTexture_createFromFile("res/yellow.png", NULL);
-    heart = sfTexture_createFromFile("res/full_health.png", NULL);
-    critical = sfTexture_createFromFile("res/heart_low.png", NULL);
-    full_health = sfTexture_createFromFile("res/heart.png", NULL);
-    purple_heart = sfTexture_createFromFile("res/purple.png", NULL);
-    gold = sfTexture_createFromFile("res/bronze.png", NULL);
+    textures[HEART_TEX] = sfTexture_createFromFile("res/textures[FULL_HEALTH_TEX].png", NULL);
+    textures[CRITICAL_TEX] = sfTexture_createFromFile("res/textures[HEART_TEX]_low.png", NULL);
+    textures[FULL_HEALTH_TEX] = sfTexture_createFromFile("res/textures[HEART_TEX].png", NULL);
+    purple_textures[HEART_TEX] = sfTexture_createFromFile("res/purple.png", NULL);
+    gold = sfTexture_createFromFile("res/textures[BRONZE_TEX].png", NULL);
     silver = sfTexture_createFromFile("res/silver.png", NULL);
-    bronze = sfTexture_createFromFile("res/gold.png", NULL);
+    textures[BRONZE_TEX] = sfTexture_createFromFile("res/gold.png", NULL);
     exhaust_bottom = sfTexture_createFromFile("res/exhaust_bot.png", NULL);
     exhaust_left = sfTexture_createFromFile("res/exhaust_lef.png", NULL);
     exhaust_right = sfTexture_createFromFile("res/exhaust_rig.png", NULL);
@@ -97,20 +122,20 @@ int init_displays(void){
     floor_tex = sfTexture_createFromFile("res/floor.png", NULL);
     fern = sfTexture_createFromFile("res/fern.png", NULL);
     npc_tex = sfTexture_createFromFile("res/npc_generic.png", NULL);
-    black = sfTexture_createFromFile("res/black.png", NULL);
+    textures[BLACK_TEX] = sfTexture_createFromFile("res/textures[BLACK_TEX].png", NULL); */
 
     return 0;
 }
 
-void cleardisplay(bool _debug){
+void cleardisplay(bool _textures[DEBUG_TEX]){
     sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     //sf::RectangleShape r(sf::Vector2f(16, 16));
-    if (_debug){
-        //rsetTexture(r,  debug);
-        sfRectangleShape_setTexture(r, debug, sfTrue);
+    if (_textures[DEBUG_TEX]){
+        //rsetTexture(r,  textures[DEBUG_TEX]);
+        sfRectangleShape_setTexture(r, textures[DEBUG_TEX], sfTrue);
     } else {
-        //rsetTexture(r,  black);
-        sfRectangleShape_setTexture(r, black, sfTrue);
+        //rsetTexture(r,  textures[BLACK_TEX]);
+        sfRectangleShape_setTexture(r, textures[BLACK_TEX], sfTrue);
     }
     for (int i = 0; i < WIDTH; i++){
         for (int j = 0; j <  HEIGHT; j++){
@@ -134,12 +159,12 @@ void draw_stats(){
     sfText_setPosition(text, (sfVector2f) {816, 16});
     //sfRenderWindow_drawText(window, text, NULL);
     sfRenderWindow_drawText(window, text, NULL);
-    rsetTexture(r,  heart);
+    rsetTexture(r,  textures[HEART_TEX]);
     if (health >= 250){
         rsetPosition( r, 960,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     } else {
-        rsetTexture(r,  critical);
+        rsetTexture(r,  textures[CRITICAL_TEX]);
         rsetPosition( r, 960,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
@@ -151,7 +176,7 @@ void draw_stats(){
         rsetPosition( r, 928,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
     }
-    rsetTexture(r,  full_health);
+    rsetTexture(r,  textures[FULL_HEALTH_TEX]);
     if (health >= 900){
         rsetPosition( r, 912,16);
         sfRenderWindow_drawRectangleShape(window, r, NULL);
@@ -160,7 +185,7 @@ void draw_stats(){
     sfText_setString(text, "RANK: ");
     sfText_setPosition(text, (sfVector2f) {816, 32});
     sfRenderWindow_drawText(window, text, NULL);
-    rsetTexture(r,  bronze);
+    rsetTexture(r,  textures[BRONZE_TEX]);
     rsetPosition( r, 912,32);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 
@@ -273,22 +298,22 @@ void draw_rogue(){
 
                 switch (tdat){
                     case -1:
-                        rsetTexture(r,  black);
+                        rsetTexture(r,  textures[BLACK_TEX]);
                         break;
                     case 0:
-                        rsetTexture(r,  floor_tex);
+                        rsetTexture(r,  textures[FLOOR_TEX]);
                         break;
                     case 1:
-                        rsetTexture(r,  wall);
+                        rsetTexture(r,  textures[WALL_TEX]);
                         break;
                     case 5:
-                        rsetTexture(r,  fern);
+                        rsetTexture(r,  textures[FERN_TEX]);
                         break;
                     default:
-                        rsetTexture(r,  system_texture);
+                        rsetTexture(r,  textures[FLOOR_TEX]);
                 }
             } else {
-                rsetTexture(r,  npc_tex);
+                rsetTexture(r,  textures[NPC_TEX]);
             }
             sfRenderWindow_drawRectangleShape(window, r, NULL);
         }
@@ -298,12 +323,12 @@ void draw_rogue(){
     draw_inventory();
 
     rsetPosition( r, 15 * 16, 15 * 16);
-    rsetTexture(r,  green);
+    rsetTexture(r,  textures[GREEN_TEX]);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 }
 
 void draw_logo(){
     sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {S_WIDTH, S_HEIGHT});
-    rsetTexture(r,  logo);
+    rsetTexture(r,  textures[LOGO_TEX]);
     sfRenderWindow_drawRectangleShape(window, r, NULL);
 }

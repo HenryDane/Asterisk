@@ -24,7 +24,6 @@ int fuel = 10000;
 
 int character_x = 0;
 int character_y = 0;
-bool tilted = false;
 
 int selected_object = 0;
 
@@ -167,9 +166,6 @@ int main(){
                         if (state == -1){
                             state = 16;
                         }
-                        break;
-                    case sfKeyZ:
-                        tilted = !tilted;
                         break;
                     case sfKeyReturn:
                         if (state == 19 || state == 18 || state == 17) {

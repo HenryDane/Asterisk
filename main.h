@@ -114,6 +114,9 @@ typedef struct {
 // number of maps
 #define NUM_MAPS 2
 
+// define texture data
+#define NUM_TEXTURES 43
+
 // number of quests
 #define NUM_QUESTS 1
 #define NUM_QUESTS_MAX 4
