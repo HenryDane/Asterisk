@@ -1,14 +1,13 @@
-#include <SFML/Graphics.h>
+//#include <SFML/Graphics.h>
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include "kernel/kernel.h"
 #include "main.h"
 #include "display.h"
 #include "entity.h"
 #include "map.h"
-
-sfRenderWindow* window;
 
 // timer
 double timerval = 0;
@@ -22,6 +21,7 @@ int health = 1000;
 float experience = 0;
 int credits = 1000;
 int fuel = 10000;
+int score = 0;
 
 int character_x = 0;
 int character_y = 0;
@@ -40,7 +40,7 @@ npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 }
 // game state (see documentation)
 int state = -1;
 
-sfFont* font;
+//sfFont* font;
 
 bool build_game_data(){
     // reads in game file data
@@ -48,7 +48,7 @@ bool build_game_data(){
     game_file = fopen("game_data.txt", "r");
 
     if(!game_file){
-        printf("Failed to read game file");
+        printf("Failed to read game file \n");
         return false;
     }
 
@@ -57,76 +57,46 @@ bool build_game_data(){
 }
 
 int main(){
-    // set up events
-    sfEvent event;
-
     // initalize rand
     srand (time(NULL));
 
     // because we need to do this dont forget ok??
     init_maps();
 
-    // create window
-    sfVideoMode mode = {S_WIDTH, S_HEIGHT, 32};
-    window = sfRenderWindow_create(mode, "Asterisk I", sfResize | sfClose, NULL);
-    if (!window)
-        return 1;
-
-    // gimme some fontness
-    font = sfFont_createFromFile("res/telegrama_raw.ttf");
-    if (!font)
-        return 1;
-
-    // time stuff
-    sfClock* clock = sfClock_create();
-    sfTime elapsed;
+    // set up graphics
+    k_init_gfx();
 
     // init textures
     if (init_displays() < 0) { return -3; }
 
-    // cout << "DONE" << endl;
     printf("DONE \n");
 
-    // generate font
-    sfText* text = sfText_create();
-    sfText_setFont(text, font);
-    sfText_setCharacterSize(text, 16);
-
     // init cache_map
-    master_index = 0;
+    master_index = 2;
     cached_map = rogue_map_master[master_index].mapdat;
     character_x = rogue_map_master[master_index].coord.x;
     character_y = rogue_map_master[master_index].coord.y;
 
-    // init quests
     num_active_quests = 0; // no active quests
 
-    int trade_index = 0;
-
-    // because csfml wont do colors idk why
-    sfColor color_blk;
-    color_blk.r = 0;
-    color_blk.g = 0;
-    color_blk.b = 0;
-    color_blk.a = 255;
+    int trade_index = 0; // pointer to trading address
 
     // main loop
-    while (sfRenderWindow_isOpen(window)){
+    while (k_this_close_request()){
         // clean texture
-        sfRenderWindow_clear(window, color_blk);
-
-        // update timer
-        elapsed = sfClock_restart(clock);
+        k_refresh_display();
 
         // handle events
-        while (sfRenderWindow_pollEvent(window, &event)){
+        while (k_get_events()){
+#ifndef USE_SDCC // ugly hack #109873276
             // close window if needed
-            if (event.type == sfEvtClosed)
-                sfRenderWindow_close(window);
+            if (k_get_sf_event_type() == sfEvtClosed)
+                sfRenderWindow_close(k_get_window());
             // check keys (released to avoid repeated keypresses
-            if (event.type == sfEvtKeyReleased) {
+            if (k_get_sf_event_type() == sfEvtKeyReleased) {
+#endif // USE_SDCC
                 // handle key presses
-                switch(event.key.code){
+                switch( k_get_key() ){
                     case sfKeyEscape:
                         return 0;
                     case sfKeyNum5:
@@ -134,12 +104,25 @@ int main(){
                         break;
                     case sfKeyQ:
                         if (state == 19) {
-                            trade_index--;
+                            if (trade_index > 0) trade_index--;
+                        } else if (state == 16){
+                            trade_index = 0;
+                            state = 21;
+                        } else if (state == 21){
+                            if (trade_index > 0) {
+                                trade_index--;
+                            }
                         }
                         break;
                     case sfKeyE:
                         if (state == 19) {
-                            trade_index++;
+                            if (trade_index + 1< npc_last.inventory_size) {
+                                trade_index++;
+                            }
+                        } else if (state == 21){
+                            if (trade_index + 1 < num_items) {
+                                trade_index++;
+                            }
                         }
                     case sfKeyW:
                         if (state == 16) {
@@ -181,9 +164,7 @@ int main(){
                                     if (credits - npc_last.inventory[trade_index].cost >= 0){
                                         credits -= npc_last.inventory[trade_index].cost;
                                         printf("adding item . . . \n");
-                                        //inventory[num_items] = npc_last.inventory[trade_index];
                                         strcpy(inventory[num_items].data, npc_last.inventory[trade_index].data);
-                                        // = npc_last.inventory[trade_index].data;
                                         inventory[num_items].id = npc_last.inventory[trade_index].id;
                                         inventory[num_items].type = npc_last.inventory[trade_index].type;
                                         inventory[num_items].data_len = npc_last.inventory[trade_index].data_len;
@@ -200,13 +181,29 @@ int main(){
                             }
                         } else if (state == 18 || state == 17) {
                             state = 16;
+                        } else if (state == 21){
+                            if (trade_index >= 0 && trade_index < num_items){
+                                switch (inventory[trade_index].type){
+                                    case 10: // medkit
+                                        health += 250;
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                // remove item
+                                for (int i = trade_index; i < num_items; i++){
+                                    inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+                                }
+                                if (num_items > 0) num_items --;
+                            }
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d /n", state, selected_object, 0, character_x, character_y);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d\n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index);
                         break;
                     case sfKeyEqual: // increment map pointer
-                        if (event.key.shift){
+                        if (k_get_sf_key_shift()){
                             master_index ++;
                         }
                         break;
@@ -243,9 +240,6 @@ int main(){
                                     state = 20;
                                     // increment check
                                 }
-                                //state = 16;
-                            } else {
-                                //cout << "FAILED TO ADD, NAQ:" << num_active_quests << " NAQ+1:" << num_active_quests + 1 << " NAQM:" << NUM_QUESTS_MAX << endl;
                             }
                         }
                         break;
@@ -258,10 +252,11 @@ int main(){
                         break;
                         // do nothing
                 }
+#ifndef USE_SDCC
             }
+#endif // USE_SDCC
         }
 
-        int l = 1;
         char tmp[80];
         // draw screen and do stuff
         switch(state){
@@ -271,30 +266,30 @@ int main(){
                 break;
             case -1:
                 draw_logo();
+                for (int i = 0; i < NUM_K_TEXTURES; i++){
+                    k_put_rect(i, i, (i > S_WIDTH / 16) ? 1 : 0);
+                }
                 break;
             case 16:
                 draw_rogue();
                 break;
             case 17:
                 // quest
-                sfText_setString(text, "QUEST");
-                textsetPosition( text, 0,0);
-                sfRenderWindow_drawText(window, text, NULL);
+                k_put_text("QUEST", 0, 0);
                 break;
             case 18:
                 // cutscene
-                sfText_setString(text, "CUTSCENE");
-                textsetPosition( text, 0,0);
-                sfRenderWindow_drawText(window, text, NULL);
+                k_put_text("CUTSCENE", 0, 0);
                 break;
             case 19:
                 draw_trade(trade_index);
                 break;
             case 20:
                 sprintf(tmp, "%s", quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0]);
-                sfText_setString(text, tmp);
-                textsetPosition(text, 0, 96);
-                sfRenderWindow_drawText(window, text, NULL);
+                k_put_text(tmp, 0, 96);
+                break;
+            case 21:
+                draw_use_item(trade_index);
                 break;
             default:
                 printf("Intercepted bad state %d /n", state);
@@ -303,7 +298,8 @@ int main(){
                 break;
         }
 
-        sfRenderWindow_display(window);
+        //sfRenderWindow_display(window);
+        k_display();
     }
 
     return 0;

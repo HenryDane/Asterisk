@@ -1,11 +1,5 @@
-#include <SFML/Graphics.h>
-
-// because C is annoying
-typedef enum { false, true } bool;
-
-// because CSFML
-extern sfRenderWindow* window;
-extern sfFont* font; // needs to be loaded in main
+//#include <SFML/Graphics.h>
+#include <stdbool.h>
 
 typedef struct {
     int x;
@@ -113,7 +107,7 @@ typedef struct {
 #define S_HEIGHT 576
 
 // number of maps
-#define NUM_MAPS 2
+#define NUM_MAPS 3
 
 // define texture data
 #define NUM_TEXTURES 43
@@ -122,7 +116,7 @@ typedef struct {
 #define NUM_QUESTS 1
 #define NUM_QUESTS_MAX 4
 
-// entity timing constants milliseconds)
+// entity timing constants milliseconds
 #define TIME_CHARACTER 760
 #define TIME_ENTITY 1000
 #define TIME_ROCKET 200
@@ -151,6 +145,7 @@ extern int level; // level id for space view
 extern int location; // location on level for rouge: -1 for none loaded
 extern item_t inventory[]; // inventory list
 extern int num_items;    // number of items
+extern int score;
 
 // ???
 extern int selected_object;

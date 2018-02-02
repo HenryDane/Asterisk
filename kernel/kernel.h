@@ -3,6 +3,29 @@
     s_init() must be first call
 */
 
+#include <stdint.h>
+#include <stdbool.h>
+
+#define S_WIDTH 1024
+#define S_HEIGHT 576
+#define NUM_K_TEXTURES 49
+
+#ifndef SDCC
+    #include <SFML/Graphics.h>
+    sfTexture * k_textures[NUM_K_TEXTURES];
+#endif // SDCC
+
+// wrapper calls
+void k_put_text(char * stringin, int x, int y);
+void k_put_rect(int tex_id, int x, int y);
+void k_put_rects(int tex_id, int x, int y, int w, int h);
+void k_init_gfx();
+bool k_this_close_request();
+void k_refresh_display();
+bool k_get_events();
+void k_display();
+int k_get_key();
+
 // private calls
 void _call( uint8_t address );
 void _set_bank( uint8_t address );

@@ -47,10 +47,32 @@ bool check_next_step(int x, int y){
         }
     }
 
+    if ( cached_map.tile_type[ x + cached_map.w * y ] < -1){
+        master_index = (- cached_map.tile_type[ x + cached_map.w * y ]) - 1;
+        printf("Triggered portal at %d, %d : %d \n", x, y, cached_map.tile_type[ x + cached_map.w * y ]);
+        cached_map = rogue_map_master[master_index].mapdat;
+        character_x = rogue_map_master[master_index].coord.x;
+        character_y = rogue_map_master[master_index].coord.y;
+        return true;
+    }
+
+    // handle map stuffs
     switch (cached_map.tile_type[ x + cached_map.w * y ]){
+        case 4:
+            health -= (rand() % 150 + 400);
+            return true;
+        case 3:
+            health -= (rand() % 100 + 200);
+            return true;
         case 1:
+        case 2:
+        case 6:
             return false;
+        case 5:
+            credits += (rand() % 3);
         default:
             return true;
     }
+
+    // portal
 }
