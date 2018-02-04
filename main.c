@@ -8,10 +8,7 @@
 #include "display.h"
 #include "entity.h"
 #include "map.h"
-
-// timer
-double timerval = 0;
-double time_entity = 0;
+#include "data.h"
 
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
@@ -40,21 +37,8 @@ npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 }
 // game state (see documentation)
 int state = -1;
 
-//sfFont* font;
-
-bool build_game_data(){
-    // reads in game file data
-    FILE * game_file;
-    game_file = fopen("game_data.txt", "r");
-
-    if(!game_file){
-        printf("Failed to read game file \n");
-        return false;
-    }
-
-    // loop for reading game data
-    return true;
-}
+int num_entities = 0;
+entity_t entities[32];
 
 int main(){
     // initalize rand
@@ -73,13 +57,13 @@ int main(){
 
     // init cache_map
     master_index = 2;
-    cached_map = rogue_map_master[master_index].mapdat;
-    character_x = rogue_map_master[master_index].coord.x;
-    character_y = rogue_map_master[master_index].coord.y;
+    load_map(master_index);
 
     num_active_quests = 0; // no active quests
 
     int trade_index = 0; // pointer to trading address
+
+    build_game_data();
 
     // main loop
     while (k_this_close_request()){
@@ -126,6 +110,7 @@ int main(){
                         }
                     case sfKeyW:
                         if (state == 16) {
+                            update_entities();
                             if (character_y - 1 >= 0 && check_next_step(character_x, character_y - 1)) {
                                 character_y--;
                             }
@@ -133,6 +118,7 @@ int main(){
                         break;
                     case sfKeyA:
                         if (state == 16) {
+                            update_entities();
                             if (character_x - 1 >= 0  && check_next_step(character_x - 1, character_y)) {
                                     character_x--;
                             }
@@ -140,6 +126,7 @@ int main(){
                         break;
                     case sfKeyS:
                         if (state == 16) {
+                            update_entities();
                             if (character_y + 1 < cached_map.h  && check_next_step(character_x, character_y + 1)) {
                                 character_y++;
                             }
@@ -147,6 +134,7 @@ int main(){
                         break;
                     case sfKeyD:
                         if (state == 16) {
+                            update_entities();
                             if (character_x + 1 < cached_map.w  && check_next_step(character_x + 1, character_y)){
                                 character_x++;
                             }
@@ -200,7 +188,7 @@ int main(){
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d\n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d\n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities);
                         break;
                     case sfKeyEqual: // increment map pointer
                         if (k_get_sf_key_shift()){
@@ -211,9 +199,7 @@ int main(){
                         master_index--;
                         break;
                     case sfKeyBack: // set up changes
-                        cached_map = rogue_map_master[master_index].mapdat;
-                        character_x = rogue_map_master[master_index].coord.x;
-                        character_y = rogue_map_master[master_index].coord.y;
+                        load_map(master_index);
                         break;
                     case sfKeyY:
                         if (state == 17) {
@@ -244,7 +230,7 @@ int main(){
                         }
                         break;
                     case sfKeyN:
-                        if (state == 17 || state == 18 || state == 19) {
+                        if (state == 17 || state == 18 || state == 19 || state == 21) {
                             state = 16;
                         }
                         break;
@@ -272,6 +258,7 @@ int main(){
                 break;
             case 16:
                 draw_rogue();
+                //update_entities();
                 break;
             case 17:
                 // quest

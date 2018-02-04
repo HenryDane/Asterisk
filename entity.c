@@ -50,9 +50,7 @@ bool check_next_step(int x, int y){
     if ( cached_map.tile_type[ x + cached_map.w * y ] < -1){
         master_index = (- cached_map.tile_type[ x + cached_map.w * y ]) - 1;
         printf("Triggered portal at %d, %d : %d \n", x, y, cached_map.tile_type[ x + cached_map.w * y ]);
-        cached_map = rogue_map_master[master_index].mapdat;
-        character_x = rogue_map_master[master_index].coord.x;
-        character_y = rogue_map_master[master_index].coord.y;
+        load_map(master_index);
         return true;
     }
 
@@ -75,4 +73,25 @@ bool check_next_step(int x, int y){
     }
 
     // portal
+}
+
+void update_entities(){
+    for (int i = 0; i < 1; i++){
+        switch(entities[i].type){
+            case 0:
+                printf("updating entity %d at (%d, %d) \n", i, entities[i].x, entities[i].y);
+                if (entities[i].x > character_x){
+                    entities[i].x--;
+                } else if (entities[i].x < character_x) {
+                    entities[i].x++;
+                }
+
+                if (entities[i].y > character_y){
+                    entities[i].y--;
+                } else if (entities[i].y < character_y) {
+                    entities[i].y++;
+                }
+                break;
+        }
+    }
 }

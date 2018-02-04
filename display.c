@@ -261,6 +261,10 @@ void draw_rogue(){
     draw_stats();
     draw_inventory();
 
+    for(int i = 0; i < num_entities; i++){
+        k_put_rect(CRATE_TEX, 15 - character_x + entities[i].x, 15 - character_y + entities[i].y);
+    }
+
     k_put_rect(GREEN_TEX, 15, 15);
 }
 

@@ -8,6 +8,13 @@ typedef struct {
 
 typedef struct {
     int id;
+    int x;
+    int y;
+    int type;
+} entity_t;
+
+typedef struct {
+    int id;
     int type;
     bool unuseable;
     char data[10];
@@ -83,6 +90,8 @@ typedef struct  {
     int tile_type [32 * 32]; // can be one byte (if negative then is portal to another area)
     bool on_fire [32 * 32];
     bool under_water [32 * 32];
+    int num_entities;
+    entity_t * entities;
 } map_t;
 
 
@@ -128,20 +137,14 @@ typedef struct {
 extern double timerval;
 extern double time_entity;
 
-// maps
-extern int mapdata[HEIGHT][WIDTH];
-extern int screen[];
-
 // character attrs
 extern int character_x;
 extern int character_y;
-extern int facing;
 extern int health;
 extern float experience;
 extern int fuel;
 extern int rounds;
 extern int credits;
-extern int level; // level id for space view
 extern int location; // location on level for rouge: -1 for none loaded
 extern item_t inventory[]; // inventory list
 extern int num_items;    // number of items
@@ -152,6 +155,9 @@ extern int selected_object;
 
 // game state
 extern int state;
+
+extern int num_entities;
+entity_t entities[32];
 
 // for going to quest/cutscene/etc mode
 extern npc_t npc_last;

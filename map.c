@@ -1,5 +1,8 @@
 #include "main.h"
 
+// example entity listing
+entity_t playthrough_test_entities[4] = { {0, 7, 7, 2}, {0, 7, 8, 3}, {0, 7, 9, 4}, {0, 7, 10, 1} };
+
 // EXAMPLE MAP DEF
 map_t example_map = {4,
                              4,
@@ -14,7 +17,9 @@ map_t example_map = {4,
                             {true, false, false, false,
                              false, false, false, false,
                              false, false, false, false,
-                             false, false, false, false} };
+                             false, false, false, false},
+                             0,
+                             playthrough_test_entities };
 coord_t example_map_start = {3, 2};
 npc_t example_map_npc ( unsigned int x, unsigned int y ){
     npc_t a = {1432, 988, 7, 1, {5763, 42, "Legendary", 9, 0}, false, false, true, 1, 1, 0 };
@@ -41,7 +46,9 @@ map_t test_map = {6,
                        {true, false, false, false,
                         false, false, false, false,
                         false, false, false, false,
-                        false, false, false, false} };
+                        false, false, false, false},
+                        0,
+                        playthrough_test_entities };
 coord_t test_map_start = {3, 2};
 npc_t test_map_npc ( unsigned int x, unsigned int y ){
     npc_t a = {9107, 988, 7, 3, {{5761, 10, "Legendary", 9, 100}, {5763, 7, "oWo What", 8, 130}, {5764, 8, "Test", 4, 120}}, true, false, true, 1, 5, 5 };
@@ -148,7 +155,9 @@ map_t playthrough_test = {32, 32,
                           false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                           false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
                           false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-                          false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}};
+                          false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
+                          4,
+                          playthrough_test_entities};
 coord_t playthrough_test_start = {3, 2};
 npc_t playthrough_test_npc ( unsigned int x, unsigned int y ){
     npc_t a = {9107, 988, 7, 3, {{5761, 10, "Legendary", 9, 100}, {5763, 7, "oWo What", 8, 130}, {5764, 8, "Test", 4, 120}}, true, false, true, 1, 5, 5 };
@@ -178,4 +187,17 @@ void init_maps(){
     rogue_npc_master[0] = example_map_npc;
     rogue_npc_master[1] = test_map_npc;
     rogue_npc_master[2] = playthrough_test_npc;
+}
+
+void load_map(int index){
+    master_index = index;
+    cached_map = rogue_map_master[index].mapdat;
+    character_x = rogue_map_master[index].coord.x;
+    character_y = rogue_map_master[index].coord.y;
+    cached_map.num_entities = rogue_map_master[index].mapdat.num_entities;
+    num_entities = rogue_map_master[index].mapdat.num_entities;
+    printf("Loading map %d with start of (%d, %d) and %d entities \n", index, rogue_map_master[index].coord.x, rogue_map_master[index].coord.y, rogue_map_master[index].mapdat.num_entities);
+    for (int i = 0; i < rogue_map_master[index].mapdat.num_entities; i++){
+        entities[i] = rogue_map_master[index].mapdat.entities[i];
+    }
 }

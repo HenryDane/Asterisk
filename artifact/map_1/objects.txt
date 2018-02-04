@@ -1,0 +1,9 @@
+! objects.txt
+! quests_on
+example_map_
+3
+5
+10
+3
+4
+-2
