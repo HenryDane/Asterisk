@@ -8,7 +8,7 @@
 
 #define S_WIDTH 1024
 #define S_HEIGHT 576
-#define NUM_K_TEXTURES 49
+#define NUM_K_TEXTURES 56
 
 #ifndef SDCC
     #include <SFML/Graphics.h>

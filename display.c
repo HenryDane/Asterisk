@@ -25,6 +25,13 @@
 #define FIRE_TEX 44
 #define CRATE_TEX 47
 #define PORTAl_TEX 48
+#define PLANTS_TEX 49
+#define SPLANTS_TEX 50
+#define MACHINERY_TEX 52
+#define ENEMY_TEX 53
+#define WATER_TEX 54
+#define OMACHINERY_TEX 51
+#define FLOOR_ALT_TEX 55
 
 int g_state = 0;
 
@@ -228,20 +235,38 @@ void draw_rogue(){
                     case 1:
                         texid = WALL_TEX;
                         break;
-                    case 2:
-                        texid = TURRET_TEX;
+                    case 2: // plants (passable)
+                        texid = PLANTS_TEX;
                         break;
-                    case 3:
-                        texid = BULLET_TEX;
+                    case 3: // plants (impassable)
+                        texid = SPLANTS_TEX;
                         break;
-                    case 4:
+                    case 4: // impassable machinery
+                        texid = MACHINERY_TEX;
+                        break;
+                    case 5: // npc (impassable)
+                        texid = NPC_TEX;
+                        break;
+                    case 6: // fire
                         texid = FIRE_TEX;
                         break;
-                    case 5:
-                        texid = FERN_TEX;
+                    case 7: // portal
+                        texid = PORTAl_TEX;
                         break;
-                    case 6:
-                        texid = CRATE_TEX;
+                    case 8: // enemy (impassable)
+                        texid = ENEMY_TEX;
+                        break;
+                    case 9: // spawn
+                        texid = SYSTEM_TEX;
+                        break;
+                    case 10: // water
+                        texid = WATER_TEX;
+                        break;
+                    case 11: // overgrown machinery (impassable)
+                        texid = OMACHINERY_TEX;
+                        break;
+                    case 12:
+                        texid = FLOOR_ALT_TEX;
                         break;
                     default:
                         texid = FLOOR_TEX;

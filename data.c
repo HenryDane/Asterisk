@@ -1,3 +1,5 @@
+/*
+
 #include <stdbool.h>
 #include "main.h"
 #include <stdio.h>
@@ -66,3 +68,4 @@ bool build_game_data(){
 }
 
 #endif
+*/

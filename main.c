@@ -8,7 +8,7 @@
 #include "display.h"
 #include "entity.h"
 #include "map.h"
-#include "data.h"
+// #include "data.h"
 
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
@@ -56,14 +56,14 @@ int main(){
     printf("DONE \n");
 
     // init cache_map
-    master_index = 2;
+    master_index = 0;
     load_map(master_index);
 
     num_active_quests = 0; // no active quests
 
     int trade_index = 0; // pointer to trading address
 
-    build_game_data();
+    // build_game_data();
 
     // main loop
     while (k_this_close_request()){

@@ -87,9 +87,7 @@ typedef npc_t (*npc_function_ft) (unsigned int x, unsigned int y); // gets npc a
 typedef struct  {
     unsigned int w; // can be one byte
     unsigned int h; // can be one byte
-    int tile_type [32 * 32]; // can be one byte (if negative then is portal to another area)
-    bool on_fire [32 * 32];
-    bool under_water [32 * 32];
+    int * tile_type; // can be one byte (if negative then is portal to another area)
     int num_entities;
     entity_t * entities;
 } map_t;
