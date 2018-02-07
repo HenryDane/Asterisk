@@ -1,5 +1,6 @@
 #include "main.h"
 #include "display.h"
+#include "map.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,24 +9,15 @@ typedef struct {
     int y;
 } coord;
 
-void copy_npc_t(npc_t a, npc_t t){
-    a.health = t.health;
-    a.id = t.id;
-    a.inventory_size = t.inventory_size;
-    for (int i = 0; i < t.inventory_size; i++){
-        a.inventory[i] = t.inventory[i];
-    }
-    a.is_ablaze = t.is_ablaze;
-    a.is_alive = t.is_alive;
-    a.is_merchant = t.is_merchant;
-    a.quest_id = t.quest_id;
-    a.type = t.type;
-    a.x = t.x;
-    a.y = t.y;
-}
-
 bool check_next_step(int x, int y){
+    // is the player alive?
+    if (health < 0){
+        state = -2;
+        return false;
+    }
+
     if (rogue_npc_master[master_index](x, y).id > 0) {
+        printf("Found NPC! Id: %d Merchant: %d Quest: %d\n", rogue_npc_master[master_index](x, y).id, rogue_npc_master[master_index](x, y).is_merchant, rogue_npc_master[master_index](x, y).quest_id );
         if (!rogue_npc_master[master_index](x, y).is_merchant){
             if (rogue_npc_master[master_index](x, y).quest_id > 0 ){
                 state = 17;  // go to NPC screen for quest/ talk screen
@@ -47,28 +39,27 @@ bool check_next_step(int x, int y){
         }
     }
 
-    // moving to different portals
-    /* if ( cached_map.tile_type[ x + cached_map.w * y ] < -1){
-        master_index = (- cached_map.tile_type[ x + cached_map.w * y ]) - 1;
-        printf("Triggered portal at %d, %d : %d \n", x, y, cached_map.tile_type[ x + cached_map.w * y ]);
-        load_map(master_index);
-        return true;
-    } */
+    // portals first bc PEMDAS
+    if (rogue_portal_master[master_index](x, y).mapid > -1){
+        load_map(rogue_portal_master[master_index](x, y).mapid); // load map and set up
+        character_x = rogue_portal_master[master_index](x, y).x;  // teleport
+        character_y = rogue_portal_master[master_index](x, y).y;
+        return false;
+    }
 
     // handle map stuffs
     switch (cached_map.tile_type[ x + cached_map.w * y ]){
         case 1:
         case 3:
         case 4:
-        case 5:
         case 8:
-        case 10:
+        case 9:
             return false;
+        case 6:
+            health -= (rand() % 100) + 300; // take fire damage
         default:
             return true;
     }
-
-    // portal
 }
 
 void update_entities(){
@@ -87,6 +78,8 @@ void update_entities(){
                 } else if (entities[i].y < character_y) {
                     entities[i].y++;
                 }
+                break;
+            default:
                 break;
         }
     }

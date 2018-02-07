@@ -1,9 +1,10 @@
 ! objects.txt
 ! quests_on
-example_map_
+map_test_
 3
 5
 10
 3
 4
+0
 -2

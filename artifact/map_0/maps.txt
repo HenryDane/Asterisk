@@ -1,4 +1,4 @@
 ! maps.txt
-3
+1
 example_map_
 true

@@ -105,6 +105,14 @@ typedef struct {
     char alignment[16];
 } flavor_text;
 
+typedef struct {
+    int x;
+    int y;
+    int mapid;
+} portal_t;
+
+typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
+
 // map sizing
 #define WIDTH 50
 #define HEIGHT 35
@@ -114,7 +122,7 @@ typedef struct {
 #define S_HEIGHT 576
 
 // number of maps
-#define NUM_MAPS 3
+#define NUM_MAPS 1
 
 // define texture data
 #define NUM_TEXTURES 43
@@ -165,6 +173,7 @@ extern map_t cached_map; // map for use when walkin around, needs to be loaded w
 extern int master_index; // current map id (index inside rogue_map_master
 extern map_master rogue_map_master[ NUM_MAPS ]; // main registry of maps
 extern npc_function_ft rogue_npc_master[NUM_MAPS]; // main registry of NPCs (this is an array of pointers to functions)
+extern portal_function_ft rogue_portal_master[NUM_MAPS];
 
 // quest stuffs
 extern quest_active_t active_quests [NUM_QUESTS_MAX]; // list of active quests

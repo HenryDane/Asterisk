@@ -4,10 +4,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include "kernel/kernel.h"
-//using namespace std;
 
 // texture names
 #define DEBUG_TEX 9
+#define SPAWN_TEX 9
 #define BLACK_TEX 3
 #define HEART_TEX 24
 #define CRITICAL_TEX 28
@@ -32,6 +32,7 @@
 #define WATER_TEX 54
 #define OMACHINERY_TEX 51
 #define FLOOR_ALT_TEX 55
+#define GAME_OVER_TEX 56
 
 int g_state = 0;
 
@@ -55,11 +56,11 @@ void cleardisplay(bool debug){
 }
 
 void draw_quests(){
-
+    // nothing here
 }
 
 void draw_cutscene(){
-
+    // nothing here
 }
 
 void draw_trade( int trade_index ){
@@ -131,7 +132,7 @@ void draw_stats(){
     if (health >= 250){
         k_put_rect(texid, 45, 1);
     } else {
-        k_put_rect(CRITICAL_TEX, 60, 1);
+        k_put_rect(CRITICAL_TEX, 43, 1);
     }
     if (health >= 500){
         k_put_rect(texid, 44, 1);
@@ -244,7 +245,7 @@ void draw_rogue(){
                     case 4: // impassable machinery
                         texid = MACHINERY_TEX;
                         break;
-                    case 5: // npc (impassable)
+                    case 9: // npc (impassable)
                         texid = NPC_TEX;
                         break;
                     case 6: // fire
@@ -256,8 +257,8 @@ void draw_rogue(){
                     case 8: // enemy (impassable)
                         texid = ENEMY_TEX;
                         break;
-                    case 9: // spawn
-                        texid = SYSTEM_TEX;
+                    case 5: // spawn
+                        texid = SPAWN_TEX;
                         break;
                     case 10: // water
                         texid = WATER_TEX;
@@ -347,4 +348,8 @@ void draw_use_item(int trade_index){
 
 void draw_logo(){
     k_put_rects(LOGO_TEX, 0, 0, S_WIDTH, S_HEIGHT);
+}
+
+void draw_game_over(){
+    k_put_rects(GAME_OVER_TEX, 0, 0, S_WIDTH, S_HEIGHT);
 }

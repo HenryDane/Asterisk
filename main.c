@@ -248,7 +248,7 @@ int main(){
         switch(state){
             case -2:
                 // game over?
-                draw_logo();
+                draw_game_over();
                 break;
             case -1:
                 draw_logo();
