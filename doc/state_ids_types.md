@@ -4,6 +4,8 @@ Remember, all IDs **must** be unique
 
 ## Gamestates
 ```
+-2 - Game over
+-1 - Game opening screen
 0 - Main space view (flight, radar-like)
 1 - View 
 2 - Select view
@@ -19,3 +21,18 @@ Remember, all IDs **must** be unique
 18 - Cutscene
 19 - Trading interface
 ```
+
+## Types
+
+### Item Types
+```
+1 - Basic Ration
+2 - Basic Handgun
+3 - Wrench
+4 - Ammuntion Pack
+5 - Grenade
+6 - Book
+7 - Machine Gun
+8 - Rocket Launcher
+9 - Pick
+10 - Medkit

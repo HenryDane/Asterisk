@@ -1,4 +1,6 @@
 # Game Data Format
+** See `doc/alternategdformat.md` for the current format version.**
+
 This is the format of the game data file. This file is divided into multiple sections:
 1. Level data
 2. Item data
