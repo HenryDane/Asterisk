@@ -98,13 +98,6 @@ typedef struct {
     coord_t coord;
 } map_master;
 
-// flavor text
-typedef struct {
-    char personnell[16];
-    int weight;
-    char alignment[16];
-} flavor_text;
-
 typedef struct {
     int x;
     int y;
@@ -122,7 +115,7 @@ typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 #define S_HEIGHT 576
 
 // number of maps
-#define NUM_MAPS 1
+#define NUM_MAPS 5
 
 // define texture data
 #define NUM_TEXTURES 43

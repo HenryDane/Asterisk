@@ -21,19 +21,15 @@ bool check_next_step(int x, int y){
         if (!rogue_npc_master[master_index](x, y).is_merchant){
             if (rogue_npc_master[master_index](x, y).quest_id > 0 ){
                 state = 17;  // go to NPC screen for quest/ talk screen
-                //copy_npc_t(npc_last, rogue_npc_master[master_index](x, y));
                 npc_last = rogue_npc_master[master_index](x , y);
             } else if (rogue_npc_master[master_index](x, y).quest_id < 0) {
                 state = 18; // go to cutscene
-                //copy_npc_t(npc_last, rogue_npc_master[master_index](x, y));
                 npc_last = rogue_npc_master[master_index](x, y);
             }
             return false;
         } else {
             state = 19; // go to merchant mode
-            //copy_npc_t(npc_last, rogue_npc_master[master_index](x, y));
             npc_last = rogue_npc_master[master_index](x, y);
-            //cout << "EXPECTED SIZE: " << rogue_npc_master[master_index](x, y).inventory_size << endl;
             printf("EXPECTED SIZE: %d \n", rogue_npc_master[master_index](x,y).inventory_size);
             return false;
         }
@@ -41,9 +37,8 @@ bool check_next_step(int x, int y){
 
     // portals first bc PEMDAS
     if (rogue_portal_master[master_index](x, y).mapid > -1){
-        load_map(rogue_portal_master[master_index](x, y).mapid); // load map and set up
-        character_x = rogue_portal_master[master_index](x, y).x;  // teleport
-        character_y = rogue_portal_master[master_index](x, y).y;
+        load_teleport(rogue_portal_master[master_index](x, y).mapid, rogue_portal_master[master_index](x, y).x, rogue_portal_master[master_index](x, y).y ); // load map and set up
+        printf("Updating player to %d, %d", rogue_portal_master[master_index](x, y).x, rogue_portal_master[master_index](x, y).y );
         return false;
     }
 
@@ -82,5 +77,31 @@ void update_entities(){
             default:
                 break;
         }
+    }
+}
+
+void load_map(int index){
+    master_index = index;
+    cached_map = rogue_map_master[index].mapdat;
+    character_x = rogue_map_master[index].coord.x;
+    character_y = rogue_map_master[index].coord.y;
+    cached_map.num_entities = rogue_map_master[index].mapdat.num_entities;
+    num_entities = rogue_map_master[index].mapdat.num_entities;
+    printf("Loading map %d with start of (%d, %d) and %d entities \n", index, rogue_map_master[index].coord.x, rogue_map_master[index].coord.y, rogue_map_master[index].mapdat.num_entities);
+    for (int i = 0; i < rogue_map_master[index].mapdat.num_entities; i++){
+        entities[i] = rogue_map_master[index].mapdat.entities[i];
+    }
+}
+
+void load_teleport(int index, int x, int y){
+    master_index = index;
+    cached_map = rogue_map_master[index].mapdat;
+    character_x = x;
+    character_y = y;
+    cached_map.num_entities = rogue_map_master[index].mapdat.num_entities;
+    num_entities = rogue_map_master[index].mapdat.num_entities;
+    printf("Loading map %d with start of (%d, %d) and %d entities \n", index, rogue_map_master[index].coord.x, rogue_map_master[index].coord.y, rogue_map_master[index].mapdat.num_entities);
+    for (int i = 0; i < rogue_map_master[index].mapdat.num_entities; i++){
+        entities[i] = rogue_map_master[index].mapdat.entities[i];
     }
 }

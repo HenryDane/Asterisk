@@ -40,7 +40,7 @@ int state = -1;
 int num_entities = 0;
 entity_t entities[32];
 
-int main(){
+int main(int argc, char *argv[]){
     // initalize rand
     srand (time(NULL));
 
@@ -76,8 +76,8 @@ int main(){
             // close window if needed
             if (k_get_sf_event_type() == sfEvtClosed)
                 sfRenderWindow_close(k_get_window());
-            // check keys (released to avoid repeated keypresses
-            if (k_get_sf_event_type() == sfEvtKeyReleased) {
+            // check keys allow repeats
+            if (k_get_sf_event_type() == sfEvtKeyPressed) {
 #endif // USE_SDCC
                 // handle key presses
                 switch( k_get_key() ){
@@ -188,7 +188,7 @@ int main(){
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d\n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h);
                         break;
                     case sfKeyEqual: // increment map pointer
                         if (k_get_sf_key_shift()){
