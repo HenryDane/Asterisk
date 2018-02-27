@@ -10,6 +10,8 @@
 #include "map.h"
 // #include "data.h"
 
+#define USE_SDCC 1
+
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
 

@@ -41,15 +41,16 @@ int init_displays(void){
 }
 
 void cleardisplay(bool debug){
-    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+//    sfRectangleShape* r = sfRectangleShape_create(); sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     int texid = 0;
+    int i, j;
     if (debug){
         texid = DEBUG_TEX;
     } else {
         texid = BLACK_TEX;
     }
-    for (int i = 0; i < WIDTH; i++){
-        for (int j = 0; j <  HEIGHT; j++){
+    for (i = 0; i < WIDTH; i++){
+        for (j = 0; j <  HEIGHT; j++){
             k_put_rect(texid, i, j);
         }
     }
@@ -65,14 +66,14 @@ void draw_cutscene(){
 
 void draw_trade( int trade_index ){
     // merchant mode;
-    k_put_text("MERCHANT", 0, 0);
     char tim[80];
+    int l = 0;
+    int i;
+    k_put_text("MERCHANT", 0, 0);
     sprintf(tim, "CREDITS: $%d", credits);
     k_put_text(tim, 32, 0);
 
-    int l = 0;
-
-    for (int i = 0; i < npc_last.inventory_size; i++){
+    for (i = 0; i < npc_last.inventory_size; i++){
         switch(npc_last.inventory[i].type){
             case 1:
                 sprintf(tim, "Ration : %s", inventory[i].data);
@@ -157,11 +158,11 @@ void draw_stats(){
 
 void draw_inventory(){
     char tim[80];
+    int i, j;
 
     k_put_text("INVENTORY: ", 36, 6);
 
     // loop inventory
-    int i;
     for(i = 0; i < num_items; i++){
         switch(inventory[i].type){
             case 1:
@@ -207,7 +208,7 @@ void draw_inventory(){
     if (num_active_quests == 0){
         k_put_text("-[No Active Quests]", 36, i + 8);
     } else {
-        for (int j = 0; j < num_active_quests; j++){
+        for (j = 0; j < num_active_quests; j++){
             char tmp[80];
             sprintf(tmp, "%s [%d]", quest_registry[npc_last.quest_id].title, quest_registry[npc_last.quest_id].id);
             k_put_text(tmp, 36, ++i + 8);
@@ -217,10 +218,12 @@ void draw_inventory(){
 
 void draw_rogue(){
     int texid = 0;
-    for (int i = 0; i < HEIGHT; i++){
-        for (int j = 0; j < HEIGHT; j++){
+    int i, j, tdat;
+
+    tdat = -1;
+    for (i = 0; i < HEIGHT; i++){
+        for (j = 0; j < HEIGHT; j++){
             if (rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id <= 0) {
-                int tdat = -1;
                 if (((i - 15 + character_x) >= 0 && (i - 15 + character_x ) < cached_map.w) &&
                     ((j - 15 + character_y) >= 0 && (j - 15 + character_y ) < cached_map.h)) {
                     tdat = cached_map.tile_type[(i - 15 + character_x)  + (j - 15 + character_y) * cached_map.w];
@@ -287,7 +290,7 @@ void draw_rogue(){
     draw_stats();
     draw_inventory();
 
-    for(int i = 0; i < num_entities; i++){
+    for(i = 0; i < num_entities; i++){
         k_put_rect(CRATE_TEX, 15 - character_x + entities[i].x, 15 - character_y + entities[i].y);
     }
 
@@ -296,11 +299,11 @@ void draw_rogue(){
 
 void draw_use_item(int trade_index){
     char tim[80];
+    int i;
 
     k_put_text("Select Item: ", 0, 0);
 
     // loop inventory
-    int i;
     for(i = 0; i < num_items; i++){
         switch(inventory[i].type){
             case 1:
