@@ -8,7 +8,7 @@
 #include "display.h"
 #include "entity.h"
 #include "map.h"
-// #include "data.h"
+#include "quest.h"
 
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
@@ -24,6 +24,9 @@ int character_x = 0;
 int character_y = 0;
 
 int selected_object = 0;
+
+double time_count;
+double bullet_timer;
 
 item_t inventory[16] = {{0,2,false,"Glock    ", 5},
                      {1,1,false,"Generic  ", 7},
@@ -202,37 +205,23 @@ int main(int argc, char *argv[]){
                         load_map(master_index);
                         break;
                     case sfKeyY:
-                        if (state == 17) {
-                            if (num_active_quests + 1 < NUM_QUESTS_MAX){
-                                // search for copies
-                                bool found = false;
-                                for (int i = 1; i < num_active_quests + 1; i++){
-                                    printf("LOOKED: NPCQID: %d AQID: %d \n", quest_registry[npc_last.quest_id].id, active_quests[i].quest.id);
-                                    if (quest_registry[npc_last.quest_id].id == active_quests[i].quest.id){
-                                        found = true;
-                                        printf("! DUPLICATE FOUND, NPC ID: %d QUEST ID: %d INDEX: %d \n", npc_last.id, quest_registry[npc_last.quest_id].id, i);
-                                        break;
-                                    }
-                                }
-
-                                if (!found){
-                                    // if no duplicates, add to quest list
-                                    printf("NO DUPL, adding \n");
-                                    active_quests[++num_active_quests] = (quest_active_t) {quest_registry[npc_last.quest_id], 0, false};
-                                    state = 16;
-                                } else {
-                                    // complete check
-                                    printf("DUPL, not adding \n");
-                                    state = 20;
-                                    // increment check
-                                }
-                            }
-                        }
                         break;
                     case sfKeyN:
                         if (state == 17 || state == 18 || state == 19 || state == 21) {
                             state = 16;
                         }
+                        break;
+                    case sfKeyUp:
+                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 0, -1, 1};
+                        break;
+                    case sfKeyDown:
+                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 0, 1, 1};
+                        break;
+                    case sfKeyLeft:
+                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, -1, 0, 1};
+                        break;
+                    case sfKeyRight:
+                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 1, 0, 1};
                         break;
                     default:
                         break;
@@ -258,7 +247,7 @@ int main(int argc, char *argv[]){
                 break;
             case 16:
                 draw_rogue();
-                //update_entities();
+                update_entities();
                 break;
             case 17:
                 // quest
@@ -272,8 +261,8 @@ int main(int argc, char *argv[]){
                 draw_trade(trade_index);
                 break;
             case 20:
-                sprintf(tmp, "%s", quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0]);
-                k_put_text(tmp, 0, 96);
+                //sprintf(tmp, "%s", quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0]);
+                //k_put_text(tmp, 0, 96);
                 break;
             case 21:
                 draw_use_item(trade_index);

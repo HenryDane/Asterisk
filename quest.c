@@ -1,30 +1,19 @@
-#include "main.h"
+#define QUEST_STR_DAT_LEN 5
 
-bool validate_empty(){
-    return true;
+char quest_str_dat [ QUEST_STR_DAT_LEN ] = "HELLO";
+
+int get_quest_line(int quest_id){
+    return 0;
 }
 
-void assign_empty(){
-    // do nothing
+int get_quest_visual(int quest_id){
+    return 0;
 }
 
-quest_dialogue_t example_dialogue_1[3] = {{"Hello person", 12, 0}, {"Hello Example NPC", 12, 0}, {"Hello world", 12, 0}};
-quest_dialogue_t example_dialogue_2[3] = {{"Hello person (2_", 16, 0}, {"Hello Example NPC.", 13, 0}, {"Hello world-", 13, 0}};
-quest_dialogue_t example_dialogue_3[3] = {{"Hello person .3", 15, 0}, {"Hello Example NPC..", 14, 0}, {"Hello world--", 14, 0}};
+unsigned char get_quest_char_dat(unsigned int position){
+    return 0;
+}
 
-quest_assign_ft ex_asn_func[3] = {assign_empty, assign_empty, assign_empty};
+void set_quest_char_dat(unsigned char dat, unsigned int position){
 
-quest_validate_ft ex_val_func[3] = {validate_empty, validate_empty, validate_empty};
-
-quest_dialogue_block_t example_quest_dialogue_block [3] = { {0, example_dialogue_1, 3}, {0, example_dialogue_2, 3}, {0, example_dialogue_3, 3}};
-
-quest_t example_quest = {1029, "Example Quest", 13, "Example NPC", 11, example_quest_dialogue_block, ex_val_func, ex_asn_func, 3, 10, 10, {192, 2, true, "ex_quest", 8}};
-
-quest_t quest_registry[NUM_QUESTS + 1];
-
-quest_active_t active_quests[ NUM_QUESTS_MAX ] = {{0, "Null Quest", 10, "Null", 4, example_quest_dialogue_block, ex_val_func, ex_asn_func, 3, 10, 10, {192, 2, true, "ex_quest", 8}}, 1000, true};
-
-void init_quests(){
-    quest_registry[0] = example_quest;
-    quest_registry[1] = example_quest;
 }

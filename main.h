@@ -10,6 +10,8 @@ typedef struct {
     int id;
     int x;
     int y;
+    int vx;
+    int vy;
     int type;
 } entity_t;
 
@@ -130,7 +132,7 @@ typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 #define TIME_ROCKET 200
 
 // max entities
-#define MAX_ENTITIES 64
+#define MAX_ENTITIES 32
 
 // timing
 extern double timerval;

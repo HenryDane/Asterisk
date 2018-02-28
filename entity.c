@@ -58,10 +58,11 @@ bool check_next_step(int x, int y){
 }
 
 void update_entities(){
-    for (int i = 0; i < 1; i++){
+    for (int i = 0; i < num_entities; i++){
+        printf("updating entity %d at (%d, %d) \n", i, entities[i].x, entities[i].y);
+        int tile_type = cached_map.tile_type[entities[i].x +(entities[i].y * cached_map.w)];
         switch(entities[i].type){
-            case 0:
-                printf("updating entity %d at (%d, %d) \n", i, entities[i].x, entities[i].y);
+            case 0: // follower
                 if (entities[i].x > character_x){
                     entities[i].x--;
                 } else if (entities[i].x < character_x) {
@@ -73,6 +74,23 @@ void update_entities(){
                 } else if (entities[i].y < character_y) {
                     entities[i].y++;
                 }
+                break;
+            case 1: // bullet from character
+                if (entities[i].x > cached_map.w || entities[i].x < 0 || entities[i].y > cached_map.h || entities[i].y < 0 ||
+                    tile_type == 1 || tile_type == 3 || tile_type == 4 || tile_type == 8 || tile_type == 9) {
+                    // delete this entity
+                    for (int j = i; j < num_entities; j++){
+                        if (j + 1 < num_entities){
+                            entities[j] = entities[j + 1];
+                        } else {
+                            break;
+                        }
+                    }
+                    num_entities--;
+                    break;
+                }
+                entities[i].x += entities[i].vx;
+                entities[i].y += entities[i].vy;
                 break;
             default:
                 break;

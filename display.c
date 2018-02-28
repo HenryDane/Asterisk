@@ -1,5 +1,5 @@
 #include "main.h"
-#include "quest.h"
+//#include "quest.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -200,7 +200,7 @@ void draw_inventory(){
         k_put_text(tim, 37, i + 8);
     }
     i++;
-
+/*
     k_put_text("QUESTS: ", 36, i + 8);
 
     i++;
@@ -213,6 +213,7 @@ void draw_inventory(){
             k_put_text(tmp, 36, ++i + 8);
         }
     }
+    */
 }
 
 void draw_rogue(){
