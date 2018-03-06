@@ -19,47 +19,9 @@ typedef struct {
     int id;
     int type;
     bool unuseable;
-    char data[10];
+    char data[16];
     int data_len;
 } item_t;
-
-// does not yet support giving/taking items
-typedef struct {
-    char * data;
-    int dat_len;
-    int image_id; // -1 for black, 0 for no change
-} quest_dialogue_t;
-
-// function pointer typedefs
-typedef bool (*quest_validate_ft) (void); // checks if step is complete
-typedef void (*quest_assign_ft) (void); // assigns step (may do nothing)
-
-typedef struct {
-    int id; // must be positive
-    quest_dialogue_t * dialogue_list; // length of list must be same as num_dialogue
-    int num_dialogue; //
-} quest_dialogue_block_t;
-
-typedef struct {
-    int id;
-    char title[32];
-    int title_len;
-    char issuer[32];
-    int issuer_len;
-    quest_dialogue_block_t * dialogue;
-    quest_validate_ft * validation_functions; // length of list must be same as num_stages
-    quest_assign_ft * assignment_functions; // length of list must be same as num_stages
-    int num_stages;
-    int reward_exp;
-    int reward_credits;
-    item_t reward_item;
-} quest_t;
-
-typedef struct {
-    quest_t quest;
-    int block_index;
-    bool complete; // if true, will be removed at some point
-} quest_active_t;
 
 typedef struct {
     int id;
@@ -106,6 +68,25 @@ typedef struct {
     int mapid;
 } portal_t;
 
+
+typedef struct {
+    int id;
+    char * title; // assemble to char title [len];
+    char * issuer; // assemble to char issuer [len];
+    int stages;
+    int exp_reward;
+    int credit_reward;
+    item_t * item_reward;
+    int * data;
+    int * verify_id;
+    int * action_id;
+} mquest_t;
+
+typedef struct {
+    mquest_t quest;
+    int position;
+} mquest_a_t;
+
 typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 
 // map sizing
@@ -133,6 +114,8 @@ typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 
 // max entities
 #define MAX_ENTITIES 32
+
+#define QUEST_STR_DAT_LEN 160
 
 // timing
 extern double timerval;
@@ -170,10 +153,10 @@ extern map_master rogue_map_master[ NUM_MAPS ]; // main registry of maps
 extern npc_function_ft rogue_npc_master[NUM_MAPS]; // main registry of NPCs (this is an array of pointers to functions)
 extern portal_function_ft rogue_portal_master[NUM_MAPS];
 
-// quest stuffs
-extern quest_active_t active_quests [NUM_QUESTS_MAX]; // list of active quests
+extern mquest_t quest_registry[ NUM_QUESTS_MAX + 1];
 extern int num_active_quests;
-extern quest_t quest_registry[ NUM_QUESTS + 1 ];
+extern mquest_a_t quest_a_registry[ NUM_QUESTS_MAX + 1];
+extern char quest_str_dat [ QUEST_STR_DAT_LEN ];
 
 // cutscene stuffs
 // nothing to see yet

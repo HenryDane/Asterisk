@@ -28,9 +28,9 @@ int selected_object = 0;
 double time_count;
 double bullet_timer;
 
-item_t inventory[16] = {{0,2,false,"Glock    ", 5},
-                     {1,1,false,"Generic  ", 7},
-                     {2,3,false,"Glock    ", 5}};
+item_t inventory[16] = {{0,2,false," T4", 3},
+                        {1,1,false," 4K Cal.", 8},
+                        {2,3,false," Electric", 9}};
 int num_items = 3;
 
 int num_active_quests = 0;
@@ -49,6 +49,7 @@ int main(int argc, char *argv[]){
 
     // because we need to do this dont forget ok??
     init_maps();
+    init_quests();
 
     // set up graphics
     k_init_gfx();
@@ -65,8 +66,6 @@ int main(int argc, char *argv[]){
     num_active_quests = 0; // no active quests
 
     int trade_index = 0; // pointer to trading address
-
-    // build_game_data();
 
     // main loop
     while (k_this_close_request()){
@@ -171,43 +170,59 @@ int main(int argc, char *argv[]){
                                 printf("failed array bounds check\n");
                             }
                         } else if (state == 18 || state == 17) {
-                            state = 16;
-                        } else if (state == 21){
+                            state = 16; // leave cutscene and (old) quest mode
+                        } else if (state == 21){ // use item
                             if (trade_index >= 0 && trade_index < num_items){
+                                bool erase = false;
                                 switch (inventory[trade_index].type){
                                     case 10: // medkit
                                         health += 250;
+                                    case 1: // ration
+                                        health += (rand() % 4) + 1;
+                                        erase = true;
                                         break;
                                     default:
                                         break;
                                 }
 
                                 // remove item
-                                for (int i = trade_index; i < num_items; i++){
-                                    inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+                                if (erase){
+                                    for (int i = trade_index; i < num_items; i++){
+                                        inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+                                    }
+                                    if (num_items > 0) num_items --;
                                 }
-                                if (num_items > 0) num_items --;
                             }
                         }
                         break;
                     case sfKeyTab:
                         printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h);
                         break;
-                    case sfKeyEqual: // increment map pointer
-                        if (k_get_sf_key_shift()){
-                            master_index ++;
-                        }
+                    case sfKeyEqual: // increment map pointer (changed from + so shift key can be unused)
+                        if (master_index + 1 >= 0 && master_index + 1 < NUM_MAPS) master_index++; // pointer safety first
                         break;
                     case sfKeyDash: // decrement map pointer
-                        master_index--;
+                        if (master_index - 1 >= 0 && master_index - 1 < NUM_MAPS) master_index--; // pointer safety first
                         break;
                     case sfKeyBack: // set up changes
                         load_map(master_index);
                         break;
                     case sfKeyY:
+                        if (state == 27) {
+                            if (!searchQuest(npc_last.quest_id)){ // if quest is not active active
+                                quest_a_registry[num_active_quests].quest = quest_registry[npc_last.quest_id];
+                                quest_a_registry[num_active_quests++].position = 0;
+                                printf("Added quest %d!\n", quest_a_registry[num_active_quests - 1].quest.id);
+                                state = 16;
+                            } else {
+                                printf("Quest %d already active \n", npc_last.quest_id);
+                                state = 29; // quest add fail
+                            }
+                        }
                         break;
                     case sfKeyN:
-                        if (state == 17 || state == 18 || state == 19 || state == 21) {
+                        if (state == 17 || state == 18 || state == 19 || state == 21 || state == 27 || state == 28 ||
+                            state == 29) {
                             state = 16;
                         }
                         break;
@@ -223,9 +238,8 @@ int main(int argc, char *argv[]){
                     case sfKeyRight:
                         if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 1, 0, 1};
                         break;
-                    default:
+                    default: // do nothing (undefined key)
                         break;
-                        // do nothing
                 }
 #ifndef USE_SDCC
             }
@@ -233,48 +247,52 @@ int main(int argc, char *argv[]){
         }
 
         char tmp[80];
-        // draw screen and do stuff
-        switch(state){
+        char tmpalt[80];
+        switch(state){  // draw screen and do stuff
             case -2:
                 // game over?
                 draw_game_over();
                 break;
             case -1:
                 draw_logo();
+                // draw *all* the textures
                 for (int i = 0; i < NUM_K_TEXTURES; i++){
-                    k_put_rect(i, i, (i > S_WIDTH / 16) ? 1 : 0);
+                    k_put_rect(i, i % 63, (i > 62) ? 1 : 0); // hack that will last to ~126 textures
                 }
                 break;
             case 16:
-                draw_rogue();
-                update_entities();
+                draw_rogue(); // draw scene
+                update_entities(); // update the entities (but dont time them lmfao)
                 break;
-            case 17:
-                // quest
-                k_put_text("QUEST", 0, 0);
+            case 27: // display quest add request
+                sprintf(tmp, "NPC [%s] is offering quest %s, accept? [Y/N]", quest_registry[npc_last.quest_id].issuer, quest_registry[npc_last.quest_id].title);
+                k_put_text(tmp, 0, 0);
                 break;
-            case 18:
-                // cutscene
+            case 28: // failed to add the quest
+                state = 29;
+                k_put_text("Oh! Silly me! You already have that quest active!", 0, 0);
+                k_put_text("Why would you want to have to do it a second time?", 0, 1);
+                break;
+            case 29: // quest active, display current position
+                sprintf(tmp, "Quest ID: %d Position: %d", npc_last.quest_id, quest_a_registry[npc_last.quest_id].position);
+                k_put_text(tmp, 0, 0);
+                break;
+            case 18: // cutscene
                 k_put_text("CUTSCENE", 0, 0);
                 break;
-            case 19:
+            case 19: // trading menu
                 draw_trade(trade_index);
                 break;
-            case 20:
-                //sprintf(tmp, "%s", quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0]);
-                //k_put_text(tmp, 0, 96);
-                break;
-            case 21:
+            case 21: // item use menu
                 draw_use_item(trade_index);
                 break;
             default:
-                printf("Intercepted bad state %d /n", state);
+                printf("Intercepted bad state %d \n", state);
                 state = 16; // go to rugue to cache problems
                 cleardisplay(false);
                 break;
         }
 
-        //sfRenderWindow_display(window);
         k_display();
     }
 
