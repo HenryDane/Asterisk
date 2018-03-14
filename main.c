@@ -1,16 +1,13 @@
 //#include <SFML/Graphics.h>
 #include <stdio.h>
 #include <time.h>
+// #include <stdbool.h>   <-- fml
 #include <stdlib.h>
 #include <string.h>
-#include "kernel/kernel.h"
 #include "main.h"
 #include "display.h"
 #include "entity.h"
 #include "map.h"
-// #include "data.h"
-
-#define USE_SDCC 1
 
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
@@ -34,7 +31,7 @@ int num_items = 3;
 
 int num_active_quests = 0;
 
-npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };  // initalize npc for states 17, 18, 19
+npc_t npc_last; // = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };  // initalize npc for states 17, 18, 19
 
 // game state (see documentation)
 int state = -1;
@@ -42,7 +39,18 @@ int state = -1;
 int num_entities = 0;
 entity_t entities[32];
 
-int main(int argc, char *argv[]){
+int main( void ){
+    int trade_index = 0; // pointer to trading address
+    char tmp[80];
+	char tmpalt[80];
+    int i;
+    quest_active_t qat;
+    item_t null_inven[] = {{{-1, 0, ' ', 0}}};
+
+	npc_last.id = -1;
+	npc_last.health = -1;
+	memcpy(&npc_last.inventory, &null_inven, sizeof(item_t));
+
     // initalize rand
     srand (time(NULL));
 
@@ -63,8 +71,6 @@ int main(int argc, char *argv[]){
 
     num_active_quests = 0; // no active quests
 
-    int trade_index = 0; // pointer to trading address
-
     // build_game_data();
 
     // main loop
@@ -74,21 +80,14 @@ int main(int argc, char *argv[]){
 
         // handle events
         while (k_get_events()){
-#ifndef USE_SDCC // ugly hack #109873276
-            // close window if needed
-            if (k_get_sf_event_type() == sfEvtClosed)
-                sfRenderWindow_close(k_get_window());
-            // check keys allow repeats
-            if (k_get_sf_event_type() == sfEvtKeyPressed) {
-#endif // USE_SDCC
                 // handle key presses
                 switch( k_get_key() ){
-                    case sfKeyEscape:
+                    case /*sfKeyEscape*/ 1:
                         return 0;
-                    case sfKeyNum5:
+                    case /*sfKeyNum5*/ 132:
                         state = 16; // rouge like
                         break;
-                    case sfKeyQ:
+                    case /*sfKeyQ*/ 81:
                         if (state == 19) {
                             if (trade_index > 0) trade_index--;
                         } else if (state == 16){
@@ -100,7 +99,7 @@ int main(int argc, char *argv[]){
                             }
                         }
                         break;
-                    case sfKeyE:
+                    case /*sfKeyE*/ 69:
                         if (state == 19) {
                             if (trade_index + 1< npc_last.inventory_size) {
                                 trade_index++;
@@ -110,7 +109,7 @@ int main(int argc, char *argv[]){
                                 trade_index++;
                             }
                         }
-                    case sfKeyW:
+                    case /*sfKeyW*/ 87:
                         if (state == 16) {
                             update_entities();
                             if (character_y - 1 >= 0 && check_next_step(character_x, character_y - 1)) {
@@ -118,7 +117,7 @@ int main(int argc, char *argv[]){
                             }
                         }
                         break;
-                    case sfKeyA:
+                    case /*sfKeyA*/ 65:
                         if (state == 16) {
                             update_entities();
                             if (character_x - 1 >= 0  && check_next_step(character_x - 1, character_y)) {
@@ -126,7 +125,7 @@ int main(int argc, char *argv[]){
                             }
                         }
                         break;
-                    case sfKeyS:
+                    case /*sfKeyS*/ 83:
                         if (state == 16) {
                             update_entities();
                             if (character_y + 1 < cached_map.h  && check_next_step(character_x, character_y + 1)) {
@@ -134,7 +133,7 @@ int main(int argc, char *argv[]){
                             }
                         }
                         break;
-                    case sfKeyD:
+                    case /*sfKeyD*/ 68:
                         if (state == 16) {
                             update_entities();
                             if (character_x + 1 < cached_map.w  && check_next_step(character_x + 1, character_y)){
@@ -142,12 +141,12 @@ int main(int argc, char *argv[]){
                             }
                         }
                         break;
-                    case sfKeySpace:
+                    case /*sfKeySpace*/ 32:
                         if (state == -1){
                             state = 16;
                         }
                         break;
-                    case sfKeyReturn:
+                    case /*sfKeyReturn*/ 10:
                         if (state == 19){
                             if (trade_index >= 0 && trade_index < npc_last.inventory_size ){
                                 if (num_items < 16){
@@ -183,27 +182,28 @@ int main(int argc, char *argv[]){
 
                                 // remove item
                                 for (int i = trade_index; i < num_items; i++){
-                                    inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+                                    //inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+									memcpy(&inventory[i], &inventory[(i + 1 < num_items) ? i + 1 : i], sizeof(item_t));
                                 }
                                 if (num_items > 0) num_items --;
                             }
                         }
                         break;
-                    case sfKeyTab:
+                    case /*sfKeyTab*/ 9:
                         printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h);
                         break;
-                    case sfKeyEqual: // increment map pointer
+                    case /*sfKeyEqual*/ 61: // increment map pointer
                         if (k_get_sf_key_shift()){
                             master_index ++;
                         }
                         break;
-                    case sfKeyDash: // decrement map pointer
+                    case /*sfKeyDash*/ 45: // decrement map pointer
                         master_index--;
                         break;
-                    case sfKeyBack: // set up changes
+                    case /*sfKeyBack*/ 127: // set up changes
                         load_map(master_index);
                         break;
-                    case sfKeyY:
+                    case /*sfKeyY*/ 89:
                         if (state == 17) {
                             if (num_active_quests + 1 < NUM_QUESTS_MAX){
                                 // search for copies
@@ -220,7 +220,13 @@ int main(int argc, char *argv[]){
                                 if (!found){
                                     // if no duplicates, add to quest list
                                     printf("NO DUPL, adding \n");
-                                    active_quests[++num_active_quests] = (quest_active_t) {quest_registry[npc_last.quest_id], 0, false};
+
+                                    //qat.quest = quest_registry[npc_last.quest_id];
+									memcpy(&qat.quest, &quest_registry[npc_last.quest_id], sizeof(quest_t));
+                                    qat.block_index = 0;
+                                    qat.complete = false;
+                                    memcpy(&active_quests[++num_active_quests], &qat, sizeof(quest_active_t));
+                                    //(quest_active_t) {quest_registry[npc_last.quest_id], 0, false};
                                     state = 16;
                                 } else {
                                     // complete check
@@ -231,7 +237,7 @@ int main(int argc, char *argv[]){
                             }
                         }
                         break;
-                    case sfKeyN:
+                    case /*sfKeyN*/ 78:
                         if (state == 17 || state == 18 || state == 19 || state == 21) {
                             state = 16;
                         }
@@ -240,12 +246,9 @@ int main(int argc, char *argv[]){
                         break;
                         // do nothing
                 }
-#ifndef USE_SDCC
-            }
-#endif // USE_SDCC
+
         }
 
-        char tmp[80];
         // draw screen and do stuff
         switch(state){
             case -2:
@@ -254,7 +257,7 @@ int main(int argc, char *argv[]){
                 break;
             case -1:
                 draw_logo();
-                for (int i = 0; i < NUM_K_TEXTURES; i++){
+                for (i = 0; i < NUM_K_TEXTURES; i++){
                     k_put_rect(i, i, (i > S_WIDTH / 16) ? 1 : 0);
                 }
                 break;
@@ -274,7 +277,8 @@ int main(int argc, char *argv[]){
                 draw_trade(trade_index);
                 break;
             case 20:
-                sprintf(tmp, "%s", quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0]);
+				memcpy(&tmpalt, &quest_registry[npc_last.quest_id].dialogue[active_quests[0].block_index].dialogue_list[0], 10);
+                sprintf(tmp, "%s", tmpalt);
                 k_put_text(tmp, 0, 96);
                 break;
             case 21:

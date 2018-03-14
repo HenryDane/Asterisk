@@ -2,8 +2,8 @@
 #include "quest.h"
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
-#include "kernel/kernel.h"
+//#include <stdbool.h>
+// #include "kernel/kernel.h"
 
 // texture names
 #define DEBUG_TEX 9

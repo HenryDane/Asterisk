@@ -1,5 +1,12 @@
-//#include <SFML/Graphics.h>
-#include <stdbool.h>
+extern /*__LIB__ __FASTCALL__*/ void k_put_text(char * stringin, int x, int y);
+extern /*__LIB__ __FASTCALL__*/ void k_put_rect(int tex_id, int x, int y);
+extern /*__LIB__ __FASTCALL__*/ void k_put_rects(int tex_id, int x, int y, int w, int h);
+
+#define NUM_K_TEXTURES 66
+
+typedef enum{
+    true = 1, false = 0
+} bool;
 
 typedef struct {
     int x;
@@ -29,6 +36,7 @@ typedef struct {
 } quest_dialogue_t;
 
 // function pointer typedefs
+// because sccz80 is
 typedef bool (*quest_validate_ft) (void); // checks if step is complete
 typedef void (*quest_assign_ft) (void); // assigns step (may do nothing)
 
@@ -133,8 +141,8 @@ typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 #define MAX_ENTITIES 64
 
 // timing
-extern double timerval;
-extern double time_entity;
+extern float timerval;
+extern float time_entity;
 
 // character attrs
 extern int character_x;
