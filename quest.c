@@ -10,7 +10,7 @@ item_t quest_1_item[] = {{14523, 5, true, "Test Reward", 16}};
 mquest_t quest_1 = {1,
                     "Test Quest",
                     "Test Issuer",
-                    2,
+                    6,
                     1000,
                     5000,
                     quest_1_item,

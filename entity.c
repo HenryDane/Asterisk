@@ -27,8 +27,26 @@ bool check_next_step(int x, int y){
                 if (searchQuest(npc_last.quest_id)){
                     state = 28; // we have our quest. Here we go!!
 
-                    // logic for incrementing quest position goes here
+                    // where is it in the registry?
+                    int i = 0;
+                    for ( ; i < num_active_quests; i++){
+                        if (quest_a_registry[i].quest.id == npc_last.quest_id) break;
+                    }
 
+                    // exit test
+                    if (quest_a_registry[i].position >= quest_a_registry[i].quest.stages){
+                        printf("Done with quest \n");
+                        state = 30; // quest complete
+                    } else {
+                        // logic for incrementing quest position goes here
+                        switch (quest_a_registry[i].quest.verify_id[quest_a_registry[i].position]){
+                            case 0: // nothing
+                                quest_a_registry[i].position++;
+                                break;
+                            default:
+                                printf("Unable to continue with verification value %d \n", quest_a_registry[i].quest.verify_id[quest_a_registry[i].position]);
+                        }
+                    }
                 } else {
                     state = 27; // go through quest add interaction
                 }
@@ -124,7 +142,7 @@ void update_entities(){
 
                 // check for entity collisions
                 for (int j = 0; j < num_entities; j++){
-                    if (entities[i].x == entities[j].x && entities[i].y == entities[j].y){
+                    if (entities[i].x == entities[j].x && entities[i].y == entities[j].y && entities[i].id != entities[j].id){
                         for (int k = i; k < num_entities; k++){
                             entities[k] = entities[(k + 1 < num_items) ? k + 1 : k];
                         }

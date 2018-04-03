@@ -43,7 +43,7 @@ int state = -1;
 int num_entities = 0;
 entity_t entities[32];
 
-int main(int argc, char *argv[]){
+int main( ){
     // initalize rand
     srand (time(NULL));
 
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]){
                             } else {
                                 printf("failed array bounds check\n");
                             }
-                        } else if (state == 18 || state == 17) {
+                        } else if (state == 18 || state == 17 || state == 30) {
                             state = 16; // leave cutscene and (old) quest mode
                         } else if (state == 21){ // use item
                             if (trade_index >= 0 && trade_index < num_items){
@@ -218,6 +218,8 @@ int main(int argc, char *argv[]){
                                 printf("Quest %d already active \n", npc_last.quest_id);
                                 state = 29; // quest add fail
                             }
+                        } else if (state == 29){
+
                         }
                         break;
                     case sfKeyN:
@@ -247,7 +249,7 @@ int main(int argc, char *argv[]){
         }
 
         char tmp[80];
-        char tmpalt[80];
+//        char tmpalt[80];
         switch(state){  // draw screen and do stuff
             case -2:
                 // game over?
@@ -276,6 +278,9 @@ int main(int argc, char *argv[]){
             case 29: // quest active, display current position
                 sprintf(tmp, "Quest ID: %d Position: %d", npc_last.quest_id, quest_a_registry[npc_last.quest_id].position);
                 k_put_text(tmp, 0, 0);
+                break;
+            case 30:
+                k_put_text("Done", 0, 0);
                 break;
             case 18: // cutscene
                 k_put_text("CUTSCENE", 0, 0);

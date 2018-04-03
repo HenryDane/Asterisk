@@ -7,3 +7,4 @@ void draw_rogue();
 void draw_logo();
 void draw_trade(int trade_index);
 void draw_use_item(int trade_index);
+void draw_game_over(void);
