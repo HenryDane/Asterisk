@@ -1,5 +1,5 @@
 //#include <SFML/Graphics.h>
-#include <stdio.h>
+#include <stdio.h> // rand()
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +20,9 @@ int credits = 1000;
 int fuel = 10000;
 int score = 0;
 
+int ship_x = 20;
+int ship_y = 20;
+
 int character_x = 0;
 int character_y = 0;
 
@@ -27,6 +30,34 @@ int selected_object = 0;
 
 double time_count;
 double bullet_timer;
+
+// engine data
+int flux = 500;
+int fuel_r = 500;
+int durability = 500;
+int response = 500;
+int flux_clamp = 1000;
+int emission_clamp = 1000;
+int themal_clamp = 1000;
+
+int sector_s = 0;
+int sector_x = 0;
+int sector_y = 0;
+
+int level = 0;
+int location = 0;
+
+int e1_g = 8;
+int e1_y = 9;
+int e2_g = 8;
+int e2_y = 9;
+int e3_g = 8;
+int e3_y = 9;
+int e4_g = 8;
+int e4_y = 9;
+int ticks_for_warp;
+
+int facing = 0;
 
 item_t inventory[16] = {{0,2,false," T4", 3},
                         {1,1,false," 4K Cal.", 8},
@@ -67,6 +98,10 @@ int main( ){
 
     int trade_index = 0; // pointer to trading address
 
+    int jump_x = 0;
+    int jump_y = 0;
+    int jump_s = 0;
+
     // main loop
     while (k_this_close_request()){
         // clean texture
@@ -88,6 +123,12 @@ int main( ){
                     case sfKeyNum5:
                         state = 16; // rouge like
                         break;
+                    case sfKeyNum1:
+                        state = 1;
+                        break;
+                    case sfKeyNum2:
+                        state = 2;
+                        break;
                     case sfKeyQ:
                         if (state == 19) {
                             if (trade_index > 0) trade_index--;
@@ -98,6 +139,10 @@ int main( ){
                             if (trade_index > 0) {
                                 trade_index--;
                             }
+                        } else if (state == 1){
+                            jump_s++;
+                            if (jump_s > 3) jump_s = 0;
+                            if (jump_s < 0) jump_s = 3;
                         }
                         break;
                     case sfKeyE:
@@ -109,6 +154,10 @@ int main( ){
                             if (trade_index + 1 < num_items) {
                                 trade_index++;
                             }
+                        } else if (state == 1){
+                            jump_s--;
+                            if (jump_s > 3) jump_s = 0;
+                            if (jump_s < 0) jump_s = 3;
                         }
                     case sfKeyW:
                         if (state == 16) {
@@ -116,6 +165,10 @@ int main( ){
                             if (character_y - 1 >= 0 && check_next_step(character_x, character_y - 1)) {
                                 character_y--;
                             }
+                        } else if (state == 1){
+                            jump_y--;
+                            if (jump_y > 9) jump_y = 9;
+                            if (jump_y < 0) jump_y = 0;
                         }
                         break;
                     case sfKeyA:
@@ -124,6 +177,10 @@ int main( ){
                             if (character_x - 1 >= 0  && check_next_step(character_x - 1, character_y)) {
                                     character_x--;
                             }
+                        } else if (state == 1){
+                            jump_x--;
+                            if (jump_x > 9) jump_x = 9;
+                            if (jump_x < 0) jump_x = 0;
                         }
                         break;
                     case sfKeyS:
@@ -132,6 +189,10 @@ int main( ){
                             if (character_y + 1 < cached_map.h  && check_next_step(character_x, character_y + 1)) {
                                 character_y++;
                             }
+                        } else if (state == 1){
+                            jump_y++;
+                            if (jump_y > 9) jump_y = 9;
+                            if (jump_y < 0) jump_y = 0;
                         }
                         break;
                     case sfKeyD:
@@ -140,6 +201,10 @@ int main( ){
                             if (character_x + 1 < cached_map.w  && check_next_step(character_x + 1, character_y)){
                                 character_x++;
                             }
+                        } else if (state == 1){
+                            jump_x++;
+                            if (jump_x > 9) jump_x = 9;
+                            if (jump_x < 0) jump_x = 0;
                         }
                         break;
                     case sfKeySpace:
@@ -193,6 +258,12 @@ int main( ){
                                     if (num_items > 0) num_items --;
                                 }
                             }
+                        } else if (state == 1){
+                            state = 3;
+                            sector_x = jump_x;
+                            sector_y = jump_y;
+                            sector_s = jump_s;
+                            ticks_for_warp = jump_x * 2 + jump_y * 2 + jump_s * 3 + (rand() % 20);
                         }
                         break;
                     case sfKeyTab:
@@ -249,7 +320,6 @@ int main( ){
         }
 
         char tmp[80];
-//        char tmpalt[80];
         switch(state){  // draw screen and do stuff
             case -2:
                 // game over?
@@ -261,6 +331,26 @@ int main( ){
                 for (int i = 0; i < NUM_K_TEXTURES; i++){
                     k_put_rect(i, i % 63, (i > 62) ? 1 : 0); // hack that will last to ~126 textures
                 }
+                break;
+            case 2:
+                draw_engine_config();
+                break;
+            case 1:
+                draw_prewarp(jump_x, jump_y, jump_s);
+                break;
+            case 3:
+                draw_warp(jump_x, jump_y, jump_s);
+                if (rand() % 100 < 2){
+                    update_warp_interface();
+                    ticks_for_warp--;
+                    if (ticks_for_warp < 0){
+                        state = 4;
+                        printf("COMPLETED WARP \n");
+                    }
+                }
+                break;
+            case 4:
+                display();
                 break;
             case 16:
                 draw_rogue(); // draw scene

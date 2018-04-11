@@ -7,6 +7,50 @@ typedef struct {
 } coord_t;
 
 typedef struct {
+    unsigned int w; // can be one byte
+    unsigned int h; // can be one byte
+    int tile_type [32 * 32]; // can be one byte (if negative then is portal to another area)
+    bool on_fire [32 * 32];
+    bool under_water [32 * 32];
+} o_map_t;
+
+
+typedef struct {
+    const o_map_t mapdat;
+    const coord_t coord;
+} o_map_master;
+
+// flavor text
+struct {
+    char personnell[16];
+    int weight;
+    char alignment[16];
+} flavor_text;
+
+// for flight level view
+typedef struct {
+    int x;
+    int y;
+    char data[16];
+    bool persistent;
+    int type;
+    unsigned int num;
+    bool map_exists;
+    int map_id;
+    int map_w;
+    int map_h;
+} level_data;
+
+// for info on each tile in sector
+typedef struct {
+    int x;
+    int y;
+    char data[16];
+    int num_level_data;
+    const level_data * flight_data;
+} tile_data;
+
+typedef struct {
     int id;
     int x;
     int y;
@@ -163,3 +207,57 @@ extern char quest_str_dat [ QUEST_STR_DAT_LEN ];
 
 // reads quest, level, npc, map data from file
 bool build_game_data();
+
+// stuff for space part of game
+extern int sector_x;
+extern int sector_y;
+extern int sector_s;
+extern int level; // level id for space view
+
+// check for angled movement
+extern bool tilted;
+
+// engine data
+extern int flux;
+extern int fuel_r;
+extern int durability;
+extern int respons;
+extern int flux_clamp;
+extern int emission_clamp;
+extern int themal_clamp;
+
+// ship data
+extern float vx;
+extern float vy;
+extern float vz;
+extern float x;
+extern float y;
+extern float z;
+extern int thrust_clamp;
+extern int afterburn_clamp;
+extern float thrust;
+
+// engine stuff
+extern int e1_g;
+extern int e1_y;
+extern int e2_g;
+extern int e2_y;
+extern int e3_g;
+extern int e3_y;
+extern int e4_g;
+extern int e4_y;
+
+extern int facing;
+
+extern int ship_x;
+extern int ship_y;
+
+// map definitions
+extern const int level_0_0[10][10];
+extern const tile_data level_0_0_tile_data[10];
+extern const int level_0_1[10][10];
+extern const tile_data level_0_1_tile_data[10];
+extern const int level_0_2[10][10];
+extern const tile_data level_0_2_tile_data[10];
+extern const int level_0_3[10][10];
+extern const tile_data level_0_3_tile_data[10];
