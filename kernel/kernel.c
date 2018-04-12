@@ -1,6 +1,6 @@
 #if USE_SDCC == 1
     #include "k_generic.c"
-#else
+#else if USE_SDCC == 2
 
     #include <SFML/Graphics.h>
     #include <stdio.h>
@@ -111,5 +111,56 @@
     bool k_get_sf_key_shift(){
         return event.key.shift;
     }
+#else if USE_SDCC == 3
+    bool k_get_sf_key_shift();
+
+    sfRenderWindow* k_get_window(){
+
+    }
+
+    void k_put_text(char * stringin, int x, int y){
+
+    }
+
+    void k_put_rect(int tex_id, int x, int y){
+
+    }
+
+    void k_put_rects(int tex_id, int x, int y, int w, int h){
+
+    }
+
+    void k_init_gfx(){
+
+    }
+
+    bool k_this_close_request(){
+
+    }
+
+    void k_refresh_display(){
+
+    }
+
+    bool k_get_events(){
+
+    }
+
+    void k_display(){
+
+    }
+
+    int k_get_key(){
+
+    }
+
+    sfEventType k_get_sf_event_type(){
+
+    }
+
+    bool k_get_sf_key_shift(){
+
+    }
+
 
 #endif // USE_SDCC

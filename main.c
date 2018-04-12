@@ -1,4 +1,3 @@
-//#include <SFML/Graphics.h>
 #include <stdio.h> // rand()
 #include <time.h>
 #include <stdlib.h>
