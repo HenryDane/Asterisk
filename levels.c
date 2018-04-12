@@ -170,8 +170,7 @@ const tile_data level_0_3_tile_data[10] = { {1, 1, "Enemy Base 7-m", 1, level_0_
 
 
 void search_and_build(const tile_data * tiledata){
-    //cout << "SECTOR: "  << sector_s << endl;
-    printf("SECTOR: %d /n", sector_s);
+    printf("SECTOR: %d \n", sector_s);
 
     // init vairables
     bool exists = false;
@@ -181,105 +180,91 @@ void search_and_build(const tile_data * tiledata){
     for ( ; i < 10; i++){
         if (tiledata[i].x == sector_y && tiledata[i].y == sector_x){
             exists = true;
-            //cout << " FOUND W DESC: " << tiledata[i].data  << " I: " << i << endl;
-            printf("FOUND W DESC %d I: %d /n" , tiledata[i].data, i);
+            printf("FOUND W DESC %d I: %d \n" , tiledata[i].data, i);
             break;
         }
     }
-    //cout << "EXISTS " << ((exists) ? 1 : 0) << endl;
     printf("EXITST: %d \n", ((exists) ? 1 : 0) );
 
     // create entities
-    /*if (exists){
-        //cout << "EXISTS!! NUM: " << tiledata[i].num_level_data << " I:" << i << endl;
+    if (exists){
         printf("EXISTS!! NUM: %d I: %d \n", tiledata[i].num_level_data, i);
         for(int j = 0; j < tiledata[i].num_level_data; j++){
-            //cout << "LOOKING AT J:" << j << endl;
             printf("LOOKING AT J: %d \n", j);
             switch(tiledata[i].flight_data[j].type){
                 case 0: // station
-                   // cout << "SPAWN STATION AT X:" << tiledata[i].flight_data[j].x;
-                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
-                    printf("SPAWN STATION AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+                    printf("SPAWN STATION AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
 
                     // create entity listing
-                    entities[num_entities].id = id_entity_last;
-                    entities[num_entities].x = tiledata[i].flight_data[j].x;
-                    entities[num_entities].y = tiledata[i].flight_data[j].y;
-                    entities[num_entities].type = 0;
+                    entities_o[num_entities_o].id = id_entity_last;
+                    entities_o[num_entities_o].x = tiledata[i].flight_data[j].x;
+                    entities_o[num_entities_o].y = tiledata[i].flight_data[j].y;
+                    entities_o[num_entities_o].type = 0;
                     for (int k = 0; k < 16; k++){
-                        entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                        entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
                     }
-                    entities[num_entities].vx = 0;
-                    entities[num_entities].vy = 0;
-                    if (num_entities < MAX_ENTITIES) num_entities++;
+                    entities_o[num_entities_o].vx = 0;
+                    entities_o[num_entities_o].vy = 0;
+                    if (num_entities_o < MAX_ENTITIES) num_entities_o++;
                     id_entity_last++;
                     break;
                 case 1: //asteroid
-                    //cout << "SPAWN ASTEROID AT X:" << tiledata[i].flight_data[j].x;
-                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
-                    printf("SPAWN ASTEROID AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+                    printf("SPAWN ASTEROID AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
 
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
-                        entities[num_entities].id = id_entity_last;
-                        entities[num_entities].x = rand() % WIDTH;
-                        entities[num_entities].y = rand() % HEIGHT;
-                        entities[num_entities].type = 1;
+                        entities_o[num_entities_o].id = id_entity_last;
+                        entities_o[num_entities_o].x = rand() % WIDTH;
+                        entities_o[num_entities_o].y = rand() % HEIGHT;
+                        entities_o[num_entities_o].type = 1;
                         for (int k = 0; k < 16; k++){
-                            entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                            entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
                         }
-                        entities[num_entities].vx = (rand() % 5) - 2;
-                        entities[num_entities].vy = (rand() % 5) - 2;
-                        if (num_entities < MAX_ENTITIES) {
-                            num_entities++;
+                        entities_o[num_entities_o].vx = (rand() % 5) - 2;
+                        entities_o[num_entities_o].vy = (rand() % 5) - 2;
+                        if (num_entities_o < MAX_ENTITIES) {
+                            num_entities_o++;
                         }
                         id_entity_last++;
                     }
                     break;
                 case 2: // enemy
-                    //cout << "SPAWN ENEMY AT X:" << tiledata[i].flight_data[j].x;
-                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
-                    printf("SPAWN ENEMY AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+                    printf("SPAWN ENEMY AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
 
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
-                        entities[num_entities].id = id_entity_last;
-                        entities[num_entities].x = tiledata[i].flight_data[j].x;
-                        entities[num_entities].y = tiledata[i].flight_data[j].y;
-                        entities[num_entities].type = 2;
+                        entities_o[num_entities_o].id = id_entity_last;
+                        entities_o[num_entities_o].x = tiledata[i].flight_data[j].x;
+                        entities_o[num_entities_o].y = tiledata[i].flight_data[j].y;
+                        entities_o[num_entities_o].type = 2;
                         for (int k = 0; k < 16; k++){
-                            entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                            entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
                         }
-                        entities[num_entities].vx = (rand() % 10 > 5) ? -1 : 1;
-                        entities[num_entities].vy = (rand() % 10 > 5) ? -1 : 1;
-                        if (num_entities < MAX_ENTITIES) num_entities++;
+                        entities_o[num_entities_o].vx = (rand() % 10 > 5) ? -1 : 1;
+                        entities_o[num_entities_o].vy = (rand() % 10 > 5) ? -1 : 1;
+                        if (num_entities < MAX_ENTITIES) num_entities_o++;
                     }
                     break;
                 case 3: // debris
-                    //cout << "SPAWN DEBRIS AT X:" << tiledata[i].flight_data[j].x;
-                    //cout << " Y: " << tiledata[i].flight_data[j].y << endl;
-                    printf("SPAWN DEBRIS AT X: %d Y: %d /n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
+                    printf("SPAWN DEBRIS AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
 
                     for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
-                        entities[num_entities].id = id_entity_last;
-                        entities[num_entities].x = rand() % WIDTH;
-                        entities[num_entities].y = rand() % HEIGHT;
-                        entities[num_entities].type = 3;
+                        entities_o[num_entities_o].id = id_entity_last;
+                        entities_o[num_entities_o].x = rand() % WIDTH;
+                        entities_o[num_entities_o].y = rand() % HEIGHT;
+                        entities_o[num_entities_o].type = 3;
                         for (int k = 0; k < 16; k++){
-                            entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                            entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
                         }
-                        entities[num_entities].vx = 0;
-                        entities[num_entities].vy = 0;
-                        if (num_entities < MAX_ENTITIES) num_entities++;
+                        entities_o[num_entities_o].vx = 0;
+                        entities_o[num_entities_o].vy = 0;
+                        if (num_entities_o < MAX_ENTITIES) num_entities_o++;
                         id_entity_last++;
                     }
                     break;
                 default:
-                    //cout << "FAILED WITH: " << tiledata[i].flight_data[j].type << endl
                     printf("FAILED WITH: %d \n" , tiledata[i].flight_data[j].type);
             }
         }
     } else {
-        //cout << "SPAWNING NOTHING" << endl;
         printf("SPAWINING NOTHING \n");
-    } */
+    }
 }

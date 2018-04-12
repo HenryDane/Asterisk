@@ -62,6 +62,10 @@
 #define E_D_TEX             18
 #define E_L_TEX             16
 
+#define ASTEROID_TEX        1
+#define DEBRIS_TEX          22
+#define ROCKET_TEX          37
+
 int g_state = 0;
 
 int init_displays(void){
@@ -93,10 +97,10 @@ void display(bool update, int state){
     // draw character
     switch(facing % 4){
         case 0: tex = C_U_TEX; break;
-        case 1: tex = C_R_TEX; break;
+        case 1: tex = C_L_TEX; break;
         case 2: tex = C_D_TEX; break;
-        case 3: tex = C_L_TEX; break;
-        default: tex = C_U_TEX;
+        case 3: tex = C_R_TEX; break;
+        default: tex = DEBUG_TEX;
     }
     k_put_rect(tex, ship_x, ship_y);
 
@@ -105,40 +109,40 @@ void display(bool update, int state){
             k_put_rect(E_U_TEX, ship_x, ship_y + 1);
             break;
         case 1:
-            k_put_rect(E_U_TEX, ship_x - 1, ship_y + 1);
+            k_put_rect(E_R_TEX, ship_x - 1, ship_y);
             break;
         case 2:
-            k_put_rect(E_U_TEX, ship_x, ship_y - 1);
+            k_put_rect(E_D_TEX, ship_x, ship_y - 1);
             break;
         case 3:
-            k_put_rect(E_U_TEX, ship_x + 1, ship_y + 1);
+            k_put_rect(E_L_TEX, ship_x + 1, ship_y);
             break;
     }
 
     // draw entities
-    for (int i = 0; i < num_entities; i++){
-        if (entities[i].type >= 0){
-            switch(entities[i].type){
+    for (int i = 0; i < num_entities_o; i++){
+        if (entities_o[i].type >= 0){
+            switch(entities_o[i].type){
                 case 0:
-                    k_put_rect(STATION_TEX, entities[i].x, entities[i].y);
+                    k_put_rect(STATION_TEX, entities_o[i].x, entities_o[i].y);
                     break;
                 case 1:
-                    k_put_rect(STATION_TEX, entities[i].x, entities[i].y);
+                    k_put_rect(ASTEROID_TEX, entities_o[i].x, entities_o[i].y);
                     break;
                 case 2:
-                    k_put_rect(ENEMY_TEX, entities[i].x, entities[i].y);
+                    k_put_rect(ENEMY_TEX, entities_o[i].x, entities_o[i].y);
                     break;
                 case 3:
-                    k_put_rect(/*debris?*/ 0, entities[i].x, entities[i].y);
+                    k_put_rect(DEBRIS_TEX, entities_o[i].x, entities_o[i].y);
                     break;
                 case 5:
-                    k_put_rect(/*rockets?*/ 0, entities[i].x, entities[i].y);
+                    k_put_rect(ROCKET_TEX, entities_o[i].x, entities_o[i].y);
                     break;
                 default:
-                    k_put_rect(DEBUG_TEX, entities[i].x, entities[i].y);
+                    k_put_rect(DEBUG_TEX, entities_o[i].x, entities_o[i].y);
             }
         } else {
-            k_put_rect(WALL_TEX, entities[i].x, entities[i].y);
+            k_put_rect(WALL_TEX, entities_o[i].x, entities_o[i].y);
         }
     }
 

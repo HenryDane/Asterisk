@@ -60,6 +60,16 @@ typedef struct {
 } entity_t;
 
 typedef struct {
+    int x;
+    int y;
+    int vx;
+    int vy;
+    char data[16];
+    int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet, 5 = rocket (player), 6 = rocket (other)
+    int id;
+} o_entity_t;
+
+typedef struct {
     int id;
     int type;
     bool unuseable;
@@ -178,6 +188,11 @@ extern item_t inventory[]; // inventory list
 extern int num_items;    // number of items
 extern int score;
 
+extern int time_character;
+extern int time_entity_o;
+extern int time_character;
+extern int time_rocket;
+
 // ???
 extern int selected_object;
 
@@ -185,7 +200,11 @@ extern int selected_object;
 extern int state;
 
 extern int num_entities;
+extern int num_entities_o;
 entity_t entities[32];
+
+o_entity_t entities_o[32];
+extern int id_entity_last;
 
 // for going to quest/cutscene/etc mode
 extern npc_t npc_last;

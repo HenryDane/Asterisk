@@ -8,9 +8,13 @@
 #include "entity.h"
 #include "map.h"
 #include "quest.h"
+#include "terrain.h"
 
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
+
+int id_entity_last = 0;
+int num_entities_o = 0;
 
 // character data
 int health = 1000;
@@ -56,7 +60,12 @@ int e4_g = 8;
 int e4_y = 9;
 int ticks_for_warp;
 
+int time_character = 0;
+int time_entity_o = 0;
+int time_rocket = 0;
+
 int facing = 0;
+bool tilted = false;
 
 item_t inventory[16] = {{0,2,false," T4", 3},
                         {1,1,false," 4K Cal.", 8},
@@ -108,7 +117,7 @@ int main( ){
 
         // handle events
         while (k_get_events()){
-#ifndef USE_SDCC // ugly hack #109873276
+#if USE_SDCC == 2 // ugly hack #109873276
             // close window if needed
             if (k_get_sf_event_type() == sfEvtClosed)
                 sfRenderWindow_close(k_get_window());
@@ -142,6 +151,8 @@ int main( ){
                             jump_s++;
                             if (jump_s > 3) jump_s = 0;
                             if (jump_s < 0) jump_s = 3;
+                        } else if (state == 4){
+                            facing = -10;
                         }
                         break;
                     case sfKeyE:
@@ -168,6 +179,8 @@ int main( ){
                             jump_y--;
                             if (jump_y > 9) jump_y = 9;
                             if (jump_y < 0) jump_y = 0;
+                        } else if (state == 4){
+                            facing = 0;
                         }
                         break;
                     case sfKeyA:
@@ -180,6 +193,8 @@ int main( ){
                             jump_x--;
                             if (jump_x > 9) jump_x = 9;
                             if (jump_x < 0) jump_x = 0;
+                        } else if (state == 4){
+                            facing = 3;
                         }
                         break;
                     case sfKeyS:
@@ -192,6 +207,8 @@ int main( ){
                             jump_y++;
                             if (jump_y > 9) jump_y = 9;
                             if (jump_y < 0) jump_y = 0;
+                        } else if (state == 4){
+                            facing = 2;
                         }
                         break;
                     case sfKeyD:
@@ -204,6 +221,8 @@ int main( ){
                             jump_x++;
                             if (jump_x > 9) jump_x = 9;
                             if (jump_x < 0) jump_x = 0;
+                        } else if (state == 4){
+                            facing = 1;
                         }
                         break;
                     case sfKeySpace:
@@ -263,10 +282,11 @@ int main( ){
                             sector_y = jump_y;
                             sector_s = jump_s;
                             ticks_for_warp = jump_x * 2 + jump_y * 2 + jump_s * 3 + (rand() % 20);
+                            build_terrain(sector_x, sector_y, sector_s);
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o);
                         break;
                     case sfKeyEqual: // increment map pointer (changed from + so shift key can be unused)
                         if (master_index + 1 >= 0 && master_index + 1 < NUM_MAPS) master_index++; // pointer safety first
@@ -313,7 +333,7 @@ int main( ){
                     default: // do nothing (undefined key)
                         break;
                 }
-#ifndef USE_SDCC
+#if USE_SDCC == 2
             }
 #endif // USE_SDCC
         }
@@ -350,10 +370,17 @@ int main( ){
                 break;
             case 4:
                 display();
+                update_entities_o(0);
+                time_character++;
+                time_entity_o++;
+                time_rocket++;
                 break;
             case 16:
                 draw_rogue(); // draw scene
-                update_entities(); // update the entities (but dont time them lmfao)
+                if (ticks_for_warp++ > 20){
+                    update_entities(); // update the entities (but dont time them lmfao)
+                    ticks_for_warp = 0;
+                }
                 break;
             case 27: // display quest add request
                 sprintf(tmp, "NPC [%s] is offering quest %s, accept? [Y/N]", quest_registry[npc_last.quest_id].issuer, quest_registry[npc_last.quest_id].title);
