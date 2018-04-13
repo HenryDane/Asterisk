@@ -125,6 +125,13 @@ int main( ){
             if (k_get_sf_event_type() == sfEvtKeyPressed) {
 #endif // USE_SDCC
                 // handle key presses
+
+                if (state == -4){
+                    return 0; // leave if on final screen
+                } else if (state == -2){
+                    state = -3; // go back to main menu
+                }
+
                 switch( k_get_key() ){
                     case sfKeyEscape:
                         return 0;
@@ -136,6 +143,14 @@ int main( ){
                         break;
                     case sfKeyNum2:
                         state = 2;
+                        break;
+                    case sfKeyNum3:
+                        state = -2;
+                        break;
+                    case sfKeyL:
+                        if (state == -3){
+                            state = -4;
+                        }
                         break;
                     case sfKeyQ:
                         if (state == 19) {
@@ -195,6 +210,8 @@ int main( ){
                             if (jump_x < 0) jump_x = 0;
                         } else if (state == 4){
                             facing = 3;
+                        } else if (state == -3){
+                            state = 16;
                         }
                         break;
                     case sfKeyS:
@@ -227,7 +244,7 @@ int main( ){
                         break;
                     case sfKeySpace:
                         if (state == -1){
-                            state = 16;
+                            state = -3;
                         }
                         break;
                     case sfKeyReturn:
@@ -344,12 +361,31 @@ int main( ){
                 // game over?
                 draw_game_over();
                 break;
+
+                k_put_text("[Press any key to return to main menu]", 10, 20);
             case -1:
                 draw_logo();
                 // draw *all* the textures
                 for (int i = 0; i < NUM_K_TEXTURES; i++){
                     k_put_rect(i, i % 63, (i > 62) ? 1 : 0); // hack that will last to ~126 textures
                 }
+                break;
+            case -3:
+                k_put_rects(67, 0, 0, 1024, 192);
+                k_put_text("Main Menu", 20, 13);
+                k_put_text("[A] New Game", 20, 14);
+                k_put_text("[S] Load Game", 20, 15); // does nothing
+                k_put_text("[D] Options", 20, 16);   // does nothing
+                k_put_text("[F] Help", 20, 17);      // does nothing
+                k_put_text("[L] Quit", 20, 18);
+                break;
+            case -4:
+                k_put_rects(67, 0, 0, 1024, 192);
+                k_put_text("Credits:", 0, 13);
+                k_put_text("HENRY OLLING: Design, Programming, and Hardware", 0, 14);
+                k_put_text("SHAWN PARK: Music, Sound Effects", 0, 15);
+                k_put_text("LOUIS VANHAELEWYN: Build Scripts", 0, 16);
+                k_put_text("[Press any key to exit]", 0, 18);
                 break;
             case 2:
                 draw_engine_config();
@@ -409,7 +445,7 @@ int main( ){
                 break;
             default:
                 printf("Intercepted bad state %d \n", state);
-                state = 16; // go to rugue to cache problems
+                state = 16; // go to rugue to catch problems
                 cleardisplay(false);
                 break;
         }

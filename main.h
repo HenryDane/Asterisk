@@ -155,13 +155,13 @@ typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 #define NUM_MAPS 5
 
 // define texture data
-#define NUM_TEXTURES 43
+#define NUM_TEXTURES 67
 
 // number of quests
 #define NUM_QUESTS 1
 #define NUM_QUESTS_MAX 4
 
-// entity timing constants milliseconds
+// entity timing constants "milliseconds"
 #define TIME_CHARACTER 760
 #define TIME_ENTITY 1000
 #define TIME_ROCKET 200

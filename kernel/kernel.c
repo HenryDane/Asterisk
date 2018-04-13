@@ -57,7 +57,7 @@
         for (int i = 0; i < NUM_K_TEXTURES; i++){
             char tmp[32];
             sprintf(tmp, "res/%d.png", i);
-            //printf("[%d] \n", i);
+            printf("[%d] \n", i);
             k_textures[i] = sfTexture_createFromFile(tmp, NULL);
         }
 
