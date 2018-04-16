@@ -1,16 +1,20 @@
 # Programming Notes
 
 ## Game states
--2 : Game over
--1 : Initial state (game start)
- 0 : Generic flight mode
- 2 : Paused flight mode
- 1 : View objects
- 5 : View objects
- 7 : Preparing for warp
- 8 : Docked
-10 : At warp
-11 : Engine setup
-16 : Generic rougelike mode
-
-     
+-4 : Closing credits \
+-3 : Main Menu \
+-2 : Game over \
+-1 : Initial state (game start) \
+ 1 : Prewarp \
+ 2 : Engine config \
+ 3 : Warp \
+ 4 : Generic flight mode \
+16 : Generic rougelike mode \
+18 : Cutscene (unsupported...) \
+19 : Trading \
+21 : Use item \
+27 : Accept / Reject quest \
+28 : Redirect to 29 \
+29 : Actual view of quest \
+30 : Quest end \
+32 : Edit modules \
