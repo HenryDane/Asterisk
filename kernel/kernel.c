@@ -57,9 +57,10 @@
         for (int i = 0; i < NUM_K_TEXTURES; i++){
             char tmp[32];
             sprintf(tmp, "res/%d.png", i);
-            printf("[%d] \n", i);
+            //printf("[%d] ", i);
             k_textures[i] = sfTexture_createFromFile(tmp, NULL);
         }
+        // printf("/n");
 
         printf("[K] INIT FONT \n");
         font = sfFont_createFromFile("res/telegrama_raw.ttf");

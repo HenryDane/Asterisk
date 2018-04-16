@@ -143,6 +143,8 @@ typedef struct {
 
 typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 
+typedef int module_t;
+
 // map sizing
 #define WIDTH 50
 #define HEIGHT 35
@@ -153,6 +155,8 @@ typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
 
 // number of maps
 #define NUM_MAPS 5
+
+#define NUM_MODULES_MAX 16
 
 // define texture data
 #define NUM_TEXTURES 67
@@ -221,6 +225,7 @@ extern int num_active_quests;
 extern mquest_a_t quest_a_registry[ NUM_QUESTS_MAX + 1];
 extern char quest_str_dat [ QUEST_STR_DAT_LEN ];
 
+extern int modules_enabled[NUM_MODULES_MAX];
 // cutscene stuffs
 // nothing to see yet
 

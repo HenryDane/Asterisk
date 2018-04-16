@@ -67,6 +67,8 @@ int time_rocket = 0;
 int facing = 0;
 bool tilted = false;
 
+int modules_enabled[NUM_MODULES_MAX] = {-1};
+
 item_t inventory[16] = {{0,2,false," T4", 3},
                         {1,1,false," 4K Cal.", 8},
                         {2,3,false," Electric", 9}};
@@ -110,6 +112,8 @@ int main( ){
     int jump_y = 0;
     int jump_s = 0;
 
+    int selected_module = -1;
+
     // main loop
     while (k_this_close_request()){
         // clean texture
@@ -147,13 +151,17 @@ int main( ){
                     case sfKeyNum3:
                         state = -2;
                         break;
+                    case sfKeyNum4:
+                        state = 32;
+                        trade_index = 0;
+                        break;
                     case sfKeyL:
                         if (state == -3){
                             state = -4;
                         }
                         break;
                     case sfKeyQ:
-                        if (state == 19) {
+                        if (state == 19 || state == 32) {
                             if (trade_index > 0) trade_index--;
                         } else if (state == 16){
                             trade_index = 0;
@@ -172,7 +180,11 @@ int main( ){
                         break;
                     case sfKeyE:
                         if (state == 19) {
-                            if (trade_index + 1< npc_last.inventory_size) {
+                            if (trade_index + 1 < npc_last.inventory_size) {
+                                trade_index++;
+                            }
+                        } else if (state == 32){
+                            if (trade_index + 1 < NUM_MODULES_MAX) {
                                 trade_index++;
                             }
                         } else if (state == 21){
@@ -196,6 +208,8 @@ int main( ){
                             if (jump_y < 0) jump_y = 0;
                         } else if (state == 4){
                             facing = 0;
+                        } else if (state == 32){
+                            selected_module++;
                         }
                         break;
                     case sfKeyA:
@@ -226,6 +240,8 @@ int main( ){
                             if (jump_y < 0) jump_y = 0;
                         } else if (state == 4){
                             facing = 2;
+                        } else if (state == 32){
+                            selected_module--;
                         }
                         break;
                     case sfKeyD:
@@ -248,7 +264,17 @@ int main( ){
                         }
                         break;
                     case sfKeyReturn:
-                        if (state == 19){
+                        if (state == 32){
+                            if (trade_index >= 0 && trade_index < NUM_MODULES_MAX){
+                                if (modules_enabled[trade_index] > 0) {
+                                    printf("REMOVING MODULE %d \n", modules_enabled[trade_index]);
+                                    remove_module(modules_enabled[trade_index]);
+                                } else {
+                                    printf("ADDING MODULE %d \n", selected_module);
+                                    add_module(selected_module);
+                                }
+                            }
+                        } else if (state == 19){
                             if (trade_index >= 0 && trade_index < npc_last.inventory_size ){
                                 if (num_items < 16){
                                     if (credits - npc_last.inventory[trade_index].cost >= 0){
@@ -442,6 +468,17 @@ int main( ){
                 break;
             case 21: // item use menu
                 draw_use_item(trade_index);
+                break;
+            case 32:
+                k_put_text("Edit Modules", 0, 0);
+                for (int i = 0; i < NUM_MODULES_MAX; i++){
+                    sprintf(tmp, "MODULE TYPE: %d", modules_enabled[i]);
+                    k_put_text(tmp, 1, i + 1);
+                }
+
+                k_put_text("<-", 0, trade_index + 1);
+                sprintf(tmp, "Module ID: %d", selected_module);
+                k_put_text(tmp, 20, 0);
                 break;
             default:
                 printf("Intercepted bad state %d \n", state);

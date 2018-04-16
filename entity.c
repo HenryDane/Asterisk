@@ -95,6 +95,7 @@ void update_entities(){
                 if (rand() % 10 < 3) {
                     if (abs(character_x - entities[i].x) < 6 && abs(character_y - entities[i].y) < 6){
                         // detonate and delete self
+                        printf("DETONATE AND DELETE SELF! \n");
                     }
                 }
             case 2: // generic
