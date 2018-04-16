@@ -192,6 +192,8 @@ extern item_t inventory[]; // inventory list
 extern int num_items;    // number of items
 extern int score;
 
+extern int rounds;
+
 extern int time_character;
 extern int time_entity_o;
 extern int time_character;

@@ -22,6 +22,7 @@ float experience = 0;
 int credits = 1000;
 int fuel = 10000;
 int score = 0;
+int rounds = 10000;
 
 int ship_x = 20;
 int ship_y = 20;
@@ -161,7 +162,7 @@ int main( ){
                         }
                         break;
                     case sfKeyQ:
-                        if (state == 19 || state == 32) {
+                        if (state == 19 || state == 32 || state == 37) {
                             if (trade_index > 0) trade_index--;
                         } else if (state == 16){
                             trade_index = 0;
@@ -187,7 +188,11 @@ int main( ){
                             if (trade_index + 1 < NUM_MODULES_MAX) {
                                 trade_index++;
                             }
-                        } else if (state == 21){
+                        } else if (state == 37){
+                            if (trade_index + 1 < num_items) {
+                                trade_index++;
+                            }
+                        } else if (state == 21) {
                             if (trade_index + 1 < num_items) {
                                 trade_index++;
                             }
@@ -295,6 +300,23 @@ int main( ){
                             } else {
                                 printf("failed array bounds check\n");
                             }
+                        } else if (state == 37) {
+                            if (trade_index >= 0 && trade_index < num_items ){
+                                if (num_items < 16){
+                                    credits += 10; // needs updating for actual apprasial
+                                    int i = trade_index; // yep, awful hack (#081724234)
+                                    if (/*erase*/ true){ // ugly hack #408554564
+                                        for (int i = trade_index; i < num_items; i++){
+                                            inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+                                        }
+                                        if (num_items > 0) num_items --;
+                                    }
+                                } else {
+                                    printf("failed item number check\n");
+                                }
+                            } else {
+                                printf("failed array bounds check\n");
+                            }
                         } else if (state == 18 || state == 17 || state == 30) {
                             state = 16; // leave cutscene and (old) quest mode
                         } else if (state == 21){ // use item
@@ -307,6 +329,9 @@ int main( ){
                                         health += (rand() % 4) + 1;
                                         erase = true;
                                         break;
+                                    case 4: // ammo
+                                        rounds += 10000;
+                                        erase = true;
                                     default:
                                         break;
                                 }
@@ -340,6 +365,11 @@ int main( ){
                     case sfKeyBack: // set up changes
                         load_map(master_index);
                         break;
+                    case sfKeyU:
+                        if (state == 19){
+                            state = 37;
+                        }
+                        break;
                     case sfKeyY:
                         if (state == 27) {
                             if (!searchQuest(npc_last.quest_id)){ // if quest is not active active
@@ -357,21 +387,34 @@ int main( ){
                         break;
                     case sfKeyN:
                         if (state == 17 || state == 18 || state == 19 || state == 21 || state == 27 || state == 28 ||
-                            state == 29) {
+                            state == 29 || state == 37 || state == 32) {
                             state = 16;
                         }
                         break;
                     case sfKeyUp:
-                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 0, -1, 1};
+                        if (num_entities < MAX_ENTITIES - 1 && rounds > 0) {
+                            entities[num_entities++] = (entity_t) {1432, character_x, character_y, 0, -1, 1};
+                            rounds--;
+                        }
                         break;
                     case sfKeyDown:
-                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 0, 1, 1};
+                        if (num_entities < MAX_ENTITIES - 1 && rounds > 0) {
+                            entities[num_entities++] = (entity_t) {1432, character_x, character_y, 0, 1, 1};
+                            rounds--;
+                            break;
+                        }
                         break;
                     case sfKeyLeft:
-                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, -1, 0, 1};
+                        if (num_entities < MAX_ENTITIES - 1 && rounds > 0) {
+                            entities[num_entities++] = (entity_t) {1432, character_x, character_y, -1, 0, 1};
+                            rounds --;
+                        }
                         break;
                     case sfKeyRight:
-                        if (num_entities < MAX_ENTITIES - 1) entities[num_entities++] = (entity_t) {1432, character_x, character_y, 1, 0, 1};
+                        if (num_entities < MAX_ENTITIES - 1 && rounds > 0) {
+                            entities[num_entities++] = (entity_t) {1432, character_x, character_y, 1, 0, 1};
+                            rounds --;
+                        }
                         break;
                     default: // do nothing (undefined key)
                         break;
@@ -479,6 +522,60 @@ int main( ){
                 k_put_text("<-", 0, trade_index + 1);
                 sprintf(tmp, "Module ID: %d", selected_module);
                 k_put_text(tmp, 20, 0);
+                break;
+            case 37:
+                k_put_text("Oh, you want to sell to me?", 0, 0);
+
+                int l = 0;
+
+                for (int i = 0; i < num_items; i++){
+                    switch(inventory[i].type){
+                        case 1:
+                            sprintf(tmp, "Ration : %s", inventory[i].data);
+                            break;
+                        case 2:
+                            sprintf(tmp, "Handgun : %s", inventory[i].data);
+                            break;
+                        case 3:
+                            sprintf(tmp, "Wrench : %s", inventory[i].data);
+                            break;
+                        case 4:
+                            sprintf(tmp, "Ammunition : %s", inventory[i].data);
+                            break;
+                        case 5:
+                            sprintf(tmp, "Grenade : %s", inventory[i].data);
+                            break;
+                        case 6:
+                            sprintf(tmp, "Book : %s", inventory[i].data);
+                            break;
+                        case 7:
+                            sprintf(tmp, "Machine Gun : %s", inventory[i].data);
+                            break;
+                        case 8:
+                            sprintf(tmp, "Rocket Launcher : %s", inventory[i].data);
+                            break;
+                        case 9:
+                            sprintf(tmp, "Pick : %s", inventory[i].data);
+                            break;
+                        case 10:
+                            sprintf(tmp, "Medkit : %s", inventory[i].data);
+                            break;
+                        default:
+                            strcpy(tmp, "Invalid Item!");
+                    }
+                    k_put_text(tmp, 2, l + 1);
+
+                    sprintf(tmp, "%s ($%d)", "Hmm", 10);
+                    k_put_text(tmp, 2, l + 2);
+
+                    if (i == trade_index){
+                        k_put_text("->", 0, l + 1);
+                    }
+
+                    l += 3;
+                }
+
+                k_put_text("N(Exit) Q(Go Up) E(Go Down) Enter(Sell)", 2, 34);
                 break;
             default:
                 printf("Intercepted bad state %d \n", state);

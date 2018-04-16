@@ -531,7 +531,7 @@ void draw_trade( int trade_index ){
     }
 
     l+=2;
-    k_put_text("N(Exit) Q(Go Up) E(Go Down) Enter(Purchase)", 2, 34);
+    k_put_text("N(Exit) Q(Go Up) E(Go Down) U(Sell Items) Enter(Purchase)", 2, 34);
 }
 
 void draw_stats(){
@@ -565,6 +565,9 @@ void draw_stats(){
 
     sprintf(tim, "CREDITS: %d ", credits);
     k_put_text(tim, 36, 4);
+
+    sprintf(tim, "AMMO: %d ", rounds);
+    k_put_text(tim, 36, 5);
 }
 
 void draw_inventory(){
