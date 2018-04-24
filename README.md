@@ -14,8 +14,8 @@ Asteroid + risk
 - Expand item use
 - Expand avaliable quest action and validation functions
 - Make enemies move in roguelike
-- Make firing gun require ammo
-- Make merchants buy items
+- ~~Make firing gun require ammo~~
+- ~~Make merchants buy items~~
 
 
 

@@ -70,20 +70,26 @@ bool tilted = false;
 
 int modules_enabled[NUM_MODULES_MAX] = {-1};
 
-item_t inventory[16] = {{0,2,false," T4", 3},
+item_t inventory[NUM_ITEMS_MAX] = {{0,2,false," T4", 3},
                         {1,1,false," 4K Cal.", 8},
                         {2,3,false," Electric", 9}};
 int num_items = 3;
 
+d_item_t dropped_items[NUM_DROPPED_MAX] = {{-1,-1,false, " ", 0}};
+int num_dropped_items = 0;
+
 int num_active_quests = 0;
 
-npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };  // initalize npc for states 17, 18, 19
+npc_t npc_last = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };  // initalize npc
 
 // game state (see documentation)
 int state = -1;
 
 int num_entities = 0;
 entity_t entities[32];
+
+int selected_module = -1;
+int trade_index = 0; // pointer to trading address
 
 int main( ){
     // initalize rand
@@ -107,13 +113,9 @@ int main( ){
 
     num_active_quests = 0; // no active quests
 
-    int trade_index = 0; // pointer to trading address
-
     int jump_x = 0;
     int jump_y = 0;
     int jump_s = 0;
-
-    int selected_module = -1;
 
     // main loop
     while (k_this_close_request()){
@@ -162,7 +164,7 @@ int main( ){
                         }
                         break;
                     case sfKeyQ:
-                        if (state == 19 || state == 32 || state == 37) {
+                        if (state == 19 || state == 32 || state == 37 || state == 43) {
                             if (trade_index > 0) trade_index--;
                         } else if (state == 16){
                             trade_index = 0;
@@ -196,10 +198,17 @@ int main( ){
                             if (trade_index + 1 < num_items) {
                                 trade_index++;
                             }
+                        } else if (state == 43){
+                            // drop item
+                            if (trade_index + 1 < NUM_DROPPED_MAX) {
+                                trade_index++;
+                            }
                         } else if (state == 1){
                             jump_s--;
                             if (jump_s > 3) jump_s = 0;
                             if (jump_s < 0) jump_s = 3;
+                        } else if (state == 16){
+                            state = 43; // go drop a thingy
                         }
                     case sfKeyW:
                         if (state == 16) {
@@ -279,6 +288,9 @@ int main( ){
                                     add_module(selected_module);
                                 }
                             }
+                        } else if (state == 43){
+                            drop_item_c(trade_index);
+                            state = 16;
                         } else if (state == 19){
                             if (trade_index >= 0 && trade_index < npc_last.inventory_size ){
                                 if (num_items < 16){
@@ -354,7 +366,7 @@ int main( ){
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d NUM_DROPPED_ITEMS: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o, num_dropped_items);
                         break;
                     case sfKeyEqual: // increment map pointer (changed from + so shift key can be unused)
                         if (master_index + 1 >= 0 && master_index + 1 < NUM_MAPS) master_index++; // pointer safety first
@@ -382,7 +394,17 @@ int main( ){
                                 state = 29; // quest add fail
                             }
                         } else if (state == 29){
-
+                            // why is this here?
+                        } else if (state == 16){
+                            if (num_items + 1 < NUM_ITEMS_MAX){
+                                item_t tmp_item;
+                                if (collect_item(&tmp_item, character_x, character_y, master_index)){
+                                    printf("Item is %d %d %d \n", tmp_item.id, tmp_item.type, tmp_item.unuseable);
+                                    if (tmp_item.id >= 0){
+                                        inventory[num_items++] = tmp_item;
+                                    }
+                                }
+                            }
                         }
                         break;
                     case sfKeyN:
@@ -424,37 +446,21 @@ int main( ){
 #endif // USE_SDCC
         }
 
+        // temporary variable for sprintf calls
         char tmp[80];
         switch(state){  // draw screen and do stuff
             case -2:
                 // game over?
                 draw_game_over();
                 break;
-
-                k_put_text("[Press any key to return to main menu]", 10, 20);
             case -1:
                 draw_logo();
-                // draw *all* the textures
-                for (int i = 0; i < NUM_K_TEXTURES; i++){
-                    k_put_rect(i, i % 63, (i > 62) ? 1 : 0); // hack that will last to ~126 textures
-                }
                 break;
             case -3:
-                k_put_rects(67, 0, 0, 1024, 192);
-                k_put_text("Main Menu", 20, 13);
-                k_put_text("[A] New Game", 20, 14);
-                k_put_text("[S] Load Game", 20, 15); // does nothing
-                k_put_text("[D] Options", 20, 16);   // does nothing
-                k_put_text("[F] Help", 20, 17);      // does nothing
-                k_put_text("[L] Quit", 20, 18);
+                draw_main_menu();
                 break;
             case -4:
-                k_put_rects(67, 0, 0, 1024, 192);
-                k_put_text("Credits:", 0, 13);
-                k_put_text("HENRY OLLING: Design, Programming, and Hardware", 0, 14);
-                k_put_text("SHAWN PARK: Music, Sound Effects", 0, 15);
-                k_put_text("LOUIS VANHAELEWYN: Build Scripts", 0, 16);
-                k_put_text("[Press any key to exit]", 0, 18);
+                draw_credits();
                 break;
             case 2:
                 draw_engine_config();
@@ -464,6 +470,8 @@ int main( ){
                 break;
             case 3:
                 draw_warp(jump_x, jump_y, jump_s);
+
+                // do "timing" for warp travel
                 if (rand() % 100 < 2){
                     update_warp_interface();
                     ticks_for_warp--;
@@ -475,13 +483,19 @@ int main( ){
                 break;
             case 4:
                 display();
+
+                // update entities
                 update_entities_o(0);
+
+                // increment timers
                 time_character++;
                 time_entity_o++;
                 time_rocket++;
                 break;
             case 16:
                 draw_rogue(); // draw scene
+
+                // run timer for entity updates
                 if (ticks_for_warp++ > 20){
                     update_entities(); // update the entities (but dont time them lmfao)
                     ticks_for_warp = 0;
@@ -513,69 +527,13 @@ int main( ){
                 draw_use_item(trade_index);
                 break;
             case 32:
-                k_put_text("Edit Modules", 0, 0);
-                for (int i = 0; i < NUM_MODULES_MAX; i++){
-                    sprintf(tmp, "MODULE TYPE: %d", modules_enabled[i]);
-                    k_put_text(tmp, 1, i + 1);
-                }
-
-                k_put_text("<-", 0, trade_index + 1);
-                sprintf(tmp, "Module ID: %d", selected_module);
-                k_put_text(tmp, 20, 0);
+                draw_module_manage();
                 break;
             case 37:
-                k_put_text("Oh, you want to sell to me?", 0, 0);
-
-                int l = 0;
-
-                for (int i = 0; i < num_items; i++){
-                    switch(inventory[i].type){
-                        case 1:
-                            sprintf(tmp, "Ration : %s", inventory[i].data);
-                            break;
-                        case 2:
-                            sprintf(tmp, "Handgun : %s", inventory[i].data);
-                            break;
-                        case 3:
-                            sprintf(tmp, "Wrench : %s", inventory[i].data);
-                            break;
-                        case 4:
-                            sprintf(tmp, "Ammunition : %s", inventory[i].data);
-                            break;
-                        case 5:
-                            sprintf(tmp, "Grenade : %s", inventory[i].data);
-                            break;
-                        case 6:
-                            sprintf(tmp, "Book : %s", inventory[i].data);
-                            break;
-                        case 7:
-                            sprintf(tmp, "Machine Gun : %s", inventory[i].data);
-                            break;
-                        case 8:
-                            sprintf(tmp, "Rocket Launcher : %s", inventory[i].data);
-                            break;
-                        case 9:
-                            sprintf(tmp, "Pick : %s", inventory[i].data);
-                            break;
-                        case 10:
-                            sprintf(tmp, "Medkit : %s", inventory[i].data);
-                            break;
-                        default:
-                            strcpy(tmp, "Invalid Item!");
-                    }
-                    k_put_text(tmp, 2, l + 1);
-
-                    sprintf(tmp, "%s ($%d)", "Hmm", 10);
-                    k_put_text(tmp, 2, l + 2);
-
-                    if (i == trade_index){
-                        k_put_text("->", 0, l + 1);
-                    }
-
-                    l += 3;
-                }
-
-                k_put_text("N(Exit) Q(Go Up) E(Go Down) Enter(Sell)", 2, 34);
+                draw_sell();
+                break;
+            case 43:
+                draw_drop();
                 break;
             default:
                 printf("Intercepted bad state %d \n", state);

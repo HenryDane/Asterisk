@@ -78,6 +78,13 @@ typedef struct {
 } item_t;
 
 typedef struct {
+    item_t item;
+    int x;
+    int y;
+    int mapid;
+} d_item_t;
+
+typedef struct {
     int id;
     int type;
     char data [16];
@@ -158,6 +165,10 @@ typedef int module_t;
 
 #define NUM_MODULES_MAX 16
 
+#define NUM_ITEMS_MAX 16
+
+#define NUM_DROPPED_MAX 32
+
 // define texture data
 #define NUM_TEXTURES 67
 
@@ -191,6 +202,9 @@ extern int location; // location on level for rouge: -1 for none loaded
 extern item_t inventory[]; // inventory list
 extern int num_items;    // number of items
 extern int score;
+
+extern d_item_t dropped_items[NUM_DROPPED_MAX];
+extern int num_dropped_items;
 
 extern int rounds;
 
@@ -277,6 +291,9 @@ extern int facing;
 
 extern int ship_x;
 extern int ship_y;
+
+extern int trade_index;
+extern int selected_module;
 
 // map definitions
 extern const int level_0_0[10][10];

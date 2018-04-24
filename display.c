@@ -585,43 +585,44 @@ void draw_inventory(){
                         tex = FOOD_ITEM_TEX;
                         break;
                     case 2:
-                        sprintf(tim, "Handgun : %s", inventory[i].data);
+                        //sprintf(tim, "Handgun : %s", inventory[i].data);
                         tex = GUN_ITEM_TEX;
                         break;
                     case 3:
-                        sprintf(tim, "Wrench : %s", inventory[i].data);
+                        //sprintf(tim, "Wrench : %s", inventory[i].data);
                         tex = WRENCH_ITEM_TEX;
                         break;
                     case 4:
-                        sprintf(tim, "Ammunition : %s", inventory[i].data);
+                        //sprintf(tim, "Ammunition : %s", inventory[i].data);
                         tex = BULLET_ITEM_TEX;
                         break;
                     case 5:
-                        sprintf(tim, "Grenade : %s", inventory[i].data);
+                        //sprintf(tim, "Grenade : %s", inventory[i].data);
                         tex = GRENADE_ITEM_TEX;
                         break;
                     case 6:
-                        sprintf(tim, "Book : %s", inventory[i].data);
+                        //sprintf(tim, "Book : %s", inventory[i].data);
                         tex = BOOK_ITEM_TEX;
                         break;
                     case 7:
-                        sprintf(tim, "Machine Gun : %s", inventory[i].data);
+                        //sprintf(tim, "Machine Gun : %s", inventory[i].data);
                         tex = MG_ITEM_TEX;
                         break;
                     case 8:
-                        sprintf(tim, "Rocket Launcher : %s", inventory[i].data);
+                        //sprintf(tim, "Rocket Launcher : %s", inventory[i].data);
                         tex = RL_ITEM_TEX;
                         break;
                     case 9:
-                        sprintf(tim, "Pick : %s", inventory[i].data);
+                        //sprintf(tim, "Pick : %s", inventory[i].data);
                         tex = PICK_ITEM_TEX;
                         break;
                     case 10:
-                        sprintf(tim, "Medkit : %s", inventory[i].data);
+                        //sprintf(tim, "Medkit : %s", inventory[i].data);
                         tex = MEDKIT_ITEM_TEX;
                         break;
                     default:
-                        strcpy(tim, "Invalid Item!");
+                        //strcpy(tim, "Invalid Item!");
+                        tex = DEBUG_TEX;
                 }
                 k_put_rect(tex, 36 + i, j + 6);
             } else {
@@ -760,6 +761,57 @@ void draw_rogue(){
         }
     }
 
+    for (int i = 0; i < num_dropped_items; i++){
+        if (15 - character_x + dropped_items[i].x < 35 && 15 - character_y + dropped_items[i].y < 35 && dropped_items[i].mapid == master_index) {
+            int tex = 0;
+            switch(dropped_items[i].item.type){
+                case 1:
+                    tex = FOOD_ITEM_TEX;
+                    break;
+                case 2:
+                    //sprintf(tim, "Handgun : %s", inventory[i].data);
+                    tex = GUN_ITEM_TEX;
+                    break;
+                case 3:
+                    //sprintf(tim, "Wrench : %s", inventory[i].data);
+                    tex = WRENCH_ITEM_TEX;
+                    break;
+                case 4:
+                    //sprintf(tim, "Ammunition : %s", inventory[i].data);
+                    tex = BULLET_ITEM_TEX;
+                    break;
+                case 5:
+                    //sprintf(tim, "Grenade : %s", inventory[i].data);
+                    tex = GRENADE_ITEM_TEX;
+                    break;
+                case 6:
+                    //sprintf(tim, "Book : %s", inventory[i].data);
+                    tex = BOOK_ITEM_TEX;
+                    break;
+                case 7:
+                    //sprintf(tim, "Machine Gun : %s", inventory[i].data);
+                    tex = MG_ITEM_TEX;
+                    break;
+                case 8:
+                    //sprintf(tim, "Rocket Launcher : %s", inventory[i].data);
+                    tex = RL_ITEM_TEX;
+                    break;
+                case 9:
+                    //sprintf(tim, "Pick : %s", inventory[i].data);
+                    tex = PICK_ITEM_TEX;
+                    break;
+                case 10:
+                    //sprintf(tim, "Medkit : %s", inventory[i].data);
+                    tex = MEDKIT_ITEM_TEX;
+                    break;
+                default:
+                    //strcpy(tim, "Invalid Item!");
+                    tex = DEBUG_TEX;
+            }
+            k_put_rect(tex, 15 - character_x + dropped_items[i].x, 15 - character_y + dropped_items[i].y);
+        }
+    }
+
     k_put_rect(GREEN_TEX, 15, 15);
 }
 
@@ -814,10 +866,154 @@ void draw_use_item(int trade_index){
     }
 }
 
+void draw_drop(){
+    char tim[80];
+
+    k_put_text("Select Item: ", 0, 0);
+
+    // loop inventory
+    int i;
+    for(i = 0; i < num_items; i++){
+        switch(inventory[i].type){
+            case 1:
+                sprintf(tim, "%s Ration", inventory[i].data);
+                break;
+            case 2:
+                sprintf(tim, "%s Handgun", inventory[i].data);
+                break;
+            case 3:
+                sprintf(tim, "%s Wrench", inventory[i].data);
+                break;
+            case 4:
+                sprintf(tim, "%s Ammunition", inventory[i].data);
+                break;
+            case 5:
+                sprintf(tim, "%s Grenade", inventory[i].data);
+                break;
+            case 6:
+                sprintf(tim, "%s Book", inventory[i].data);
+                break;
+            case 7:
+                sprintf(tim, "%s Machine Gun", inventory[i].data);
+                break;
+            case 8:
+                sprintf(tim, "%s Rocket Launcher", inventory[i].data);
+                break;
+            case 9:
+                sprintf(tim, "%s Pick", inventory[i].data);
+                break;
+            case 10:
+                sprintf(tim, "%s Medkit", inventory[i].data);
+                break;
+            default:
+                strcpy(tim, "Invalid Item!");
+        }
+
+        k_put_text(tim, 2, i + 1);
+
+        if (i == trade_index){
+            k_put_text("->", 0, i + 1);
+        }
+    }
+}
+
+void draw_sell(){
+    k_put_text("Oh, you want to sell to me?", 0, 0);
+
+    char tmp[80];
+    int l = 0;
+
+    for (int i = 0; i < num_items; i++){
+        switch(inventory[i].type){
+            case 1:
+                sprintf(tmp, "Ration : %s", inventory[i].data);
+                break;
+            case 2:
+                sprintf(tmp, "Handgun : %s", inventory[i].data);
+                break;
+            case 3:
+                sprintf(tmp, "Wrench : %s", inventory[i].data);
+                break;
+            case 4:
+                sprintf(tmp, "Ammunition : %s", inventory[i].data);
+                break;
+            case 5:
+                sprintf(tmp, "Grenade : %s", inventory[i].data);
+                break;
+            case 6:
+                sprintf(tmp, "Book : %s", inventory[i].data);
+                break;
+            case 7:
+                sprintf(tmp, "Machine Gun : %s", inventory[i].data);
+                break;
+            case 8:
+                sprintf(tmp, "Rocket Launcher : %s", inventory[i].data);
+                break;
+            case 9:
+                sprintf(tmp, "Pick : %s", inventory[i].data);
+                break;
+            case 10:
+                sprintf(tmp, "Medkit : %s", inventory[i].data);
+                break;
+            default:
+                strcpy(tmp, "Invalid Item!");
+        }
+        k_put_text(tmp, 2, l + 1);
+
+        sprintf(tmp, "%s ($%d)", "Hmm", 10);
+        k_put_text(tmp, 2, l + 2);
+
+        if (i == trade_index){
+            k_put_text("->", 0, l + 1);
+        }
+
+        l += 3;
+    }
+
+    k_put_text("N(Exit) Q(Go Up) E(Go Down) Enter(Sell)", 2, 34);
+}
+
+void draw_module_manage(){
+    char tmp[80];
+    k_put_text("Edit Modules", 0, 0);
+    for (int i = 0; i < NUM_MODULES_MAX; i++){
+        sprintf(tmp, "MODULE TYPE: %d", modules_enabled[i]);
+        k_put_text(tmp, 1, i + 1);
+    }
+
+    k_put_text("<-", 0, trade_index + 1);
+    sprintf(tmp, "Module ID: %d", selected_module);
+    k_put_text(tmp, 20, 0);
+}
+
+void draw_credits(){
+    k_put_rects(67, 0, 0, 1024, 192);
+    k_put_text("Credits:", 0, 13);
+    k_put_text("HENRY OLLING: Design, Programming, and Hardware", 0, 14);
+    k_put_text("SHAWN PARK: Music, Sound Effects", 0, 15);
+    k_put_text("LOUIS VANHAELEWYN: Build Scripts", 0, 16);
+    k_put_text("[Press any key to exit]", 0, 18);
+}
+
+void draw_main_menu(){
+    k_put_rects(67, 0, 0, 1024, 192);
+    k_put_text("Main Menu", 20, 13);
+    k_put_text("[A] New Game", 20, 14);
+    k_put_text("[S] Load Game", 20, 15); // does nothing
+    k_put_text("[D] Options", 20, 16);   // does nothing
+    k_put_text("[F] Help", 20, 17);      // does nothing
+    k_put_text("[L] Quit", 20, 18);
+}
+
 void draw_logo(){
     k_put_rects(LOGO_TEX, 0, 0, S_WIDTH, S_HEIGHT);
+    // draw *all* the textures
+    for (int i = 0; i < NUM_K_TEXTURES; i++){
+        k_put_rect(i, i % 63, (i > 62) ? 1 : 0); // hack that will last to ~126 textures
+    }
 }
 
 void draw_game_over(){
     k_put_rects(GAME_OVER_TEX, 0, 0, S_WIDTH, S_HEIGHT);
+    k_put_text("[Press any key to return to main menu]", 10, 20);
 }

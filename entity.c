@@ -261,7 +261,7 @@ coord enemy_think_1(int address){
 void update_entities_o( int time ){
     // draw entities
     if (time_entity_o > TIME_ENTITY ){
-        printf("TIME ENTITY WAS %d \n", time_entity_o);
+        //printf("TIME ENTITY WAS %d \n", time_entity_o);
         time_entity_o = 0;
         for (int i = 0; i < num_entities_o; i++){
             if (entities_o[i].type != 5 && entities_o[i].type >= 0){
@@ -272,7 +272,7 @@ void update_entities_o( int time ){
                     entities_o[i].x += t.x;
                     entities_o[i].y += t.y;
                     //cout << "TICKED ENTITY: " << i << " WITH VX: " << t.x << " WITH VY: " << t.y << endl;
-                    printf("TICKED ENTITY: %d WITH VX: %d WITH VY: %d \n", i, t.x, t.y);
+                    //printf("TICKED ENTITY: %d WITH VX: %d WITH VY: %d \n", i, t.x, t.y);
                 } else {
                     entities_o[i].x += entities_o[i].vx;
                     entities_o[i].y += entities_o[i].vy;
@@ -288,7 +288,7 @@ void update_entities_o( int time ){
     }
 
     if (time_rocket > TIME_ROCKET){
-        printf("TIME ROCKET WAS %d \n", time_rocket);
+       // printf("TIME ROCKET WAS %d \n", time_rocket);
         time_rocket = 0;
         for (int i = 0; i < num_entities_o; i++){
             if (entities_o[i].type == 5){
@@ -335,7 +335,6 @@ void update_entities_o( int time ){
 }
 
 void copy_npc_t(npc_t a, npc_t t){
-//    npc_t t = rogue_npc_master[master_index](x, y);
     a.health = t.health;
     a.id = t.id;
     a.inventory_size = t.inventory_size;
