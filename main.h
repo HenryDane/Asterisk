@@ -163,10 +163,13 @@ typedef int module_t;
 // number of maps
 #define NUM_MAPS 5
 
+// max number of loaded modules
 #define NUM_MODULES_MAX 16
 
+// maximum size of player inventory
 #define NUM_ITEMS_MAX 16
 
+// maximum number of dropped items across all maps
 #define NUM_DROPPED_MAX 32
 
 // define texture data
@@ -184,11 +187,19 @@ typedef int module_t;
 // max entities
 #define MAX_ENTITIES 32
 
+// length of quest text data
 #define QUEST_STR_DAT_LEN 160
 
-// timing
+// game state
+extern int state;
+
+// timing for entities
 extern double timerval;
 extern double time_entity;
+extern int time_character;
+extern int time_entity_o;
+extern int time_character;
+extern int time_rocket;
 
 // character attrs
 extern int character_x;
@@ -206,28 +217,20 @@ extern int score;
 extern d_item_t dropped_items[NUM_DROPPED_MAX];
 extern int num_dropped_items;
 
-extern int rounds;
-
-extern int time_character;
-extern int time_entity_o;
-extern int time_character;
-extern int time_rocket;
-
-// ???
-extern int selected_object;
-
-// game state
-extern int state;
-
+// rogue-like entities
 extern int num_entities;
 extern int num_entities_o;
 entity_t entities[32];
 
+// space entities
 o_entity_t entities_o[32];
 extern int id_entity_last;
 
 // for going to quest/cutscene/etc mode
 extern npc_t npc_last;
+extern int trade_index;
+extern int selected_module;
+extern int selected_object;
 
 // map stuffs
 extern map_t cached_map; // map for use when walkin around, needs to be loaded when player moves around
@@ -253,9 +256,8 @@ extern int sector_x;
 extern int sector_y;
 extern int sector_s;
 extern int level; // level id for space view
-
-// check for angled movement
-extern bool tilted;
+extern bool tilted; // check for angled movement
+extern int facing;
 
 // engine data
 extern int flux;
@@ -269,15 +271,17 @@ extern int themal_clamp;
 // ship data
 extern float vx;
 extern float vy;
-extern float vz;
-extern float x;
-extern float y;
-extern float z;
+// extern float vz; // unused
+//extern float x; // redundant
+//extern float y; // redundant
+// extern float z; // unused
 extern int thrust_clamp;
 extern int afterburn_clamp;
 extern float thrust;
+extern int ship_x;
+extern int ship_y;
 
-// engine stuff
+// engine stress values (can this be made private?? or in a struct??)
 extern int e1_g;
 extern int e1_y;
 extern int e2_g;
@@ -287,15 +291,7 @@ extern int e3_y;
 extern int e4_g;
 extern int e4_y;
 
-extern int facing;
-
-extern int ship_x;
-extern int ship_y;
-
-extern int trade_index;
-extern int selected_module;
-
-// map definitions
+// map definitions (can this be a struct too??)
 extern const int level_0_0[10][10];
 extern const tile_data level_0_0_tile_data[10];
 extern const int level_0_1[10][10];
@@ -304,3 +300,59 @@ extern const int level_0_2[10][10];
 extern const tile_data level_0_2_tile_data[10];
 extern const int level_0_3[10][10];
 extern const tile_data level_0_3_tile_data[10];
+
+// texture names
+#define DEBUG_TEX           9
+#define SPAWN_TEX           9
+#define BLACK_TEX           3
+#define HEART_TEX           24
+#define CRITICAL_TEX        28
+#define FULL_HEALTH_TEX     27
+#define BRONZE_TEX          25
+#define FLOOR_TEX           23
+#define WALL_TEX            42
+#define FERN_TEX            19
+#define SYSTEM_TEX          41
+#define NPC_TEX             34
+#define GREEN_TEX           26
+#define LOGO_TEX            32
+#define TURRET_TEX          45
+#define BULLET_TEX          46
+#define FIRE_TEX            44
+#define CRATE_TEX           47
+#define PORTAl_TEX          48
+#define PLANTS_TEX          49
+#define SPLANTS_TEX         50
+#define MACHINERY_TEX       52
+#define ENEMY_TEX           53
+#define WATER_TEX           54
+#define OMACHINERY_TEX      51
+#define FLOOR_ALT_TEX       55
+#define GAME_OVER_TEX       56
+#define GUN_ITEM_TEX        57
+#define FOOD_ITEM_TEX       58
+#define MEDKIT_ITEM_TEX     59
+#define WRENCH_ITEM_TEX     60
+#define BULLET_ITEM_TEX     61
+#define GRENADE_ITEM_TEX    62
+#define BOOK_ITEM_TEX       63
+#define MG_ITEM_TEX         64
+#define RL_ITEM_TEX         65
+#define PICK_ITEM_TEX       66
+#define RED_TEX             37
+#define YELLOW_TEX          43
+#define ICE_FEILD_TEX       30
+#define ICE_STATION_TEX     31
+#define STATION_TEX         40
+#define NEBULA_TEX          33
+#define C_U_TEX             8
+#define C_R_TEX             6
+#define C_D_TEX             5
+#define C_L_TEX             7
+#define E_U_TEX             15
+#define E_R_TEX             17
+#define E_D_TEX             18
+#define E_L_TEX             16
+#define ASTEROID_TEX        1
+#define DEBRIS_TEX          22
+#define ROCKET_TEX          37

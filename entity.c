@@ -39,6 +39,7 @@ bool check_next_step(int x, int y){
                         state = 30; // quest complete
                     } else {
                         // logic for incrementing quest position goes here
+                        printf("Incrementing??? \n");
                         switch (quest_a_registry[i].quest.verify_id[quest_a_registry[i].position]){
                             case 0: // nothing
                                 quest_a_registry[i].position++;

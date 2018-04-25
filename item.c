@@ -62,3 +62,55 @@ bool collect_item(item_t * item, int x, int y, int mapid){
 
     return false;
 }
+
+void use_item(int type){
+    bool erase = false;
+    switch (type){
+        case 10: // medkit
+            health += 250;
+        case 1: // ration
+            health += (rand() % 4) + 1;
+            erase = true;
+            break;
+        case 4: // ammo
+            rounds += 10000;
+            erase = true;
+        default:
+            break;
+    }
+
+    // remove item
+    if (erase){
+        for (int i = trade_index; i < num_items; i++){
+            inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
+        }
+        if (num_items > 0) num_items --;
+    }
+}
+
+int item_get_tex(int type){
+    switch(type){
+        case 1: // food
+            return FOOD_ITEM_TEX;
+        case 2: // handgun
+            return GUN_ITEM_TEX;
+        case 3: // wrench
+            return WRENCH_ITEM_TEX;
+        case 4: // ammo
+            return BULLET_ITEM_TEX;
+        case 5: // grenade
+            return GRENADE_ITEM_TEX;
+        case 6: // book
+            return BOOK_ITEM_TEX;
+        case 7: // machine gun
+            return MG_ITEM_TEX;
+        case 8: // rocket launcher
+            return RL_ITEM_TEX;
+        case 9: // pick
+            return PICK_ITEM_TEX;
+        case 10: // medkit
+            return MEDKIT_ITEM_TEX;
+        default: // unknown
+            return DEBUG_TEX;
+    }
+}

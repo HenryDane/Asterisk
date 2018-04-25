@@ -316,7 +316,7 @@ int main( ){
                             if (trade_index >= 0 && trade_index < num_items ){
                                 if (num_items < 16){
                                     credits += 10; // needs updating for actual apprasial
-                                    int i = trade_index; // yep, awful hack (#081724234)
+                                    //int i = trade_index; // yep, awful hack (#081724234) (also a redundant hack)
                                     if (/*erase*/ true){ // ugly hack #408554564
                                         for (int i = trade_index; i < num_items; i++){
                                             inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
@@ -333,28 +333,7 @@ int main( ){
                             state = 16; // leave cutscene and (old) quest mode
                         } else if (state == 21){ // use item
                             if (trade_index >= 0 && trade_index < num_items){
-                                bool erase = false;
-                                switch (inventory[trade_index].type){
-                                    case 10: // medkit
-                                        health += 250;
-                                    case 1: // ration
-                                        health += (rand() % 4) + 1;
-                                        erase = true;
-                                        break;
-                                    case 4: // ammo
-                                        rounds += 10000;
-                                        erase = true;
-                                    default:
-                                        break;
-                                }
-
-                                // remove item
-                                if (erase){
-                                    for (int i = trade_index; i < num_items; i++){
-                                        inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
-                                    }
-                                    if (num_items > 0) num_items --;
-                                }
+                                use_item(inventory[trade_index].type);
                             }
                         } else if (state == 1){
                             state = 3;
