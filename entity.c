@@ -194,38 +194,17 @@ void update_entities(){
                     num_entities--;
                 }
                 break;
+            case 11:
+                // map-defined, does not move
+                break;
+            case 12:
+                // mask self with NPC when collided (i.e. for a cutscene / quest / something )
+                break;
             default:
                 break;
         }
     }
 }
-
-void load_map(int index){
-    master_index = index;
-    cached_map = rogue_map_master[index].mapdat;
-    character_x = rogue_map_master[index].coord.x;
-    character_y = rogue_map_master[index].coord.y;
-    cached_map.num_entities = rogue_map_master[index].mapdat.num_entities;
-    num_entities = rogue_map_master[index].mapdat.num_entities;
-    printf("Loading map %d with start of (%d, %d) and %d entities \n", index, rogue_map_master[index].coord.x, rogue_map_master[index].coord.y, rogue_map_master[index].mapdat.num_entities);
-    for (int i = 0; i < rogue_map_master[index].mapdat.num_entities; i++){
-        entities[i] = rogue_map_master[index].mapdat.entities[i];
-    }
-}
-
-void load_teleport(int index, int x, int y){
-    master_index = index;
-    cached_map = rogue_map_master[index].mapdat;
-    character_x = x;
-    character_y = y;
-    cached_map.num_entities = rogue_map_master[index].mapdat.num_entities;
-    num_entities = rogue_map_master[index].mapdat.num_entities;
-    printf("Loading map %d with start of (%d, %d) and %d entities \n", index, rogue_map_master[index].coord.x, rogue_map_master[index].coord.y, rogue_map_master[index].mapdat.num_entities);
-    for (int i = 0; i < rogue_map_master[index].mapdat.num_entities; i++){
-        entities[i] = rogue_map_master[index].mapdat.entities[i];
-    }
-}
-
 
 void fire_missile(int ix, int iy, int vx, int vy, int type){
     printf("FIRED MISSILE \n"); //cout << "FIRED MISSILE" << endl;

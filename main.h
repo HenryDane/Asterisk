@@ -148,7 +148,17 @@ typedef struct {
     int position;
 } mquest_a_t;
 
+// portal definition function
 typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
+
+// enemy definition function
+typedef void (*enemy_function_ft) (entity_t * entity, int index);
+
+// validate function definition
+typedef bool (*quest_validate_function_ft) (void);
+
+// action function definition
+typedef bool (*quest_action_function_ft) (void);
 
 typedef int module_t;
 
@@ -238,11 +248,15 @@ extern int master_index; // current map id (index inside rogue_map_master
 extern map_master rogue_map_master[ NUM_MAPS ]; // main registry of maps
 extern npc_function_ft rogue_npc_master[NUM_MAPS]; // main registry of NPCs (this is an array of pointers to functions)
 extern portal_function_ft rogue_portal_master[NUM_MAPS];
+extern enemy_function_ft rogue_enemy_master[NUM_MAPS];
 
 extern mquest_t quest_registry[ NUM_QUESTS_MAX + 1];
 extern int num_active_quests;
 extern mquest_a_t quest_a_registry[ NUM_QUESTS_MAX + 1];
 extern char quest_str_dat [ QUEST_STR_DAT_LEN ];
+
+extern quest_validate_function_ft [NUM_QUESTS_MAX + 1];
+extern quest_action_function_ft [NUM_QUESTS_MAX + 1];
 
 extern int modules_enabled[NUM_MODULES_MAX];
 // cutscene stuffs
@@ -300,6 +314,9 @@ extern const int level_0_2[10][10];
 extern const tile_data level_0_2_tile_data[10];
 extern const int level_0_3[10][10];
 extern const tile_data level_0_3_tile_data[10];
+
+bool save(int slot);
+bool load(int slot);
 
 // texture names
 #define DEBUG_TEX           9

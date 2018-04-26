@@ -347,6 +347,12 @@ int main( ){
                     case sfKeyTab:
                         printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d NUM_DROPPED_ITEMS: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o, num_dropped_items);
                         break;
+                    case sfKeyTilde:
+                        printf("entities contains %d items: \n", num_entities);
+                        for (int i = 0; i < num_entities; i++){
+                            printf("    Entity %d : ID: %d TYPE: %d X: %d Y: %d VX: %d VY: %d \n", i, entities[i].id, entities[i].type, entities[i].x, entities[i].y, entities[i].vx, entities[i].vy);
+                        }
+                        break;
                     case sfKeyEqual: // increment map pointer (changed from + so shift key can be unused)
                         if (master_index + 1 >= 0 && master_index + 1 < NUM_MAPS) master_index++; // pointer safety first
                         break;
