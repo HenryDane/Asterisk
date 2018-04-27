@@ -21,8 +21,8 @@ mquest_t quest_1 = {1,
 mquest_t quest_registry[ NUM_QUESTS_MAX + 1];
 int num_active_quests;
 mquest_a_t quest_a_registry[ NUM_QUESTS_MAX + 1];
-quest_validate_function_ft [NUM_QUESTS_MAX + 1];
-quest_action_function_ft [NUM_QUESTS_MAX + 1];
+quest_validate_function_ft quest_validate_master[NUM_QUESTS_MAX + 1];
+quest_action_function_ft quest_action_master [NUM_QUESTS_MAX + 1];
 
 // update for quest V/A registry
 void init_quests(){

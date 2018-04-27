@@ -95,9 +95,12 @@ int main( ){
     // initalize rand
     srand (time(NULL));
 
+    int level = 0;
+
     // because we need to do this dont forget ok??
     init_maps();
     init_quests();
+    init_levels();
 
     // set up graphics
     k_init_gfx();
@@ -378,6 +381,8 @@ int main( ){
                                 printf("Quest %d already active \n", npc_last.quest_id);
                                 state = 29; // quest add fail
                             }
+                        } else if (state == 4){
+                            state = 44; // view stuff bro
                         } else if (state == 29){
                             // why is this here?
                         } else if (state == 16){
@@ -520,9 +525,13 @@ int main( ){
             case 43:
                 draw_drop();
                 break;
+            case 44:
+                // draw_view side panel (under stats in display();
+                state = 4; // temporary redirect
+                break;
             default:
                 printf("Intercepted bad state %d \n", state);
-                state = 16; // go to rugue to catch problems
+                state = 16; // go to rogue to catch problems
                 cleardisplay(false);
                 break;
         }

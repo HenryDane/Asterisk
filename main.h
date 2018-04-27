@@ -124,6 +124,13 @@ typedef struct {
 } map_master;
 
 typedef struct {
+    int * map_dat;
+    tile_data * tile_dat; // there must always be ten of these
+    int w;
+    int h;
+} s_map;
+
+typedef struct {
     int x;
     int y;
     int mapid;
@@ -172,6 +179,9 @@ typedef int module_t;
 
 // number of maps
 #define NUM_MAPS 5
+
+// number of space maps
+#define NUM_LEVELS 4
 
 // max number of loaded modules
 #define NUM_MODULES_MAX 16
@@ -255,8 +265,8 @@ extern int num_active_quests;
 extern mquest_a_t quest_a_registry[ NUM_QUESTS_MAX + 1];
 extern char quest_str_dat [ QUEST_STR_DAT_LEN ];
 
-extern quest_validate_function_ft [NUM_QUESTS_MAX + 1];
-extern quest_action_function_ft [NUM_QUESTS_MAX + 1];
+extern quest_validate_function_ft quest_validate_master[NUM_QUESTS_MAX + 1];
+extern quest_action_function_ft quest_action_master [NUM_QUESTS_MAX + 1];
 
 extern int modules_enabled[NUM_MODULES_MAX];
 // cutscene stuffs
@@ -306,14 +316,15 @@ extern int e4_g;
 extern int e4_y;
 
 // map definitions (can this be a struct too??)
-extern const int level_0_0[10][10];
+/*extern const int level_0_0[10][10];
 extern const tile_data level_0_0_tile_data[10];
 extern const int level_0_1[10][10];
 extern const tile_data level_0_1_tile_data[10];
 extern const int level_0_2[10][10];
 extern const tile_data level_0_2_tile_data[10];
 extern const int level_0_3[10][10];
-extern const tile_data level_0_3_tile_data[10];
+extern const tile_data level_0_3_tile_data[10]; */
+extern s_map level_master[NUM_LEVELS];
 
 bool save(int slot);
 bool load(int slot);

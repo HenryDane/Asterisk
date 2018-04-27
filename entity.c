@@ -292,7 +292,7 @@ void update_entities_o( int time ){
         facing_t += 4;
     }
     if (time_character > TIME_CHARACTER){
-        printf("TIME CHARACTER WAS %d \n", time_character);
+        // printf("TIME CHARACTER WAS %d \n", time_character);
         time_character = 0;
         fuel--;
         switch(facing_t){

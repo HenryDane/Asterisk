@@ -224,7 +224,8 @@ void draw_prewarp(int x, int y, int s){
     for (int i = 1; i < 11; i++){
         for (int j = 1; j < 11; j++){
             // draw sector 1
-            switch(level_0_0[i - 1][j - 1]){
+            //printf("TEST 3 %d \n", level)
+            switch(level_master[level].map_dat[ (i - 1) + (j - 1) * 10]){
                 case 0: tex = BLACK_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
@@ -234,7 +235,7 @@ void draw_prewarp(int x, int y, int s){
             k_put_rect(tex, i, j);
 
             // draw sector 1
-            switch(level_0_1[i - 1][j - 1]){
+            switch(level_master[level + 1].map_dat[ (i - 1) + (j - 1) * 10]){
                 case 0: tex = BLACK_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
@@ -244,7 +245,7 @@ void draw_prewarp(int x, int y, int s){
             k_put_rect(tex, i + 11, j);
 
             // draw sector 3
-            switch(level_0_3[i - 1][j - 1]){
+            switch(level_master[level + 3].map_dat[ (i - 1) + (j - 1) * 10]){
                 case 0: tex = BLACK_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
@@ -254,7 +255,7 @@ void draw_prewarp(int x, int y, int s){
             k_put_rect(tex, i, j + 11);
 
             // draw sector 2
-            switch(level_0_2[i - 1][j - 1]){
+            switch(level_master[level + 2].map_dat[ (i - 1) + (j - 1) * 10]){
                 case 0: tex = BLACK_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
@@ -282,52 +283,12 @@ void draw_prewarp(int x, int y, int s){
     }
 
     // search, inform
-    // FIX THIS -- GENERALIZE SO MULTIPLE MAPS ARE SUPPORTED (pointers?)
-    switch(s){
-        case 0:
-            // search
-            for (int i = 0; i < 10; i++){
-                // yes these need to be switched eventually someone (not me) will fix this
-                if(level_0_0_tile_data[i].y == x && level_0_0_tile_data[i].x == y){
-                    for (int j = 0; j < 16; j++){
-                        temp_data[j] = level_0_0_tile_data[i].data[j];
-                    }
-                }
+    for (int i = 0; i < 10; i++){
+        if (level_master[level + (s % 4)].tile_dat[i].x == x && level_master[level + (s % 4)].tile_dat[i].y == y){
+            for (int j = 0; j < 16; j++){
+                temp_data[j] = level_master[level + (s % 4)].tile_dat[i].data[j];
             }
-            break;
-        case 1:
-            // search
-            for (int i = 0; i < 10; i++){
-                // yes these need to be switched eventually someone (not me) will fix this
-                if(level_0_1_tile_data[i].y == x && level_0_1_tile_data[i].x == y){
-                    for (int j = 0; j < 16; j++){
-                        temp_data[j] = level_0_1_tile_data[i].data[j];
-                    }
-                }
-            }
-            break;
-        case 3:
-            // search
-            for (int i = 0; i < 10; i++){
-                // yes these need to be switched eventually someone (not me) will fix this
-                if(level_0_3_tile_data[i].y == x && level_0_3_tile_data[i].x == y){
-                    for (int j = 0; j < 16; j++){
-                        temp_data[j] = level_0_3_tile_data[i].data[j];
-                    }
-                }
-            }
-            break;
-        case 2:
-            // search
-            for (int i = 0; i < 10; i++){
-                // yes these need to be switched eventually someone (not me) will fix this
-                if(level_0_2_tile_data[i].y == x && level_0_2_tile_data[i].x == y){
-                    for (int j = 0; j < 16; j++){
-                        temp_data[j] = level_0_2_tile_data[i].data[j];
-                    }
-                }
-            }
-            break;
+        }
     }
     k_put_text(temp_data, 23, 7);
 
@@ -363,7 +324,6 @@ void draw_prewarp(int x, int y, int s){
 
     for(int i = 0; i < 2; i++){
         for (int j = 0; j < 10; j++){
-//            rsetPosition( r, 32 + 16 * i, 400 + j * 16);
             if ( j >= e1_y) {
                 k_put_rect(RED_TEX, 2 + i, 25 + j);
             } else if (j >= e1_g && j < e1_y){
@@ -791,7 +751,7 @@ void draw_module_manage(){
         k_put_text(tmp, 1, i + 1);
     }
 
-    k_put_text("<-", 0, trade_index + 1);
+    k_put_text(">", 0, trade_index + 1);
     sprintf(tmp, "Module ID: %d", selected_module);
     k_put_text(tmp, 20, 0);
 }

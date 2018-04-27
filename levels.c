@@ -37,16 +37,16 @@ LEVEL 0 DATA - Epsilon Quadrant
 ===================================================================================================
 */
 
-const int level_0_0[10][10] = { { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                { 0, 5, 0, 5, 0, 3, 0, 0, 0, 0},
-                                { 0, 1, 0, 3, 3, 0, 0, 0, 0, 0},
-                                { 0, 0, 5, 0, 3, 0, 0, 0, 0, 0},
-                                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-                                { 0, 0, 0, 0, 0, 0, 0, 4, 0, 0},
-                                { 2, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                                { 0, 0, 2, 0, 0, 0, 0, 0, 1, 0},
-                                { 0, 0, 0, 0, 0, 0, 5, 0, 0, 0},
-                                { 0, 0, 4, 0, 0, 0, 0, 0, 0, 0}};
+const int level_0_0[10][10] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0, 5, 0, 5, 0, 3, 0, 0, 0, 0,
+                                0, 1, 0, 3, 3, 0, 0, 0, 0, 0,
+                                0, 0, 5, 0, 3, 0, 0, 0, 0, 0,
+                                0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+                                0, 0, 0, 0, 0, 0, 0, 4, 0, 0,
+                                2, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                                0, 0, 2, 0, 0, 0, 0, 0, 1, 0,
+                                0, 0, 0, 0, 0, 0, 5, 0, 0, 0,
+                                0, 0, 4, 0, 0, 0, 0, 0, 0, 0};
 
 const level_data level_0_0_0_level_data[3] = { {30, 30, "Abandoned C. R.", true, 0, 0, false},
                                             {31, 31, "Asteroids", false, 1, 10, false},
@@ -69,16 +69,16 @@ const tile_data level_0_0_tile_data[10] = { {0, 0, "Abandoned C. R.", 3, level_0
                                             {4, 2, "Horse Nebula", 1, level_0_0_1_level_data},
                                             {5, 1, "Camel Nebula", 1, level_0_0_1_level_data}};
 
-const int level_0_1[10][10] = { { 0, 0, 0, 0, 0, 0, 0, 3, 3, 4},
-                                { 0, 0, 0, 1, 0, 0, 0, 0, 3, 1},
-                                { 0, 0, 2, 0, 0, 5, 0, 3, 3, 0},
-                                { 0, 1, 2, 0, 0, 0, 3, 3, 4, 0},
-                                { 0, 2, 0, 0, 0, 3, 3, 0, 0, 0},
-                                { 0, 0, 0, 0, 4, 3, 0, 0, 0, 0},
-                                { 0, 0, 3, 3, 3, 3, 3, 3, 2, 0},
-                                { 0, 0, 3, 3, 0, 0, 0, 0, 5, 0},
-                                { 0, 3, 4, 5, 0, 0, 2, 0, 2, 0},
-                                { 4, 0, 0, 0, 0, 0, 0, 0, 2, 1}};
+const int level_0_1[10][10] = { 0, 0, 0, 0, 0, 0, 0, 3, 3, 4,
+                                0, 0, 0, 1, 0, 0, 0, 0, 3, 1,
+                                0, 0, 2, 0, 0, 5, 0, 3, 3, 0,
+                                0, 1, 2, 0, 0, 0, 3, 3, 4, 0,
+                                0, 2, 0, 0, 0, 3, 3, 0, 0, 0,
+                                0, 0, 0, 0, 4, 3, 0, 0, 0, 0,
+                                0, 0, 3, 3, 3, 3, 3, 3, 2, 0,
+                                0, 0, 3, 3, 0, 0, 0, 0, 5, 0,
+                                0, 3, 4, 5, 0, 0, 2, 0, 2, 0,
+                                4, 0, 0, 0, 0, 0, 0, 0, 2, 1};
 
 const level_data level_0_1_0_level_data[2] = { {30, 30, "Asteroids", true, 1, 20},
                                             {30, 30, "Asteroids", true, 3, 20}};
@@ -103,16 +103,16 @@ const tile_data level_0_1_tile_data[10] = { {3, 1, "Enemy Base 14-g", 2, level_0
                                             {1, 4, "Apollo Iron", 2, level_0_1_0_level_data },
                                             {4, 5, "Jenja System", 1, level_0_1_1_level_data}};
 
-const int level_0_2[10][10] = { { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0},
-                                { 0, 0, 0, 0, 2, 0, 0, 0, 0, 0},
-                                { 0, 5, 0, 0, 0, 2, 2, 0, 0, 0},
-                                { 0, 0, 0, 0, 0, 0, 0, 5, 0, 0},
-                                { 1, 0, 0, 0, 1, 2, 0, 0, 0, 0},
-                                { 0, 0, 0, 0, 2, 2, 2, 0, 0, 0},
-                                { 0, 2, 0, 0, 0, 0, 2, 3, 0, 3},
-                                { 0, 2, 2, 0, 0, 0, 0, 3, 3, 0},
-                                { 3, 3, 2, 0, 0, 0, 0, 0, 3, 3},
-                                { 4, 3, 5, 0, 0, 0, 0, 0, 3, 3}};
+const int level_0_2[10][10] = { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0, 0, 0, 0, 2, 0, 0, 0, 0, 0,
+                                0, 5, 0, 0, 0, 2, 2, 0, 0, 0,
+                                0, 0, 0, 0, 0, 0, 0, 5, 0, 0,
+                                1, 0, 0, 0, 1, 2, 0, 0, 0, 0,
+                                0, 0, 0, 0, 2, 2, 2, 0, 0, 0,
+                                0, 2, 0, 0, 0, 0, 2, 3, 0, 3,
+                                0, 2, 2, 0, 0, 0, 0, 3, 3, 0,
+                                3, 3, 2, 0, 0, 0, 0, 0, 3, 3,
+                                4, 3, 5, 0, 0, 0, 0, 0, 3, 3};
 
 const level_data level_0_2_0_level_data[2] = { {30, 30, "F. Inc. Mn.", true, 1, 20},
                                             {20, 20, "F. Inc. Mn.", true, 3, 20}};
@@ -133,16 +133,16 @@ const tile_data level_0_2_tile_data[10] = { {1, 0, "F. Inc. Mn.", 2, level_0_2_0
                                             {9, 6, "Old Nebula", 1, level_0_2_1_level_data}};
 
 
-const int level_0_3[10][10] = { { 0, 2, 2, 0, 0, 0, 0, 0, 0, 0},
-                                { 0, 1, 0, 0, 0, 0, 0, 5, 0, 0},
-                                { 0, 0, 0, 0, 1, 0, 2, 0, 0, 0},
-                                { 0, 0, 0, 3, 3, 3, 0, 0, 3, 0},
-                                { 0, 0, 0, 5, 3, 4, 0, 3, 0, 0},
-                                { 0, 0, 2, 3, 3, 3, 3, 3, 0, 0},
-                                { 0, 0, 2, 2, 0, 0, 0, 5, 0, 0},
-                                { 0, 0, 0, 2, 0, 0, 0, 2, 0, 0},
-                                { 0, 0, 5, 0, 2, 0, 2, 2, 0, 0},
-                                { 0, 0, 0, 0, 0, 2, 0, 0, 0, 1}};
+const int level_0_3[10][10] = { 0, 2, 2, 0, 0, 0, 0, 0, 0, 0,
+                                0, 1, 0, 0, 0, 0, 0, 5, 0, 0,
+                                0, 0, 0, 0, 1, 0, 2, 0, 0, 0,
+                                0, 0, 0, 3, 3, 3, 0, 0, 3, 0,
+                                0, 0, 0, 5, 3, 4, 0, 3, 0, 0,
+                                0, 0, 2, 3, 3, 3, 3, 3, 0, 0,
+                                0, 0, 2, 2, 0, 0, 0, 5, 0, 0,
+                                0, 0, 0, 2, 0, 0, 0, 2, 0, 0,
+                                0, 0, 5, 0, 2, 0, 2, 2, 0, 0,
+                                0, 0, 0, 0, 0, 2, 0, 0, 0, 1};
 
 const level_data level_0_3_0_level_data[4] = { {30, 30, "Home", true, 0, 1},
                                             {20, 30, "Repair St.", true, 0, 1},
@@ -168,103 +168,15 @@ const tile_data level_0_3_tile_data[10] = { {1, 1, "Enemy Base 7-m", 1, level_0_
                                             {3, 3, "Jelge Nebula", 1, level_0_3_2_level_data},
                                             {4, 5, "Home", 4, level_0_3_0_level_data}};
 
+s_map level_master[NUM_LEVELS];
 
-void search_and_build(const tile_data * tiledata){
-    printf("SECTOR: %d \n", sector_s);
-
-    // init vairables
-    bool exists = false;
-    int i = 0;
-
-    // search
-    for ( ; i < 10; i++){
-        if (tiledata[i].x == sector_y && tiledata[i].y == sector_x){
-            exists = true;
-            printf("FOUND W DESC %d I: %d \n" , tiledata[i].data, i);
-            break;
-        }
-    }
-    printf("EXITST: %d \n", ((exists) ? 1 : 0) );
-
-    // create entities
-    if (exists){
-        printf("EXISTS!! NUM: %d I: %d \n", tiledata[i].num_level_data, i);
-        for(int j = 0; j < tiledata[i].num_level_data; j++){
-            printf("LOOKING AT J: %d \n", j);
-            switch(tiledata[i].flight_data[j].type){
-                case 0: // station
-                    printf("SPAWN STATION AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
-
-                    // create entity listing
-                    entities_o[num_entities_o].id = id_entity_last;
-                    entities_o[num_entities_o].x = tiledata[i].flight_data[j].x;
-                    entities_o[num_entities_o].y = tiledata[i].flight_data[j].y;
-                    entities_o[num_entities_o].type = 0;
-                    for (int k = 0; k < 16; k++){
-                        entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
-                    }
-                    entities_o[num_entities_o].vx = 0;
-                    entities_o[num_entities_o].vy = 0;
-                    if (num_entities_o < MAX_ENTITIES) num_entities_o++;
-                    id_entity_last++;
-                    break;
-                case 1: //asteroid
-                    printf("SPAWN ASTEROID AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
-
-                    for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
-                        entities_o[num_entities_o].id = id_entity_last;
-                        entities_o[num_entities_o].x = rand() % WIDTH;
-                        entities_o[num_entities_o].y = rand() % HEIGHT;
-                        entities_o[num_entities_o].type = 1;
-                        for (int k = 0; k < 16; k++){
-                            entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
-                        }
-                        entities_o[num_entities_o].vx = (rand() % 5) - 2;
-                        entities_o[num_entities_o].vy = (rand() % 5) - 2;
-                        if (num_entities_o < MAX_ENTITIES) {
-                            num_entities_o++;
-                        }
-                        id_entity_last++;
-                    }
-                    break;
-                case 2: // enemy
-                    printf("SPAWN ENEMY AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
-
-                    for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
-                        entities_o[num_entities_o].id = id_entity_last;
-                        entities_o[num_entities_o].x = tiledata[i].flight_data[j].x;
-                        entities_o[num_entities_o].y = tiledata[i].flight_data[j].y;
-                        entities_o[num_entities_o].type = 2;
-                        for (int k = 0; k < 16; k++){
-                            entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
-                        }
-                        entities_o[num_entities_o].vx = (rand() % 10 > 5) ? -1 : 1;
-                        entities_o[num_entities_o].vy = (rand() % 10 > 5) ? -1 : 1;
-                        if (num_entities < MAX_ENTITIES) num_entities_o++;
-                    }
-                    break;
-                case 3: // debris
-                    printf("SPAWN DEBRIS AT X: %d Y: %d \n", tiledata[i].flight_data[j].x, tiledata[i].flight_data[j].y);
-
-                    for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
-                        entities_o[num_entities_o].id = id_entity_last;
-                        entities_o[num_entities_o].x = rand() % WIDTH;
-                        entities_o[num_entities_o].y = rand() % HEIGHT;
-                        entities_o[num_entities_o].type = 3;
-                        for (int k = 0; k < 16; k++){
-                            entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
-                        }
-                        entities_o[num_entities_o].vx = 0;
-                        entities_o[num_entities_o].vy = 0;
-                        if (num_entities_o < MAX_ENTITIES) num_entities_o++;
-                        id_entity_last++;
-                    }
-                    break;
-                default:
-                    printf("FAILED WITH: %d \n" , tiledata[i].flight_data[j].type);
-            }
-        }
-    } else {
-        printf("SPAWINING NOTHING \n");
-    }
+void init_levels(){
+    level_master[0].map_dat = level_0_0;
+    level_master[0].tile_dat = level_0_0_tile_data;
+    level_master[1].map_dat = level_0_1;
+    level_master[1].tile_dat = level_0_1_tile_data;
+    level_master[2].map_dat = level_0_2;
+    level_master[2].tile_dat = level_0_2_tile_data;
+    level_master[3].map_dat = level_0_3;
+    level_master[3].tile_dat = level_0_3_tile_data;
 }
