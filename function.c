@@ -1,3 +1,7 @@
+#include "main.h"
+
+#include <stdbool.h>
+
 void handle_quest_entities(int type){
     switch (type){
         default:

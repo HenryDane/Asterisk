@@ -311,7 +311,7 @@ void draw_prewarp(int x, int y, int s){
     k_put_text("Warp Engine Integrity: 87%", 23, 5); // needs to be done dynamically once engines work
 
     k_put_text("Engine Status:", 23, 23);
-    k_put_text("[Enter] to configure", 23, 24);
+    k_put_text("[Backslash] to configure", 23, 24);
     k_put_text("Fuel: 9678 / 10000", 23, 26); // needs to be done dynamiclly once engines work
     k_put_text("Peak Flux: 0.6772 A--DE-G-", 23, 27);
     k_put_text("Reserved Flux: 10.2821", 23, 28);

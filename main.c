@@ -431,6 +431,13 @@ int main( ){
                             rounds --;
                         }
                         break;
+                    case sfKeyBackSlash:
+                        if (state == 1){
+                            state = 2;
+                        } else if (state == 2){
+                            state = 1;
+                        }
+                        break;
                     default: // do nothing (undefined key)
                         break;
                 }
@@ -457,6 +464,8 @@ int main( ){
                 break;
             case 2:
                 draw_engine_config();
+                state = 1;
+                printf("config is disabled \n");
                 break;
             case 1:
                 draw_prewarp(jump_x, jump_y, jump_s);
