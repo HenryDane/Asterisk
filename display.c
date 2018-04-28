@@ -502,7 +502,8 @@ void draw_rogue(){
     int texid = 0;
     for (int i = 0; i < HEIGHT; i++){
         for (int j = 0; j < HEIGHT; j++){
-            if (rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id <= 0) {
+            int a = rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id;
+            if (a  <= 0) {
                 int tdat = -1;
                 if (((i - 15 + character_x) >= 0 && (i - 15 + character_x ) < cached_map.w) &&
                     ((j - 15 + character_y) >= 0 && (j - 15 + character_y ) < cached_map.h)) {
@@ -530,6 +531,7 @@ void draw_rogue(){
                         break;
                     case 9: // npc (impassable)
                         texid = NPC_TEX;
+                        printf("hard_npc \n");
                         break;
                     case 6: // fire
                         texid = FIRE_TEX;
@@ -556,11 +558,29 @@ void draw_rogue(){
                         texid = FLOOR_TEX;
                 }
                 if (tdat < -1){
-                    //printf("T%d ", tdat);
                     texid = PORTAl_TEX;
                 }
             } else {
-                texid = NPC_TEX;
+                // check if NPC is hidden
+                bool ok = true;
+                if (num_hidden_npcs > 0){
+                    int i = 0;
+                    for ( ; i < num_hidden_npcs; i++){
+                        //printf("i: %d ; %d == %d (a %d)? \n", i, hidden_npcs[i], rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id, a);
+                        if (hidden_npcs[i] == a ){
+                            //printf("found hidden NPC at %d, %d with id of %d at index %d \n", i - 15 + character_x, j - 15 + character_y, rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id, i);
+                            ok = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (ok){
+                    texid = NPC_TEX;
+                } else {
+                    //printf("hmhmh\n");
+                    texid = FLOOR_TEX;
+                }
             }
 
             k_put_rect(texid, i, j);

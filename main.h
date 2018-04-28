@@ -195,6 +195,9 @@ typedef int module_t;
 // define texture data
 #define NUM_TEXTURES 67
 
+// define maximum number of hidden NPCS
+#define NUM_HIDDEN_NPCS_MAX 8
+
 // number of quests
 #define NUM_QUESTS 1
 #define NUM_QUESTS_MAX 4
@@ -236,6 +239,9 @@ extern int score;
 
 extern d_item_t dropped_items[NUM_DROPPED_MAX];
 extern int num_dropped_items;
+
+extern int hidden_npcs[NUM_HIDDEN_NPCS_MAX];
+extern int num_hidden_npcs;
 
 // rogue-like entities
 extern int num_entities;

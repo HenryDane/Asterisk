@@ -91,6 +91,9 @@ entity_t entities[32];
 int selected_module = -1;
 int trade_index = 0; // pointer to trading address
 
+int hidden_npcs[NUM_HIDDEN_NPCS_MAX] = {1281, -1, -1, -1, -1, -1, -1, -1}; // used for hiding NPCs by ID
+int num_hidden_npcs = 1;
+
 int main( ){
     // initalize rand
     srand (time(NULL));

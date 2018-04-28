@@ -18,7 +18,18 @@ bool check_next_step(int x, int y){
         return false;
     }
 
-    if (rogue_npc_master[master_index](x, y).id > 0) {
+    bool npc_ok = true;
+    if (num_hidden_npcs > 0){
+        for (int i = 0; i < num_hidden_npcs; i++){
+            if (hidden_npcs[i] == rogue_npc_master[master_index](x, y).id){
+                npc_ok = false;
+                printf("found hidden NPC at %d, %d with id of %d at index %d \n", x, y, rogue_npc_master[master_index](x, y).id, i);
+                break;
+            }
+        }
+    }
+
+    if (rogue_npc_master[master_index](x, y).id > 0 && npc_ok) {
         printf("Found NPC! Id: %d Merchant: %d Quest: %d\n", rogue_npc_master[master_index](x, y).id, rogue_npc_master[master_index](x, y).is_merchant, rogue_npc_master[master_index](x, y).quest_id );
         if (!rogue_npc_master[master_index](x, y).is_merchant){
             if (rogue_npc_master[master_index](x, y).quest_id > 0 ){
@@ -60,7 +71,11 @@ bool check_next_step(int x, int y){
             state = 19; // go to merchant mode
             npc_last = rogue_npc_master[master_index](x, y);
             printf("EXPECTED SIZE: %d \n", rogue_npc_master[master_index](x,y).inventory_size);
-            return false;
+            if (npc_ok) {
+                return false; // no moving if npc
+            } else {
+                return true; // fine to move bc "there isnt one"
+            }
         }
     }
 
@@ -78,12 +93,18 @@ bool check_next_step(int x, int y){
         case 4:
         case 8:
         case 9:
-            return false;
+            if (npc_ok){
+                return false;
+            } else {
+                return true;
+            }
         case 6:
             health -= (rand() % 100) + 300; // take fire damage
         default:
             return true;
     }
+
+    return true;
 }
 
 void update_entities(){
@@ -201,6 +222,8 @@ void update_entities(){
                 // mask self with NPC when collided (i.e. for a cutscene / quest / something )
                 break;
             default:
+                // something should be done for special bosses (IE Quest-created enemies )
+                handle_quest_entities(entities[i].type);
                 break;
         }
     }
