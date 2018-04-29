@@ -48,6 +48,21 @@ const int level_0_0[10][10] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 0, 0, 0, 0, 0, 0, 5, 0, 0, 0,
                                 0, 0, 4, 0, 0, 0, 0, 0, 0, 0};
 
+
+/*
+typedef struct {
+    int x;
+    int y;
+    char data[16];
+    bool persistent;
+    int type;
+    unsigned int num;
+    bool map_exists;
+    int map_id;
+    int map_w;
+    int map_h;
+} level_data;
+*/
 const level_data level_0_0_0_level_data[3] = { {30, 30, "Abandoned C. R.", true, 0, 0, false},
                                             {31, 31, "Asteroids", false, 1, 10, false},
                                             {23, 7, "Debris", false, 3, 5, false}};

@@ -81,9 +81,16 @@ bool check_next_step(int x, int y){
 
     // portals first bc PEMDAS
     if (rogue_portal_master[master_index](x, y).mapid > -1){
-        load_teleport(rogue_portal_master[master_index](x, y).mapid, rogue_portal_master[master_index](x, y).x, rogue_portal_master[master_index](x, y).y ); // load map and set up
-        printf("Updating player to %d, %d\n", rogue_portal_master[master_index](x, y).x, rogue_portal_master[master_index](x, y).y );
-        return false;
+        if (rogue_portal_master[master_index](x, y).x >= 0){
+            load_teleport(rogue_portal_master[master_index](x, y).mapid, rogue_portal_master[master_index](x, y).x, rogue_portal_master[master_index](x, y).y ); // load map and set up
+            printf("Updating player to %d, %d\n", rogue_portal_master[master_index](x, y).x, rogue_portal_master[master_index](x, y).y );
+            return false;
+        } else {
+            build_terrain(- rogue_portal_master[master_index](x, y).x, - rogue_portal_master[master_index](x, y).y, rogue_portal_master[master_index](x, y).mapid);
+            printf("Hit a dock!");
+            state = 4; // wooooo space
+            return false;
+        }
     }
 
     // handle map stuffs
@@ -166,15 +173,33 @@ void update_entities(){
                 // check for entity collisions
                 for (int j = 0; j < num_entities; j++){
                     if (entities[i].x == entities[j].x && entities[i].y == entities[j].y && entities[i].id != entities[j].id){
-                        for (int k = i; k < num_entities; k++){
-                            entities[k] = entities[(k + 1 < num_items) ? k + 1 : k];
+                        int k = 0;
+                        int m = 0;
+
+                        // mark entities
+                        entities[i].id = -1034;
+                        entities[j].id = -1035;
+
+                        for (m = 0; m < num_entities; m++){
+                            if (entities[m].id == -1034){
+                                break;
+                            }
+                        }
+                        for (int k = m; k < num_entities - 1; k++){
+                            entities[k] = entities[k + 1];
                         }
                         num_entities--;
 
-                        for (int k = j; k < num_entities; k++){
-                            entities[k] = entities[(k + 1 < num_items) ? k + 1 : k];
+                        for (m = 0; m < num_entities; m++){
+                            if (entities[m].id == -1035){
+                                break;
+                            }
+                        }
+                        for (int k = m; k < num_entities - 1; k++){
+                            entities[k] = entities[k + 1];
                         }
                         num_entities--;
+
                         break;
                     }
                 }
@@ -284,8 +309,18 @@ void update_entities_o( int time ){
                 if (entities_o[i].x == ship_x && entities_o[i].y == ship_y && (entities_o[i].type == 1 || entities_o[i].type == 3)){
                     //cout << "COLLISION !!";
                     printf("COLLISION !! \n");
-                    state = -2;
+                    //state = -2;
+                    //return;
                 }
+                printf("ID: %d TYPE: %d X: %d Y: %d CX: %d CY: %d", entities_o[i].id, entities_o[i].type, entities_o[i].x, entities_o[i].y, character_x, character_y);
+                if (entities_o[i].x == ship_x && entities_o[i].y == ship_y && entities_o[i].type == 0){
+                    printf("Docking! \n");
+                    state = 16;
+                    load_map(entities_o[i].vx);
+                    return;
+                }
+            } else {
+                // do nothing?
             }
         }
     }

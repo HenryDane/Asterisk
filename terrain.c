@@ -72,7 +72,7 @@ void search_and_build(const tile_data * tiledata){
 
     // search
     for ( ; i < 10; i++){
-        printf("Testing %d, %d with %d, %d", tiledata[i].x, tiledata[i].y, sector_x, sector_y);
+        printf("Testing %d, %d with %d, %d \n", tiledata[i].x, tiledata[i].y, sector_x, sector_y);
         if (tiledata[i].x == sector_x && tiledata[i].y == sector_y){
             exists = true;
             printf("FOUND W DESC %d I: %d \n" , tiledata[i].data, i);
@@ -98,7 +98,7 @@ void search_and_build(const tile_data * tiledata){
                     for (int k = 0; k < 16; k++){
                         entities_o[num_entities_o].data[i] = tiledata[i].flight_data[j].data[i];
                     }
-                    entities_o[num_entities_o].vx = 0;
+                    entities_o[num_entities_o].vx = tiledata[i].flight_data[j].num; // encodes which map
                     entities_o[num_entities_o].vy = 0;
                     if (num_entities_o < MAX_ENTITIES) num_entities_o++;
                     id_entity_last++;

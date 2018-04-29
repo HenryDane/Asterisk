@@ -72,8 +72,12 @@ int modules_enabled[NUM_MODULES_MAX] = {-1};
 
 item_t inventory[NUM_ITEMS_MAX] = {{0,2,false," T4", 3},
                         {1,1,false," 4K Cal.", 8},
-                        {2,3,false," Electric", 9}};
-int num_items = 3;
+                        {2,3,false," Electric", 9},
+                        {4,5,false," Boom", 5},
+                        {5,5,false," Boom", 5},
+                        {6,5,false," Boom", 5},
+                        {7,16,false," Speed Upg.", 11}};
+int num_items = 7;
 
 d_item_t dropped_items[NUM_DROPPED_MAX] = {{-1,-1,false, " ", 0}};
 int num_dropped_items = 0;
@@ -91,8 +95,8 @@ entity_t entities[32];
 int selected_module = -1;
 int trade_index = 0; // pointer to trading address
 
-int hidden_npcs[NUM_HIDDEN_NPCS_MAX] = {1281, -1, -1, -1, -1, -1, -1, -1}; // used for hiding NPCs by ID
-int num_hidden_npcs = 1;
+int hidden_npcs[NUM_HIDDEN_NPCS_MAX] = {-1, -1, -1, -1, -1, -1, -1, -1}; // used for hiding NPCs by ID
+int num_hidden_npcs = 0;
 
 int main( ){
     // initalize rand
@@ -142,6 +146,8 @@ int main( ){
                 if (state == -4){
                     return 0; // leave if on final screen
                 } else if (state == -2){
+                    master_index = 0;
+                    load_map(master_index);
                     state = -3; // go back to main menu
                 }
 
@@ -295,8 +301,10 @@ int main( ){
                                 }
                             }
                         } else if (state == 43){
-                            drop_item_c(trade_index);
-                            state = 16;
+                            if (num_items > 0){
+                                drop_item_c(trade_index);
+                                state = 16;
+                            }
                         } else if (state == 19){
                             if (trade_index >= 0 && trade_index < npc_last.inventory_size ){
                                 if (num_items < 16){
@@ -402,7 +410,7 @@ int main( ){
                         break;
                     case sfKeyN:
                         if (state == 17 || state == 18 || state == 19 || state == 21 || state == 27 || state == 28 ||
-                            state == 29 || state == 37 || state == 32) {
+                            state == 29 || state == 37 || state == 32 || state == 43) {
                             state = 16;
                         }
                         break;

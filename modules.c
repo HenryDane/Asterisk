@@ -33,7 +33,7 @@ void add_module(module_t module){
             printf("Added nothing module \n");
             break;
         default:
-            printf("What module??\n");
+            printf("What module?? %d \n", module);
     }
 }
 

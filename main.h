@@ -34,7 +34,7 @@ typedef struct {
     char data[16];
     bool persistent;
     int type;
-    unsigned int num;
+    unsigned int num; // if type == 0 then this is the target map_id to dock to;
     bool map_exists;
     int map_id;
     int map_w;
@@ -96,7 +96,7 @@ typedef struct {
     int id; // -1 if the npc is null
     int health; // of 1000
     int type;
-    int inventory_size;
+    int inventory_size; // do we need this? I think yes
     npc_item_t inventory [16]; // make to a fixed size? npcs probably dont need to have working inventories
     bool is_merchant;
     bool is_ablaze;
@@ -203,9 +203,9 @@ typedef int module_t;
 #define NUM_QUESTS_MAX 4
 
 // entity timing constants "milliseconds"
-#define TIME_CHARACTER 760
-#define TIME_ENTITY 1000
-#define TIME_ROCKET 200
+#define TIME_CHARACTER 50 // was 760 --> 380
+#define TIME_ENTITY 500
+#define TIME_ROCKET 100
 
 // max entities
 #define MAX_ENTITIES 32
@@ -390,3 +390,15 @@ bool load(int slot);
 #define ASTEROID_TEX        1
 #define DEBRIS_TEX          22
 #define ROCKET_TEX          37
+
+#define MODULE_TEX          68
+#define WELDER_TEX          72
+#define TNT_TEX             69
+#define TURRET_ITEM_TEX     70
+#define DRILL_TEX           71
+
+#define GOLD_TEX            4
+#define PURPLE_HEART_TEX    36
+#define SILVER_TEX          39
+#define PLATINUM_TEX        35
+#define FUEL_ITEM_TEX       73

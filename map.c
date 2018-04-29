@@ -167,7 +167,7 @@ portal_t map_0_portal( unsigned int x, unsigned int y ){
     // 0 0
     portal_t portal_3 = {82, 32, 0 };
     // 0 0
-    portal_t portal_4 = {114, 6, 0 };
+    portal_t portal_4 = {-114, -6, 0 };
     // 0 0
     portal_t portal_5 = {70, 15, 0 };
     // 0 0

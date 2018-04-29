@@ -226,7 +226,7 @@ void draw_prewarp(int x, int y, int s){
             // draw sector 1
             //printf("TEST 3 %d \n", level)
             switch(level_master[level].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = BLACK_TEX; break;
+                case 0: tex = DEBUG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -236,7 +236,7 @@ void draw_prewarp(int x, int y, int s){
 
             // draw sector 1
             switch(level_master[level + 1].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = BLACK_TEX; break;
+                case 0: tex = DEBUG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -246,7 +246,7 @@ void draw_prewarp(int x, int y, int s){
 
             // draw sector 3
             switch(level_master[level + 3].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = BLACK_TEX; break;
+                case 0: tex = DEBUG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -256,7 +256,7 @@ void draw_prewarp(int x, int y, int s){
 
             // draw sector 2
             switch(level_master[level + 2].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = BLACK_TEX; break;
+                case 0: tex = DEBUG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -270,11 +270,11 @@ void draw_prewarp(int x, int y, int s){
     if (s == 0) {
         k_put_rect(GREEN_TEX, x + 1, y + 1);
     } else if (s == 1){
-        k_put_rect(GREEN_TEX, x + 11, y + 1);
+        k_put_rect(GREEN_TEX, x + 12, y + 1);
     } else if (s == 2){
-        k_put_rect(GREEN_TEX, x + 11, y + 11);
+        k_put_rect(GREEN_TEX, x + 12, y + 12);
     } else if (s == 3){
-        k_put_rect(GREEN_TEX, x + 1, y + 11);
+        k_put_rect(GREEN_TEX, x + 1, y + 12);
     }
     // initalize temp
     char temp_data[16];
@@ -477,7 +477,7 @@ void draw_inventory(){
     // loop inventory
     for (int i = 0; i < 8; i++){
         for (int j = 0; j < 4; j++){
-            if (i + j * 4 < num_items){
+            if (i + j * 8 < num_items){
                 k_put_rect(item_get_tex(inventory[i + j * 4].type), 36 + i, j + 6);
             } else {
                 k_put_rect(DEBUG_TEX, 36 + i, j + 6);
@@ -531,13 +531,16 @@ void draw_rogue(){
                         break;
                     case 9: // npc (impassable)
                         texid = NPC_TEX;
-                        printf("hard_npc \n");
                         break;
                     case 6: // fire
                         texid = FIRE_TEX;
                         break;
                     case 7: // portal
-                        texid = PORTAl_TEX;
+                        if (rogue_portal_master[master_index](i - 15 + character_x, j - 15 + character_y).x >= 0){
+                            texid = PORTAl_TEX;
+                        } else {
+                            texid = YELLOW_TEX; // bc we have no dock icon
+                        }
                         break;
                     case 8: // enemy (impassable)
                         texid = ENEMY_TEX;
@@ -554,11 +557,30 @@ void draw_rogue(){
                     case 12:
                         texid = FLOOR_ALT_TEX;
                         break;
+                    case 106:
+                    case 105:
+                    case 104:
+                    case 103:
+                    case 102:
+                    case 101:
+                        cached_map.tile_type[(i - 15 + character_x)  + (j - 15 + character_y) * cached_map.w] -= (((rand() % 100) < 10) ? 1 : 0);
+                        texid = FIRE_TEX;
+                        break;
+                    case 100:
+                        cached_map.tile_type[(i - 15 + character_x)  + (j - 15 + character_y) * cached_map.w] = 0;
+                        texid = FIRE_TEX;
+                        break;
                     default:
                         texid = FLOOR_TEX;
                 }
+
+                // does this even do anyting?
                 if (tdat < -1){
-                    texid = PORTAl_TEX;
+                    if (rogue_portal_master[master_index](character_x, character_y).x >= 0){
+                        texid = PORTAl_TEX;
+                    } else {
+                        texid = YELLOW_TEX; // bc we have no dock icon
+                    }
                 }
             } else {
                 // check if NPC is hidden
@@ -566,9 +588,7 @@ void draw_rogue(){
                 if (num_hidden_npcs > 0){
                     int i = 0;
                     for ( ; i < num_hidden_npcs; i++){
-                        //printf("i: %d ; %d == %d (a %d)? \n", i, hidden_npcs[i], rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id, a);
                         if (hidden_npcs[i] == a ){
-                            //printf("found hidden NPC at %d, %d with id of %d at index %d \n", i - 15 + character_x, j - 15 + character_y, rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id, i);
                             ok = false;
                             break;
                         }
@@ -578,7 +598,6 @@ void draw_rogue(){
                 if (ok){
                     texid = NPC_TEX;
                 } else {
-                    //printf("hmhmh\n");
                     texid = FLOOR_TEX;
                 }
             }
@@ -613,41 +632,7 @@ void draw_use_item(int trade_index){
     // loop inventory
     int i;
     for(i = 0; i < num_items; i++){
-        switch(inventory[i].type){
-            case 1:
-                sprintf(tim, "%s Ration", inventory[i].data);
-                break;
-            case 2:
-                sprintf(tim, "%s Handgun", inventory[i].data);
-                break;
-            case 3:
-                sprintf(tim, "%s Wrench", inventory[i].data);
-                break;
-            case 4:
-                sprintf(tim, "%s Ammunition", inventory[i].data);
-                break;
-            case 5:
-                sprintf(tim, "%s Grenade", inventory[i].data);
-                break;
-            case 6:
-                sprintf(tim, "%s Book", inventory[i].data);
-                break;
-            case 7:
-                sprintf(tim, "%s Machine Gun", inventory[i].data);
-                break;
-            case 8:
-                sprintf(tim, "%s Rocket Launcher", inventory[i].data);
-                break;
-            case 9:
-                sprintf(tim, "%s Pick", inventory[i].data);
-                break;
-            case 10:
-                sprintf(tim, "%s Medkit", inventory[i].data);
-                break;
-            default:
-                strcpy(tim, "Invalid Item!");
-        }
-
+        print_item(tim, & inventory[i]);
         k_put_text(tim, 2, i + 1);
 
         if (i == trade_index){
