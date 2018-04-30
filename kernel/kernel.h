@@ -8,17 +8,21 @@
 
 #define S_WIDTH 1024
 #define S_HEIGHT 576
+
 #define NUM_K_TEXTURES 73
+#define NUM_BITMAPS 6
 
 #ifndef SDCC
     #include <SFML/Graphics.h>
     sfTexture * k_textures[NUM_K_TEXTURES];
+    sfTexture * k_bitmaps[NUM_BITMAPS];
 #endif // SDCC
 
 // wrapper calls
 void k_put_text(char * stringin, int x, int y);
 void k_put_rect(int tex_id, int x, int y);
 void k_put_rects(int tex_id, int x, int y, int w, int h);
+void k_put_bmp(int id);
 void k_init_gfx();
 bool k_this_close_request();
 void k_refresh_display();

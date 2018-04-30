@@ -98,6 +98,9 @@ int trade_index = 0; // pointer to trading address
 int hidden_npcs[NUM_HIDDEN_NPCS_MAX] = {-1, -1, -1, -1, -1, -1, -1, -1}; // used for hiding NPCs by ID
 int num_hidden_npcs = 0;
 
+int time_cutscene = 0;
+cutscene_t current_cutscene;
+
 int main( ){
     // initalize rand
     srand (time(NULL));
@@ -108,6 +111,7 @@ int main( ){
     init_maps();
     init_quests();
     init_levels();
+    init_cutscenes();
 
     // set up graphics
     k_init_gfx();
@@ -191,6 +195,8 @@ int main( ){
                             if (jump_s < 0) jump_s = 3;
                         } else if (state == 4){
                             facing = -10;
+                        } else if (state == 2){
+                            if(fuel_r + CONFIG_INCREMENT_AMOUNT <= 1000) fuel_r += CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
                     case sfKeyE:
@@ -221,6 +227,8 @@ int main( ){
                             if (jump_s < 0) jump_s = 3;
                         } else if (state == 16){
                             state = 43; // go drop a thingy
+                        } else if (state == 2){
+                            if(flux_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) flux_clamp += CONFIG_INCREMENT_AMOUNT;
                         }
                     case sfKeyW:
                         if (state == 16) {
@@ -236,6 +244,8 @@ int main( ){
                             facing = 0;
                         } else if (state == 32){
                             selected_module++;
+                        } else if (state == 2){
+                            if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
                     case sfKeyA:
@@ -252,6 +262,8 @@ int main( ){
                             facing = 3;
                         } else if (state == -3){
                             state = 16;
+                        } else if (state == 2){
+                            if(fuel_r - CONFIG_INCREMENT_AMOUNT >= 0) fuel_r -= CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
                     case sfKeyS:
@@ -268,6 +280,8 @@ int main( ){
                             facing = 2;
                         } else if (state == 32){
                             selected_module--;
+                        } else if (state == 2){
+                            if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
                     case sfKeyD:
@@ -282,6 +296,8 @@ int main( ){
                             if (jump_x < 0) jump_x = 0;
                         } else if (state == 4){
                             facing = 1;
+                        } else if (state == 2){
+                            if(flux_clamp - CONFIG_INCREMENT_AMOUNT >= 0) flux_clamp -= CONFIG_INCREMENT_AMOUNT;
                         }
                         break;
                     case sfKeySpace:
@@ -359,7 +375,7 @@ int main( ){
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d NUM_DROPPED_ITEMS: %d \n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o, num_dropped_items);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d NUM_DROPPED_ITEMS: %d NUM_ACTIVE_QUESTS: %d\n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o, num_dropped_items, num_active_quests);
                         break;
                     case sfKeyTilde:
                         printf("entities contains %d items: \n", num_entities);
@@ -385,8 +401,9 @@ int main( ){
                         if (state == 27) {
                             if (!searchQuest(npc_last.quest_id)){ // if quest is not active active
                                 quest_a_registry[num_active_quests].quest = quest_registry[npc_last.quest_id];
-                                quest_a_registry[num_active_quests++].position = 0;
+                                quest_a_registry[num_active_quests].position = 0;
                                 printf("Added quest %d!\n", quest_a_registry[num_active_quests - 1].quest.id);
+                                num_active_quests++;
                                 state = 16;
                             } else {
                                 printf("Quest %d already active \n", npc_last.quest_id);
@@ -410,7 +427,7 @@ int main( ){
                         break;
                     case sfKeyN:
                         if (state == 17 || state == 18 || state == 19 || state == 21 || state == 27 || state == 28 ||
-                            state == 29 || state == 37 || state == 32 || state == 43) {
+                            state == 29 || state == 37 || state == 32 || state == 43 || state == 30 ) {
                             state = 16;
                         }
                         break;
@@ -446,6 +463,26 @@ int main( ){
                             state = 1;
                         }
                         break;
+                    case sfKeyF:
+                        if (state == 2){
+                            if(emission_clamp - CONFIG_INCREMENT_AMOUNT >= 0) emission_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sfKeyR:
+                        if (state == 2){
+                            if(emission_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) emission_clamp += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sfKeyT:
+                        if (state == 2){
+                            if(themal_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) themal_clamp += CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
+                    case sfKeyG:
+                        if (state == 2){
+                            if(themal_clamp - CONFIG_INCREMENT_AMOUNT >= 0) themal_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        }
+                        break;
                     default: // do nothing (undefined key)
                         break;
                 }
@@ -472,8 +509,8 @@ int main( ){
                 break;
             case 2:
                 draw_engine_config();
-                state = 1;
-                printf("config is disabled \n");
+                /*state = 1;
+                printf("config is disabled \n");*/
                 break;
             case 1:
                 draw_prewarp(jump_x, jump_y, jump_s);
@@ -502,6 +539,23 @@ int main( ){
                 time_entity_o++;
                 time_rocket++;
                 break;
+            case 15: //cutscene
+                k_put_bmp(current_cutscene.first_frame_id + current_cutscene.frame);
+                k_put_text(cutscene_str_dat + current_cutscene.text_reference[current_cutscene.frame], 19, 0);
+                time_cutscene++;
+
+                if (current_cutscene.frame >= current_cutscene.num_frames){
+                    state = 16;
+                    current_cutscene.id = -1;
+                    current_cutscene.frame = 0;
+                    printf("Finished cutscene \n");
+                }
+
+                if (time_cutscene > current_cutscene.delay_per_frame[current_cutscene.frame]){
+                    time_cutscene = 0;
+                    current_cutscene.frame++;
+                }
+                break;
             case 16:
                 draw_rogue(); // draw scene
 
@@ -514,6 +568,7 @@ int main( ){
             case 27: // display quest add request
                 sprintf(tmp, "NPC [%s] is offering quest %s, accept? [Y/N]", quest_registry[npc_last.quest_id].issuer, quest_registry[npc_last.quest_id].title);
                 k_put_text(tmp, 0, 0);
+                k_put_text("N(Exit) Y(Accept)", 2, 34);
                 break;
             case 28: // failed to add the quest
                 state = 29;
@@ -521,14 +576,27 @@ int main( ){
                 k_put_text("Why would you want to have to do it a second time?", 0, 1);
                 break;
             case 29: // quest active, display current position
-                sprintf(tmp, "Quest ID: %d Position: %d", npc_last.quest_id, quest_a_registry[npc_last.quest_id].position);
-                k_put_text(tmp, 0, 0);
+                tmp[0] = tmp[0]; // that'll throw 'em off the scent
+                int index = 0;
+                for ( ; index < num_active_quests; index++){
+                    if (quest_a_registry[index].quest.id == quest_registry[npc_last.quest_id].id) break;
+                }
+                sprintf(tmp, "Quest ID: %d Position: %d", npc_last.quest_id, quest_a_registry[index].position);
+                k_put_text(tmp, 0, 19);
+
+                k_put_text(quest_str_dat + quest_a_registry[index].quest.text_references[quest_a_registry[index].position], 0, 20);
+                k_put_text("N(Exit)", 2, 34);
+                k_put_bmp(quest_a_registry[index].quest.bitmap_references[quest_a_registry[index].position - 1]);
                 break;
             case 30:
-                k_put_text("Done", 0, 0);
+                k_put_text("Done", 19, 0);
+                k_put_text(quest_str_dat + quest_a_registry[index].quest.text_references[quest_a_registry[index].position], 0, 20);
+                k_put_text("N(Exit)", 2, 34);
+                k_put_bmp(quest_a_registry[index].quest.bitmap_references[quest_a_registry[index].position - 1]);
                 break;
             case 18: // cutscene
                 k_put_text("CUTSCENE", 0, 0);
+                k_put_text("N(Exit)", 2, 34);
                 break;
             case 19: // trading menu
                 draw_trade(trade_index);

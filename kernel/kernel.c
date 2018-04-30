@@ -16,12 +16,21 @@
     sfEvent event;
 
     sfTexture * k_textures[NUM_K_TEXTURES];
+    sfTexture * k_bitmaps[NUM_BITMAPS];
 
     sfEventType k_get_sf_event_type();
     bool k_get_sf_key_shift();
 
     sfRenderWindow* k_get_window(){
         return window;
+    }
+
+    void k_put_bmp(int id){
+        sfRectangleShape_setSize(r, (sfVector2f) {S_WIDTH, S_HEIGHT / 2});
+        sfRectangleShape_setTexture(r, k_bitmaps[id], sfTrue);
+        sfRectangleShape_setPosition(r, (sfVector2f) {0, 0});
+        sfRenderWindow_drawRectangleShape(window, r, NULL);
+        sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     }
 
     void k_put_text(char * stringin, int x, int y){
@@ -61,6 +70,13 @@
             k_textures[i] = sfTexture_createFromFile(tmp, NULL);
         }
         // printf("/n");
+
+        printf("[K] INIT BITMAPS \n");
+        for (int i = 0; i < NUM_BITMAPS; i++){
+            char tmp[32];
+            sprintf(tmp, "bmp/%d.png", i);
+            k_bitmaps[i] = sfTexture_createFromFile(tmp, NULL);
+        }
 
         printf("[K] INIT FONT \n");
         font = sfFont_createFromFile("res/telegrama_raw.ttf");

@@ -112,6 +112,8 @@ void display(bool update, int state){ // display space
 
     sprintf(tim, "COORD: (%d, %d)", sector_x, sector_y);
     k_put_text(tim, 51, 6);
+
+    k_put_text("WASD(Move)\nQ(Stop)\nArrows(Shoot)\n1(Warp)", 51, 31);
 }
 
 void update_warp_interface(void){
@@ -125,6 +127,7 @@ void update_warp_interface(void){
     e4_y = 9;
 }
 
+// should be used for warp flight
 void draw_engine_config(){
     k_put_text("Engine Configuration Window", 2, 2);
     k_put_text("E1", 2, 23);
@@ -213,6 +216,8 @@ void draw_engine_config(){
         }
         k_put_rect(tex, i, 17);
     }
+
+    k_put_text("Backspace(Go Back) QAWSEDRFTG(Edit Options)", 2, 34);
 }
 
 void draw_prewarp(int x, int y, int s){
@@ -226,7 +231,7 @@ void draw_prewarp(int x, int y, int s){
             // draw sector 1
             //printf("TEST 3 %d \n", level)
             switch(level_master[level].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = DEBUG_TEX; break;
+                case 0: tex = GRID_BG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -236,7 +241,7 @@ void draw_prewarp(int x, int y, int s){
 
             // draw sector 1
             switch(level_master[level + 1].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = DEBUG_TEX; break;
+                case 0: tex = GRID_BG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -246,7 +251,7 @@ void draw_prewarp(int x, int y, int s){
 
             // draw sector 3
             switch(level_master[level + 3].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = DEBUG_TEX; break;
+                case 0: tex = GRID_BG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -256,7 +261,7 @@ void draw_prewarp(int x, int y, int s){
 
             // draw sector 2
             switch(level_master[level + 2].map_dat[ (i - 1) + (j - 1) * 10]){
-                case 0: tex = DEBUG_TEX; break;
+                case 0: tex = GRID_BG_TEX; break;
                 case 1: tex = STATION_TEX; break; // staytion
                 case 2: tex = ICE_FEILD_TEX; break; // ice field
                 case 3: tex = NEBULA_TEX; break; // nebula
@@ -357,7 +362,7 @@ void draw_prewarp(int x, int y, int s){
             }
         }
     }
-
+     k_put_text("WASD(Move) QE(Change Sector) Enter(Engage)", 23, 34);
 }
 
 // they are basically the same
@@ -376,10 +381,11 @@ void draw_cutscene(){
 
 void draw_trade( int trade_index ){
     // merchant mode;
-    k_put_text("MERCHANT", 0, 0);
+    k_put_bmp(npc_last.frame_id);
+    k_put_text("MERCHANT", 0, 19);
     char tim[80];
     sprintf(tim, "CREDITS: $%d", credits);
-    k_put_text(tim, 32, 0);
+    k_put_text(tim, 32, 19);
 
     int l = 0;
 
@@ -418,15 +424,15 @@ void draw_trade( int trade_index ){
             default:
                 strcpy(tim, "Invalid Item!");
         }
-        k_put_text(tim, 2, l + 1);
+        k_put_text(tim, 2, l + 21);
 
         if (i == trade_index){
-            k_put_text("->", 0, l + 1);
+            k_put_text("->", 0, l + 21);
         }
 
         sprintf(tim, "%s ($%d)", npc_last.inventory[i].data, npc_last.inventory[i].cost);
-        k_put_text(tim, 2, l + 2);
-        l += 3;
+        k_put_text(tim, 2, l + 22);
+        l += 2;
     }
 
     l+=2;
@@ -622,6 +628,8 @@ void draw_rogue(){
     }
 
     k_put_rect(GREEN_TEX, 15, 15);
+
+    k_put_text("WASD(Move)\nQ(Use Item)\nE(Drop Item)\nY(Pick Up)\nArrows(Shoot)", 36, 30);
 }
 
 void draw_use_item(int trade_index){

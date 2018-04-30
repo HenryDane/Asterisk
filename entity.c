@@ -38,38 +38,52 @@ bool check_next_step(int x, int y){
                 if (searchQuest(npc_last.quest_id)){
                     state = 28; // we have our quest. Here we go!!
 
-                    // where is it in the registry?
-                    int i = 0;
-                    for ( ; i < num_active_quests; i++){
-                        if (quest_a_registry[i].quest.id == npc_last.quest_id) break;
+                    int index = 0;
+                    for ( ; index < num_active_quests; index++){
+                        if (quest_a_registry[index].quest.id == quest_registry[npc_last.quest_id].id) break;
                     }
 
                     // exit test
-                    if (quest_a_registry[i].position >= quest_a_registry[i].quest.stages){
+                    if (quest_a_registry[index].position >= quest_a_registry[index].quest.stages){
+                        printf("(Index %d): At position, %d of %d stages \n",  index,  quest_a_registry[index].position, quest_a_registry[index].quest.stages);
                         printf("Done with quest \n");
+                        printf("QUEST DATA -> ID: %d TITLE: %s ISSUER: %s NUM_STAGES: %d EXP_REWARD: %d CREDIT_REWARD: %d \n", index, quest_a_registry[index].quest.title, quest_a_registry[index].quest.issuer, quest_a_registry[index].quest.stages, quest_a_registry[index].quest.exp_reward, quest_a_registry[index].quest.credit_reward);
+                        printf("NUM_ACTIVE_QUESTS: %d", num_active_quests);
                         state = 30; // quest complete
+                        credits += quest_a_registry[index].quest.credit_reward;
+                        experience += quest_a_registry[index].quest.exp_reward;
+                        score += quest_a_registry[index].quest.exp_reward + quest_a_registry[index].quest.credit_reward;
+                        num_active_quests--;
                     } else {
                         // logic for incrementing quest position goes here
                         printf("Incrementing??? \n");
-                        switch (quest_a_registry[i].quest.verify_id[quest_a_registry[i].position]){
+                        printf("QUEST DATA -> ID: %d TITLE: %s ISSUER: %s NUM_STAGES: %d EXP_REWARD: %d CREDIT_REWARD: %d \n", index, quest_a_registry[index].quest.title, quest_a_registry[index].quest.issuer, quest_a_registry[index].quest.stages, quest_a_registry[index].quest.exp_reward, quest_a_registry[index].quest.credit_reward);
+                        quest_a_registry[index].position++;
+                        /*
+                        switch (quest_a_registry[npc_last.quest_id].quest.verify_id[quest_a_registry[npc_last.quest_id].position]){
                             case 0: // nothing
-                                quest_a_registry[i].position++;
+                                printf("initial position . . . %d \n",quest_a_registry[npc_last.quest_id].position );
+                                quest_a_registry[npc_last.quest_id].position++;
+                                printf("final position . . . %d \n",quest_a_registry[npc_last.quest_id].position );
                                 break;
                             default:
-                                printf("Unable to continue with verification value %d \n", quest_a_registry[i].quest.verify_id[quest_a_registry[i].position]);
+                                printf("Unable to continue with verification value %d \n", quest_a_registry[npc_last.quest_id].quest.verify_id[quest_a_registry[npc_last.quest_id].position]);
                         }
+                        */
                     }
                 } else {
                     state = 27; // go through quest add interaction
                 }
             } else if (rogue_npc_master[master_index](x, y).quest_id < 0) {
-                state = 18; // go to cutscene
+                state = 15; // go to cutscene
                 npc_last = rogue_npc_master[master_index](x, y);
+                current_cutscene = cutscene_registry[-rogue_npc_master[master_index](x, y).quest_id];
             }
             return false;
         } else {
             state = 19; // go to merchant mode
             npc_last = rogue_npc_master[master_index](x, y);
+            score ++;
             printf("EXPECTED SIZE: %d \n", rogue_npc_master[master_index](x,y).inventory_size);
             if (npc_ok) {
                 return false; // no moving if npc
@@ -107,6 +121,7 @@ bool check_next_step(int x, int y){
             }
         case 6:
             health -= (rand() % 100) + 300; // take fire damage
+            score += 4;
         default:
             return true;
     }
@@ -153,6 +168,7 @@ void update_entities(){
                 // check character collision
                 if (entities[i].x == character_x && entities[i].y == character_y){
                     health = 0;
+                    score += 10;
                 }
             case 1: // bullet from character
                 // check for map collisions
@@ -200,6 +216,7 @@ void update_entities(){
                         }
                         num_entities--;
 
+                        score += 130;
                         break;
                     }
                 }
@@ -233,7 +250,7 @@ void update_entities(){
                 break;
             case 10: // rocket exhaust
                 // delete self logic
-                if (rand() % 10 < 4){
+                if (rand() % 100 < 4){
                     for (int k = i; k < num_entities; k++){
                         entities[k] = entities[(k + 1 < num_items) ? k + 1 : k];
                     }

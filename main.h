@@ -104,6 +104,7 @@ typedef struct {
     int quest_id; // 0 for no quest, negative numbers trigger cutscene of corresponding number but positive
     int x;
     int y;
+    int frame_id;
 } npc_t;
 
 // function pointer typedefs
@@ -148,12 +149,24 @@ typedef struct {
     int * data;
     int * verify_id;
     int * action_id;
+    int * bitmap_references;
+    int * text_references;
 } mquest_t;
 
 typedef struct {
     mquest_t quest;
     int position;
 } mquest_a_t;
+
+typedef struct {
+    int id;
+    int num_frames;
+    int frame;
+    int * delay_per_frame;
+    int first_frame_id;
+    int * text_reference;
+} cutscene_t;
+
 
 // portal definition function
 typedef portal_t (*portal_function_ft) (unsigned int x, unsigned int y);
@@ -192,15 +205,15 @@ typedef int module_t;
 // maximum number of dropped items across all maps
 #define NUM_DROPPED_MAX 32
 
-// define texture data
-#define NUM_TEXTURES 67
-
 // define maximum number of hidden NPCS
 #define NUM_HIDDEN_NPCS_MAX 8
 
 // number of quests
 #define NUM_QUESTS 1
 #define NUM_QUESTS_MAX 4
+
+// number of cutscenes
+#define NUM_CUTSCENES 1
 
 // entity timing constants "milliseconds"
 #define TIME_CHARACTER 50 // was 760 --> 380
@@ -213,6 +226,11 @@ typedef int module_t;
 // length of quest text data
 #define QUEST_STR_DAT_LEN 160
 
+// length of cutscene text data
+#define CUTSCENE_STR_DAT_LEN 160
+
+#define CONFIG_INCREMENT_AMOUNT 50
+
 // game state
 extern int state;
 
@@ -223,6 +241,11 @@ extern int time_character;
 extern int time_entity_o;
 extern int time_character;
 extern int time_rocket;
+
+// timing for cutscenes
+extern int time_cutscene;
+extern cutscene_t current_cutscene;
+extern cutscene_t cutscene_registry[NUM_CUTSCENES];
 
 // character attrs
 extern int character_x;
@@ -271,12 +294,12 @@ extern int num_active_quests;
 extern mquest_a_t quest_a_registry[ NUM_QUESTS_MAX + 1];
 extern char quest_str_dat [ QUEST_STR_DAT_LEN ];
 
+char cutscene_str_dat [ CUTSCENE_STR_DAT_LEN ];
+
 extern quest_validate_function_ft quest_validate_master[NUM_QUESTS_MAX + 1];
 extern quest_action_function_ft quest_action_master [NUM_QUESTS_MAX + 1];
 
 extern int modules_enabled[NUM_MODULES_MAX];
-// cutscene stuffs
-// nothing to see yet
 
 // reads quest, level, npc, map data from file
 bool build_game_data();
@@ -301,10 +324,6 @@ extern int themal_clamp;
 // ship data
 extern float vx;
 extern float vy;
-// extern float vz; // unused
-//extern float x; // redundant
-//extern float y; // redundant
-// extern float z; // unused
 extern int thrust_clamp;
 extern int afterburn_clamp;
 extern float thrust;
@@ -321,17 +340,10 @@ extern int e3_y;
 extern int e4_g;
 extern int e4_y;
 
-// map definitions (can this be a struct too??)
-/*extern const int level_0_0[10][10];
-extern const tile_data level_0_0_tile_data[10];
-extern const int level_0_1[10][10];
-extern const tile_data level_0_1_tile_data[10];
-extern const int level_0_2[10][10];
-extern const tile_data level_0_2_tile_data[10];
-extern const int level_0_3[10][10];
-extern const tile_data level_0_3_tile_data[10]; */
+// map definitions
 extern s_map level_master[NUM_LEVELS];
 
+// stuff for save/load
 bool save(int slot);
 bool load(int slot);
 
@@ -390,15 +402,14 @@ bool load(int slot);
 #define ASTEROID_TEX        1
 #define DEBRIS_TEX          22
 #define ROCKET_TEX          37
-
 #define MODULE_TEX          68
 #define WELDER_TEX          72
 #define TNT_TEX             69
 #define TURRET_ITEM_TEX     70
 #define DRILL_TEX           71
-
 #define GOLD_TEX            4
 #define PURPLE_HEART_TEX    36
 #define SILVER_TEX          39
 #define PLATINUM_TEX        35
 #define FUEL_ITEM_TEX       73
+#define GRID_BG_TEX         10
