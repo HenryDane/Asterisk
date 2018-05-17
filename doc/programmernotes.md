@@ -1,6 +1,8 @@
 # Programming Notes
 
 ## Game states
+-7 : Save game \
+-6 : Load game \
 -4 : Closing credits \
 -3 : Main Menu \
 -2 : Game over \
@@ -18,3 +20,6 @@
 29 : Actual view of quest \
 30 : Quest end \
 32 : Edit modules \
+37 : Sell item \
+43 : Drop item \
+44 : View ship \

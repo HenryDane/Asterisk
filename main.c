@@ -133,12 +133,6 @@ int main( ){
     int jump_y = 0;
     int jump_s = 0;
 
-    // testing only
-    save(1);
-
-    // testing only
-    load(1);
-
     // main loop
     while (k_this_close_request()){
         // clean texture
@@ -167,20 +161,50 @@ int main( ){
                     case sfKeyEscape:
                         return 0;
                     case sfKeyNum5:
-                        state = 16; // rouge like
+                        if (state > 0){
+                            state = 16; // rouge like
+                        } else if (state == -6){
+                            load(5);
+                        } else if (state == -7){
+                            save(5);
+                        }
                         break;
                     case sfKeyNum1:
-                        state = 1;
+                        if (state > 0) {
+                            state = 1;
+                        } else if (state == -6){
+                            load(1);
+                        } else if (state == -7){
+                            save(1);
+                        }
                         break;
                     case sfKeyNum2:
-                        state = 2;
+                        if (state > 0) {
+                            state = 2;
+                        } else if (state == -6){
+                            load(2);
+                        } else if (state == -7){
+                            save(2);
+                        }
                         break;
                     case sfKeyNum3:
-                        state = -2;
+                        if (state > 0) {
+                            state = -2;
+                        } else if (state == -6){
+                            load(3);
+                        } else if (state == -7){
+                            save(3);
+                        }
                         break;
                     case sfKeyNum4:
-                        state = 32;
-                        trade_index = 0;
+                        if (state > 0) {
+                            state = 32;
+                            trade_index = 0;
+                        } else if (state == -6){
+                            load(4);
+                        } else if (state == -7){
+                            save(4);
+                        }
                         break;
                     case sfKeyL:
                         if (state == -3){
@@ -254,6 +278,8 @@ int main( ){
                             selected_module++;
                         } else if (state == 2){
                             if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == -3){
+                            state = -6;
                         }
                         break;
                     case sfKeyA:
@@ -290,6 +316,8 @@ int main( ){
                             selected_module--;
                         } else if (state == 2){
                             if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == -3){
+                            state = -6;
                         }
                         break;
                     case sfKeyD:
@@ -625,6 +653,11 @@ int main( ){
                 // draw_view side panel (under stats in display();
                 state = 4; // temporary redirect
                 break;
+            case -6:
+                k_put_text(0,0,"Press 1 - 5 to load a save");
+                break;
+            case -7:
+                k_put_text(0,0,"Press 1 - 5 to select a slot to save to");
             default:
                 printf("Intercepted bad state %d \n", state);
                 state = 16; // go to rogue to catch problems

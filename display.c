@@ -782,10 +782,11 @@ void draw_main_menu(){
     k_put_rects(67, 0, 0, 1024, 192);
     k_put_text("Main Menu", 20, 13);
     k_put_text("[A] New Game", 20, 14);
-    k_put_text("[S] Load Game", 20, 15); // does nothing
-    k_put_text("[D] Options", 20, 16);   // does nothing
-    k_put_text("[F] Help", 20, 17);      // does nothing
-    k_put_text("[L] Quit", 20, 18);
+    k_put_text("[W] Save Game", 20, 15);
+    k_put_text("[S] Load Game", 20, 16);
+    k_put_text("[D] Options", 20, 17);   // does nothing
+    k_put_text("[F] Help", 20, 18);      // does nothing
+    k_put_text("[L] Quit", 20, 19);
 }
 
 void draw_logo(){

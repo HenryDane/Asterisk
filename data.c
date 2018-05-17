@@ -134,6 +134,8 @@ bool save(int slot){
     fputc(selected_module, fp);
     fputc(selected_object, fp);
 
+    state = -3;
+
     fclose(fp);
     printf("Done. \n");
 
@@ -291,8 +293,11 @@ bool load(int slot){
     selected_module = fgetc(fp);
     selected_object = fgetc(fp);
 
+    state = -3;
+
     fclose(fp);
     printf("Done \n");
     return true;
+
 }
 
