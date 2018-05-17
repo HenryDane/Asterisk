@@ -145,7 +145,7 @@ typedef struct {
     int stages;
     int exp_reward;
     int credit_reward;
-    item_t * item_reward;
+    item_t item_reward;
     int * data;
     int * verify_id;
     int * action_id;
@@ -340,12 +340,10 @@ extern int e3_y;
 extern int e4_g;
 extern int e4_y;
 
+extern int ticks_for_warp;
+
 // map definitions
 extern s_map level_master[NUM_LEVELS];
-
-// stuff for save/load
-bool save(int slot);
-bool load(int slot);
 
 // texture names
 #define DEBUG_TEX           9

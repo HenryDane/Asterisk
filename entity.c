@@ -53,6 +53,7 @@ bool check_next_step(int x, int y){
                         credits += quest_a_registry[index].quest.credit_reward;
                         experience += quest_a_registry[index].quest.exp_reward;
                         score += quest_a_registry[index].quest.exp_reward + quest_a_registry[index].quest.credit_reward;
+                        // ADD ITEM REWARD
                         num_active_quests--;
                     } else {
                         // logic for incrementing quest position goes here

@@ -33,6 +33,14 @@
         sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
     }
 
+    void k_put_bmp_full(int id){
+        sfRectangleShape_setSize(r, (sfVector2f) {S_WIDTH, S_HEIGHT});
+        sfRectangleShape_setTexture(r, k_bitmaps[id], sfTrue);
+        sfRectangleShape_setPosition(r, (sfVector2f) {0, 0});
+        sfRenderWindow_drawRectangleShape(window, r, NULL);
+        sfRectangleShape_setSize(r, (sfVector2f) {16, 16});
+    }
+
     void k_put_text(char * stringin, int x, int y){
         sfText_setString(text, stringin);
         sfText_setPosition(text, (sfVector2f) {x * 16, y * 16});

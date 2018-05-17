@@ -9,6 +9,7 @@
 #include "map.h"
 #include "quest.h"
 #include "terrain.h"
+#include "data.h"
 
 // game state: 0 - normal, 1 - ship nav, 2 - combat screen, 3 - character, 4 - port / entity interact
 int displaystate = 0;
@@ -125,11 +126,18 @@ int main( ){
     master_index = 0;
     load_map(master_index);
 
+
     num_active_quests = 0; // no active quests
 
     int jump_x = 0;
     int jump_y = 0;
     int jump_s = 0;
+
+    // testing only
+    save(1);
+
+    // testing only
+    load(1);
 
     // main loop
     while (k_this_close_request()){

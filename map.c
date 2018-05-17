@@ -271,7 +271,7 @@ int map_3_map_data[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 0, 6, 0, 0, 10, 0, 10, 0, 6, 0, 6, 1, 1, 1, 1, 1, 1, 1, 1,
 0, 0, 0, 0, 10, 9, 10, 0, 0, 6, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 0};
-map_t map_3_map = {19, 19,map_3_map_data , 9, null_entities_list /* should not be used */};
+map_t map_3_map = {19, 19, map_3_map_data , 0, null_entities_list /* should not be used */};
 coord_t map_3_start = {5, 5};
 npc_t map_3_npc ( unsigned int x, unsigned int y ){
     npc_t npc_null = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };
