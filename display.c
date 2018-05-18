@@ -117,14 +117,7 @@ void display(bool update, int state){ // display space
 }
 
 void update_warp_interface(void){
-    e1_g = rand() % 9;
-    e1_y = 9;
-    e2_g = rand() % 9;
-    e2_y = 9;
-    e3_g = rand() % 9;
-    e3_y = 9;
-    e4_g = rand() % 9;
-    e4_y = 9;
+    // not used
 }
 
 // should be used for warp flight
@@ -218,6 +211,97 @@ void draw_engine_config(){
     }
 
     k_put_text("Backspace(Go Back) QAWSEDRFTG(Edit Options)", 2, 34);
+}
+
+void draw_engine_controls(){
+    k_put_text("E1", 2, 23);
+    k_put_text("E2", 7, 23);
+    k_put_text("E3", 12, 23);
+    k_put_text("E4", 17, 23);
+    int tex;
+    for(int i = 0; i < 2; i++){
+        for (int j = 0; j < 10; j++){
+            if ( j >= e1_y) {
+                tex = RED_TEX;
+            } else if (j >= e1_g && j < e1_y){
+                tex = YELLOW_TEX;
+            } else {
+                tex = GREEN_TEX;
+            }
+            k_put_rect(tex, 2 +  i, 25 + j);
+
+            if ( j >= e2_y) {
+                tex = RED_TEX;
+            } else if (j >= e2_g && j < e2_y){
+                tex = YELLOW_TEX;
+            } else {
+                tex = GREEN_TEX;
+            }
+            k_put_rect(tex, 7 + i, 25 + j);
+
+            if ( j >= e3_y) {
+                tex = RED_TEX;
+            } else if (j >= e3_g && j < e3_y){
+                tex = YELLOW_TEX;
+            } else {
+                tex = GREEN_TEX;
+            }
+            k_put_rect(tex, 12 + i, 25 + j);
+
+            if ( j >= e4_y) {
+                tex = RED_TEX;
+            } else if (j >= e4_g && j < e4_y){
+                tex = YELLOW_TEX;
+            } else {
+                tex = GREEN_TEX;
+            }
+            k_put_rect(tex, 17 + i, 25 + j);
+        }
+    }
+
+    k_put_text("Flux:Fuel Ratio     [A][Q]", 32, 4);
+    k_put_text("Dur.:Res. Ratio     [S][W]", 32, 7);
+    k_put_text("Flux Clamp          [D][E]", 32, 10);
+    k_put_text("Emission Clamp      [F][R]", 32, 13);
+    k_put_text("Thermal Clamp       [G][T]", 32, 16);
+    k_put_text("Engine Status:", 2,22);
+    for (int i = 32; i < 52; i++){
+        if(i - 31 < fuel_r / 55){
+            tex = GREEN_TEX;
+        } else {
+            tex = RED_TEX;
+        }
+        k_put_rect(tex, i, 5);
+        if(i - 31 < durability / 55){
+            tex = GREEN_TEX;
+        } else {
+            tex = RED_TEX;
+        }
+
+        k_put_rect(tex, i, 8);
+        if(i - 31 < flux_clamp / 55){
+            tex = GREEN_TEX;
+        } else {
+            tex = RED_TEX;
+        }
+
+        k_put_rect(tex, i, 11);
+        if(i - 31 < emission_clamp / 55){
+            tex = GREEN_TEX;
+        } else {
+            tex = RED_TEX;
+        }
+
+        k_put_rect(tex, i, 14);
+        if(i - 31 < themal_clamp / 55){
+            tex = GREEN_TEX;
+        } else {
+            tex = RED_TEX;
+        }
+        k_put_rect(tex, i, 17);
+    }
+
+    k_put_text("Backspace(Go Back) QAWSEDRFTG(Edit Options)", 32, 34);
 }
 
 void draw_prewarp(int x, int y, int s){

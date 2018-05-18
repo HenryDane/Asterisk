@@ -103,6 +103,9 @@ int time_cutscene = 0;
 cutscene_t current_cutscene;
 
 int main( ){
+    // temporary variable for sprintf calls
+    char tmp[80];
+
     // initalize rand
     srand (time(NULL));
 
@@ -280,6 +283,8 @@ int main( ){
                             if(durability + CONFIG_INCREMENT_AMOUNT <= 1000) durability += CONFIG_INCREMENT_AMOUNT;
                         } else if (state == -3){
                             state = -6;
+                        } else if (state == 3){
+                            if (tmp[65] - 1 >= 0) tmp[65]--;
                         }
                         break;
                     case sfKeyA:
@@ -298,6 +303,8 @@ int main( ){
                             state = 16;
                         } else if (state == 2){
                             if(fuel_r - CONFIG_INCREMENT_AMOUNT >= 0) fuel_r -= CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 3){
+                            if (tmp[64] - 1 >= 0) tmp[64]--;
                         }
                         break;
                     case sfKeyS:
@@ -318,6 +325,8 @@ int main( ){
                             if(durability - CONFIG_INCREMENT_AMOUNT >= 0) durability -= CONFIG_INCREMENT_AMOUNT;
                         } else if (state == -3){
                             state = -6;
+                        } else if (state == 3){
+                            if (tmp[65] + 1 < 18) tmp[65]++;
                         }
                         break;
                     case sfKeyD:
@@ -334,6 +343,8 @@ int main( ){
                             facing = 1;
                         } else if (state == 2){
                             if(flux_clamp - CONFIG_INCREMENT_AMOUNT >= 0) flux_clamp -= CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 3){
+                            if (tmp[64] + 1 < 10) tmp[64]++;
                         }
                         break;
                     case sfKeySpace:
@@ -406,12 +417,27 @@ int main( ){
                             sector_x = jump_x;
                             sector_y = jump_y;
                             sector_s = jump_s;
-                            ticks_for_warp = jump_x * 2 + jump_y * 2 + jump_s * 3 + (rand() % 20);
+                            ticks_for_warp = /*jump_x * 2 + jump_y * 2 + jump_s * 3 + (rand() % 20) */ 100;
                             build_terrain(sector_x, sector_y, sector_s);
+
+                            // set up the gauntlet
+                            for (int i = 0; i < 64; i += 4){
+                                tmp[i] = rand() % 5 + 3;
+                                tmp[i + 1] = - rand() % 20;
+                                tmp[i + 2] = rand() % 2;
+                                tmp[i + 3] = 10;
+                            }
+
+                            tmp[64] = 5;
+                            tmp[65] = 14;
+
+                            // keeps track of total fuel cost
+                            tmp[66] = 10;
                         }
                         break;
                     case sfKeyTab:
-                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d NUM_DROPPED_ITEMS: %d NUM_ACTIVE_QUESTS: %d\n", state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o, num_dropped_items, num_active_quests);
+                        printf("STATE: %d SEL OBJ: %d ID_LAST: %d C_X: %d C_Y: %d HEALTH: %d TRADE_INDEX: %d NUM_ITEMS: %d MASTER_INDEX: %d NUM_ENTITES: %d CACHE_W: %d CACHE_H: %d NUM_ENTITIES_O: %d NUM_DROPPED_ITEMS: %d NUM_ACTIVE_QUESTS: %d TMP[64]: %d TMP[65]: %d \n",
+                               state, selected_object, 0, character_x, character_y, health, trade_index, num_items, master_index, num_entities, cached_map.w, cached_map.h, num_entities_o, num_dropped_items, num_active_quests, tmp[64], tmp[65]);
                         break;
                     case sfKeyTilde:
                         printf("entities contains %d items: \n", num_entities);
@@ -527,8 +553,6 @@ int main( ){
 #endif // USE_SDCC
         }
 
-        // temporary variable for sprintf calls
-        char tmp[80];
         switch(state){  // draw screen and do stuff
             case -2:
                 // game over?
@@ -552,17 +576,99 @@ int main( ){
                 draw_prewarp(jump_x, jump_y, jump_s);
                 break;
             case 3:
-                draw_warp(jump_x, jump_y, jump_s);
+                //draw_warp(jump_x, jump_y, jump_s);
+                draw_engine_controls();
 
                 // do "timing" for warp travel
+                // tmp (the buffer) is used to store space data here bc why tf not
+                // each object is 4 bytes long (x, y, type, extra)
+                // tmp[64] = player x, tmp[65] = player y, tmp[66] = last used index
                 if (rand() % 100 < 2){
-                    update_warp_interface();
+                    for (int i = 0; i < 64; i += 4){
+                        if (tmp[i + 3] < 0) continue; // skip if out of bounds
+
+                        printf("incrementing: i = %d, tmp[%d] = %d, tmp[%d + 1] = %d, tmp[%d + 2] = %d, tmp[%d + 3] = %d \n",
+                               i, i, (int) tmp[i], i, (int) tmp[i + 1], i, (int) tmp[i + 2], i, tmp[i + 3]);
+
+                        if (tmp[i] == tmp[64] && tmp[i + 1] == tmp[65]){
+                            printf("collisson at warp! \n");
+                            // player hit this object, damage engines
+                            tmp[66] += rand() % 50;
+                            switch (rand() % 4){
+                                case 0: // engine 0
+                                    e1_g -= 4;
+                                    e1_y -= 3;
+                                    printf("Engine 1 has taken damage \n");
+                                    if (e1_g < 0) e1_g = 0;
+                                    if (e1_y <= 0) state = -2; // you died
+                                    break;
+                                case 1: // engine 1
+                                    e2_g -= 4;
+                                    e2_y -= 3;
+                                    printf("Engine 2 has taken damage \n");
+                                    if (e2_g < 0) e2_g = 0;
+                                    if (e2_y <= 0) state = -2; // you died
+                                    break;
+                                case 2: // engine 2
+                                    e3_g -= 4;
+                                    e3_y -= 3;
+                                    printf("Engine 3 has taken damage \n");
+                                    if (e3_g < 0) e3_g = 0;
+                                    if (e3_y <= 0) state = -2; // you died
+                                    break;
+                                case 3: // engine 3
+                                    e4_g -= 4;
+                                    e4_y -= 3;
+                                    printf("Engine 4 has taken damage \n");
+                                    if (e4_g < 0) e4_g = 0;
+                                    if (e4_y <= 0) state = -2; // you died
+                                    break;
+                            }
+                        }
+
+                        // bounds check
+                        if (tmp[i] > 11) tmp[i + 3] = -1;
+                        if (tmp[i + 1] > 16) tmp[i + 3] = -1;
+
+                        // move
+                        tmp[i] += rand() % 3 - 1;
+                        tmp[i + 1] += 1;
+                    }
+
                     ticks_for_warp--;
                     if (ticks_for_warp < 0){
                         state = 4;
+                        fuel -= tmp[66];
                         printf("COMPLETED WARP \n");
                     }
                 }
+
+                for (int i = 1; i < 11; i++){
+                    for (int j = 1; j < 19; j++){
+                        k_put_rect(DEBUG_TEX, i, j);
+                    }
+                }
+
+                for (int i = 0; i < 64; i += 4){
+                    if (tmp[i + 3] < 0) continue; // skip if out of bounds
+                    switch(tmp[i + 2] % 4){
+                        case 0:
+                            k_put_rect(ASTEROID_TEX, 1 + tmp[i], 1 + tmp[i + 1]);
+                            break;
+                        case 1:
+                            k_put_rect(DEBRIS_TEX, 1 + tmp[i], 1 + tmp[i + 1]);
+                            break;
+                        default:
+                            printf("Wrong type %d \n", tmp[i + 2] % 4);
+                    }
+                }
+
+                k_put_rect(C_U_TEX, tmp[64] + 1, tmp[65] + 1);
+
+                /*
+                    In the gap between the controls and the display add some   type stuff motivating them to use the controls
+                */
+
                 break;
             case 4:
                 display();
