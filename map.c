@@ -143,6 +143,14 @@ int map_0_map_data[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 0};
 map_t map_0_map = {125, 125,map_0_map_data , 0, null_entities_list /* should not be used */};
 coord_t map_0_start = {64 /*124*/, 33 /*46*/};
+chest_t map_0_chest (unsigned int x, unsigned int y){
+    chest_t chest_null = {-1, 0, 0, {-1, 0, ' ', 0}};
+    chest_t chest_0 = (chest_t) {1932, 64, 32, {{125, 3, " ", 0, 50}, {4132, 4, " ", 0, 25}}, 2};
+
+    if (x == 64 && y == 32) return chest_0;
+
+    return chest_null;
+}
 npc_t map_0_npc ( unsigned int x, unsigned int y ){
     npc_t npc_null = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1, -1 };
     npc_t npc_0 = {1523, 1000, 2, 5, {{125, 3, " ", 0, 50}, {4132, 4, " ", 0, 25}, {1827, 10, " ", 0, 137}, {1134, 1, " ", 0, 10}, {9281, 2, " ", 0, 300}}, true, false, true, 0, 64, 34, 2};
@@ -198,6 +206,11 @@ int map_1_map_data[] = {11, 4, 11, 4, 4, 4, 11, 11,
 0};
 map_t map_1_map = {8, 8,map_1_map_data , 0, null_entities_list /* should not be used */};
 coord_t map_1_start = {0, 3};
+chest_t map_1_chest (unsigned int x, unsigned int y){
+    chest_t chest_null = {-1, 0, 0, {-1, 0, ' ', 0}, 0};
+
+    return chest_null;
+}
 npc_t map_1_npc ( unsigned int x, unsigned int y ){
     npc_t npc_null = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };
 
@@ -230,6 +243,11 @@ int map_2_map_data[] = {11, 11, 4, 4, 4, 11, 4, 11,
 0};
 map_t map_2_map = {8, 8,map_2_map_data , 0, null_entities_list /* should not be used */};
 coord_t map_2_start = {7, 3};
+chest_t map_2_chest (unsigned int x, unsigned int y){
+    chest_t chest_null = {-1, 0, 0, {-1, 0, ' ', 0}, 0};
+
+    return chest_null;
+}
 npc_t map_2_npc ( unsigned int x, unsigned int y ){
     npc_t npc_null = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };
 
@@ -271,8 +289,13 @@ int map_3_map_data[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 0, 6, 0, 0, 10, 0, 10, 0, 6, 0, 6, 1, 1, 1, 1, 1, 1, 1, 1,
 0, 0, 0, 0, 10, 9, 10, 0, 0, 6, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 0};
-map_t map_3_map = {19, 19, map_3_map_data , 0, null_entities_list /* should not be used */};
+map_t map_3_map = {19, 19, map_3_map_data , 9, null_entities_list /* should not be used */};
 coord_t map_3_start = {5, 5};
+chest_t map_3_chest (unsigned int x, unsigned int y){
+    chest_t chest_null = {-1, 0, 0, {-1, 0, ' ', 0}, 0};
+
+    return chest_null;
+}
 npc_t map_3_npc ( unsigned int x, unsigned int y ){
     npc_t npc_null = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };
     npc_t npc_1 = {1281, 1000, 1, 1, {{0, 0, " ", 0, 0}}, false, false, true, 1, 5, 18};
@@ -360,6 +383,11 @@ int map_4_map_data[] = {4, 4, 4, 4, 0, 5, 0, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1,
 0};
 map_t map_4_map = {19, 19,map_4_map_data , 9, null_entities_list /* should not be used */};
 coord_t map_4_start = {5, 0};
+chest_t map_4_chest (unsigned int x, unsigned int y){
+    chest_t chest_null = {-1, 0, 0, {-1, 0, ' ', 0}, 0};
+
+    return chest_null;
+}
 npc_t map_4_npc ( unsigned int x, unsigned int y ){
     npc_t npc_null = {-1, 0, 0, 0, {-1, 0, ' ', 0}, false, false, false, 0, -1, -1 };
 
@@ -385,25 +413,38 @@ map_master rogue_map_master[NUM_MAPS];
 npc_function_ft rogue_npc_master[NUM_MAPS];
 portal_function_ft rogue_portal_master[NUM_MAPS];
 enemy_function_ft rogue_enemy_master[NUM_MAPS];
+chest_function_ft rogue_chest_master[NUM_MAPS];
+int chests_consumed[NUM_CHESTS_MAX];
 
 void init_maps(){
+    for (int i = 0; i < NUM_CHESTS_MAX; i++){
+        chests_consumed[i] = -1;
+    }
+    for (int i = 0; i < NUM_QUESTS_MAX; i++){
+        quests_consumed[i] = -1;
+    }
     rogue_map_master[0] = (map_master) { map_0_map, map_0_start };
+    rogue_chest_master[0] = map_0_chest;
     rogue_npc_master[0] = map_0_npc;
     rogue_portal_master[0] = map_0_portal;
     rogue_enemy_master[0] = map_0_enemy;
     rogue_map_master[1] = (map_master) { map_1_map, map_1_start };
+    rogue_chest_master[1] = map_1_chest;
     rogue_npc_master[1] = map_1_npc;
     rogue_portal_master[1] = map_1_portal;
     rogue_enemy_master[1] = map_1_enemy;
     rogue_map_master[2] = (map_master) { map_2_map, map_2_start };
+    rogue_chest_master[2] = map_2_chest;
     rogue_npc_master[2] = map_2_npc;
     rogue_portal_master[2] = map_2_portal;
     rogue_enemy_master[2] = map_2_enemy;
     rogue_map_master[3] = (map_master) { map_3_map, map_3_start };
+    rogue_chest_master[3] = map_3_chest;
     rogue_npc_master[3] = map_3_npc;
     rogue_portal_master[3] = map_3_portal;
     rogue_enemy_master[3] = map_3_enemy;
     rogue_map_master[4] = (map_master) { map_4_map, map_4_start };
+    rogue_chest_master[4] = map_4_chest;
     rogue_npc_master[4] = map_4_npc;
     rogue_portal_master[4] = map_4_portal;
     rogue_enemy_master[4] = map_4_enemy;

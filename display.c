@@ -593,7 +593,8 @@ void draw_rogue(){
     for (int i = 0; i < HEIGHT; i++){
         for (int j = 0; j < HEIGHT; j++){
             int a = rogue_npc_master[master_index](i - 15 + character_x, j - 15 + character_y).id;
-            if (a  <= 0) {
+            int b = rogue_chest_master[master_index](i - 15 + character_x, j - 15 + character_y).id;
+            if (a <= 0 && b <= 0) {
                 int tdat = -1;
                 if (((i - 15 + character_x) >= 0 && (i - 15 + character_x ) < cached_map.w) &&
                     ((j - 15 + character_y) >= 0 && (j - 15 + character_y ) < cached_map.h)) {
@@ -674,21 +675,26 @@ void draw_rogue(){
                 }
             } else {
                 // check if NPC is hidden
-                bool ok = true;
-                if (num_hidden_npcs > 0){
-                    int i = 0;
-                    for ( ; i < num_hidden_npcs; i++){
-                        if (hidden_npcs[i] == a ){
-                            ok = false;
-                            break;
+                if (a >= 0) {
+                    bool ok = true;
+                    if (num_hidden_npcs > 0){
+                        int i = 0;
+                        for ( ; i < num_hidden_npcs; i++){
+                            if (hidden_npcs[i] == a ){
+                                ok = false;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if (ok){
-                    texid = NPC_TEX;
-                } else {
-                    texid = FLOOR_TEX;
+                    if (ok){
+                        texid = NPC_TEX;
+                    } else {
+                        texid = FLOOR_TEX;
+                    }
+                } else if (b >= 0){
+                    // chests!
+                    texid = CRATE_TEX;
                 }
             }
 
@@ -701,7 +707,14 @@ void draw_rogue(){
 
     for(int i = 0; i < num_entities; i++){
         if (15 - character_x + entities[i].x < 35 && 15 - character_y + entities[i].y < 35) {
-            k_put_rect(CRATE_TEX, 15 - character_x + entities[i].x, 15 - character_y + entities[i].y);
+            switch(entities[i].type){
+            case 7:
+            case 1:
+                k_put_rect(RED_TEX, 15 - character_x + entities[i].x, 15 - character_y + entities[i].y);
+                break;
+            default:
+                k_put_rect(ENEMY_TEX, 15 - character_x + entities[i].x, 15 - character_y + entities[i].y);
+            }
         }
     }
 

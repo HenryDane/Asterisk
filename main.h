@@ -6,6 +6,7 @@ typedef struct {
     int y;
 } coord_t;
 
+/*
 typedef struct {
     unsigned int w; // can be one byte
     unsigned int h; // can be one byte
@@ -19,6 +20,7 @@ typedef struct {
     const o_map_t mapdat;
     const coord_t coord;
 } o_map_master;
+*/
 
 // flavor text
 struct {
@@ -76,6 +78,14 @@ typedef struct {
     char data[16];
     int data_len;
 } item_t;
+
+typedef struct {
+    int id;
+    int x;
+    int y;
+    item_t items[16];
+    int num_items;
+} chest_t;
 
 typedef struct {
     item_t item;
@@ -180,6 +190,9 @@ typedef bool (*quest_validate_function_ft) (void);
 // action function definition
 typedef bool (*quest_action_function_ft) (void);
 
+// chest definition function
+typedef chest_t (*chest_function_ft) (unsigned int x, unsigned int y);
+
 typedef int module_t;
 
 // map sizing
@@ -208,6 +221,8 @@ typedef int module_t;
 // define maximum number of hidden NPCS
 #define NUM_HIDDEN_NPCS_MAX 8
 
+#define NUM_CHESTS_MAX 1
+
 // number of quests
 #define NUM_QUESTS 1
 #define NUM_QUESTS_MAX 4
@@ -233,6 +248,8 @@ typedef int module_t;
 
 // game state
 extern int state;
+
+extern int notifications;
 
 // timing for entities
 extern double timerval;
@@ -288,6 +305,9 @@ extern map_master rogue_map_master[ NUM_MAPS ]; // main registry of maps
 extern npc_function_ft rogue_npc_master[NUM_MAPS]; // main registry of NPCs (this is an array of pointers to functions)
 extern portal_function_ft rogue_portal_master[NUM_MAPS];
 extern enemy_function_ft rogue_enemy_master[NUM_MAPS];
+extern chest_function_ft rogue_chest_master[NUM_MAPS];
+extern int chests_consumed[NUM_CHESTS_MAX];
+extern int quests_consumed[NUM_QUESTS_MAX];
 
 extern mquest_t quest_registry[ NUM_QUESTS_MAX + 1];
 extern int num_active_quests;
@@ -316,7 +336,7 @@ extern int facing;
 extern int flux;
 extern int fuel_r;
 extern int durability;
-extern int respons;
+extern int response;
 extern int flux_clamp;
 extern int emission_clamp;
 extern int themal_clamp;

@@ -25,7 +25,7 @@ void load_map(int index){
     }
 
     if (num_entities - 1 > i) {
-        printf("WARN: num_entities - 1 > i! Resolving . . . \n");
+        printf("WARN: num_entities - 1 > i!  (%d - 1> %d) Resolving . . . \n", num_entities, i);
         num_entities = i + 1;
     }
 }
@@ -52,7 +52,7 @@ void load_teleport(int index, int x, int y){
     }
 
     if (num_entities - 1 > i) {
-        printf("WARN: num_entities - 1 > i! Resolving . . . \n");
+        printf("WARN: num_entities - 1 > i!  (%d - 1> %d) Resolving . . . \n", num_entities, i);
         num_entities = i;
     }
 }

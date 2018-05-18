@@ -54,6 +54,9 @@ bool check_next_step(int x, int y){
                         experience += quest_a_registry[index].quest.exp_reward;
                         score += quest_a_registry[index].quest.exp_reward + quest_a_registry[index].quest.credit_reward;
                         // ADD ITEM REWARD
+                        if (num_items + 1 < NUM_ITEMS_MAX){
+                            inventory[++num_items] = quest_a_registry[index].quest.item_reward;
+                        }
                         num_active_quests--;
                     } else {
                         // logic for incrementing quest position goes here
@@ -83,6 +86,7 @@ bool check_next_step(int x, int y){
             return false;
         } else {
             state = 19; // go to merchant mode
+            notifications = 0;
             npc_last = rogue_npc_master[master_index](x, y);
             score ++;
             printf("EXPECTED SIZE: %d \n", rogue_npc_master[master_index](x,y).inventory_size);
@@ -91,6 +95,27 @@ bool check_next_step(int x, int y){
             } else {
                 return true; // fine to move bc "there isnt one"
             }
+        }
+    } else if (rogue_chest_master[master_index](x, y).id > 0) {
+        bool ok = true;
+        for(int i = 0; i < NUM_CHESTS_MAX; i++){
+            if (chests_consumed[i] == rogue_chest_master[master_index](x, y).id){
+                ok = false;
+                break;
+            } else if (chests_consumed[i] < 0){
+                chests_consumed[i] = rogue_chest_master[master_index](x, y).id;
+                break;
+            }
+        }
+
+        if (ok){
+            printf("hit chest \n");
+            printf("n. item %d \n", rogue_chest_master[master_index](x, y).num_items);
+            for(int i = 0; i < rogue_chest_master[master_index](x, y).num_items; i++){
+                drop_item(&rogue_chest_master[master_index](x, y).items[i], x, y, master_index);
+            }
+        } else {
+            printf("chest consumed \n");
         }
     }
 
@@ -132,7 +157,7 @@ bool check_next_step(int x, int y){
 
 void update_entities(){
     for (int i = 0; i < num_entities; i++){
-        // printf("updating entity %d at (%d, %d) \n", i, entities[i].x, entities[i].y); // this is v verbose
+        //printf("updating entity %d at (%d, %d) of type %d \n", i, entities[i].x, entities[i].y, entities[i].type); // this is v verbose
         int tile_type = cached_map.tile_type[entities[i].x +(entities[i].y * cached_map.w)];
         bool step = true;
         switch(entities[i].type){
@@ -260,6 +285,8 @@ void update_entities(){
                 break;
             case 11:
                 // map-defined, does not move
+
+                //printf("ticked type 11 \n");
                 break;
             case 12:
                 // mask self with NPC when collided (i.e. for a cutscene / quest / something )
@@ -274,6 +301,7 @@ void update_entities(){
 
 void fire_missile(int ix, int iy, int vx, int vy, int type){
     printf("FIRED MISSILE \n"); //cout << "FIRED MISSILE" << endl;
+    if (num_entities_o + 1 >= 32) return;
     const char* dat = "!!!";
     entities_o[num_entities_o].type = type;
     entities_o[num_entities_o].x = ix;

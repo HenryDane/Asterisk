@@ -102,6 +102,10 @@ int num_hidden_npcs = 0;
 int time_cutscene = 0;
 cutscene_t current_cutscene;
 
+int notifications = 0;
+
+int quests_consumed[NUM_QUESTS_MAX];
+
 int main( ){
     // temporary variable for sprintf calls
     char tmp[80];
@@ -232,6 +236,8 @@ int main( ){
                             facing = -10;
                         } else if (state == 2){
                             if(fuel_r + CONFIG_INCREMENT_AMOUNT <= 1000) fuel_r += CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 44){
+                            if (trade_index - 1 >= 0) trade_index--;
                         }
                         break;
                     case sfKeyE:
@@ -264,7 +270,10 @@ int main( ){
                             state = 43; // go drop a thingy
                         } else if (state == 2){
                             if(flux_clamp + CONFIG_INCREMENT_AMOUNT <= 1000) flux_clamp += CONFIG_INCREMENT_AMOUNT;
+                        } else if (state == 44){
+                            if (trade_index + 1 < num_entities_o) trade_index++;
                         }
+                        break;
                     case sfKeyW:
                         if (state == 16) {
                             update_entities();
@@ -380,6 +389,7 @@ int main( ){
                                         inventory[num_items].data_len = npc_last.inventory[trade_index].data_len;
                                         inventory[num_items].unuseable = false;
                                         num_items++;
+                                        notifications++;
                                     } else {
                                         printf("failed cost check\n");
                                     }
@@ -399,6 +409,7 @@ int main( ){
                                             inventory[i] = inventory[(i + 1 < num_items) ? i + 1 : i];
                                         }
                                         if (num_items > 0) num_items --;
+                                        notifications++;
                                     }
                                 } else {
                                     printf("failed item number check\n");
@@ -417,7 +428,7 @@ int main( ){
                             sector_x = jump_x;
                             sector_y = jump_y;
                             sector_s = jump_s;
-                            ticks_for_warp = /*jump_x * 2 + jump_y * 2 + jump_s * 3 + (rand() % 20) */ 100;
+                            ticks_for_warp = /*jump_x * 2 + jump_y * 2 + jump_s * 3 + (rand() % 20) */ 50;
                             build_terrain(sector_x, sector_y, sector_s);
 
                             // set up the gauntlet
@@ -433,6 +444,8 @@ int main( ){
 
                             // keeps track of total fuel cost
                             tmp[66] = 10;
+                        } else if (state == 44){
+                            state = 45;
                         }
                         break;
                     case sfKeyTab:
@@ -457,6 +470,7 @@ int main( ){
                     case sfKeyU:
                         if (state == 19){
                             state = 37;
+                            notifications = 0;
                         }
                         break;
                     case sfKeyY:
@@ -491,6 +505,8 @@ int main( ){
                         if (state == 17 || state == 18 || state == 19 || state == 21 || state == 27 || state == 28 ||
                             state == 29 || state == 37 || state == 32 || state == 43 || state == 30 ) {
                             state = 16;
+                        } else if (state == 45 || state == 44){
+                            state = 4;
                         }
                         break;
                     case sfKeyUp:
@@ -554,6 +570,11 @@ int main( ){
         }
 
         switch(state){  // draw screen and do stuff
+            case -6:
+                k_put_text("Press 1 - 5 to load a save", 0, 0);
+                break;
+            case -7:
+                k_put_text("Press 1 - 5 to select a slot to save to", 0, 0);
             case -2:
                 // game over?
                 draw_game_over();
@@ -585,10 +606,18 @@ int main( ){
                 // tmp[64] = player x, tmp[65] = player y, tmp[66] = last used index
                 if (rand() % 100 < 2){
                     for (int i = 0; i < 64; i += 4){
-                        if (tmp[i + 3] < 0) continue; // skip if out of bounds
+                        if (tmp[i + 3] < 0){
+                            if (rand() % 10 < 3){
+                                tmp[i + 1] = - rand() % 3;
+                                tmp[i + 2] = rand() % 2;
+                                tmp[i + 3] = 9;
+                            } else {
+                                continue;
+                            }
+                        }
 
-                        printf("incrementing: i = %d, tmp[%d] = %d, tmp[%d + 1] = %d, tmp[%d + 2] = %d, tmp[%d + 3] = %d \n",
-                               i, i, (int) tmp[i], i, (int) tmp[i + 1], i, (int) tmp[i + 2], i, tmp[i + 3]);
+                        //printf("incrementing: i = %d, tmp[%d] = %d, tmp[%d + 1] = %d, tmp[%d + 2] = %d, tmp[%d + 3] = %d \n",
+                        //       i, i, (int) tmp[i], i, (int) tmp[i + 1], i, (int) tmp[i + 2], i, tmp[i + 3]);
 
                         if (tmp[i] == tmp[64] && tmp[i + 1] == tmp[65]){
                             printf("collisson at warp! \n");
@@ -666,7 +695,7 @@ int main( ){
                 k_put_rect(C_U_TEX, tmp[64] + 1, tmp[65] + 1);
 
                 /*
-                    In the gap between the controls and the display add some   type stuff motivating them to use the controls
+                    In the gap between the controls and the display add some spaceteam type stuff motivating them to use the controls
                 */
 
                 break;
@@ -742,6 +771,9 @@ int main( ){
                 break;
             case 19: // trading menu
                 draw_trade(trade_index);
+                for (int i = 0; i < notifications; i++){
+                    k_put_text("You bought an item", 32, 21 + i);
+                }
                 break;
             case 21: // item use menu
                 draw_use_item(trade_index);
@@ -751,19 +783,36 @@ int main( ){
                 break;
             case 37:
                 draw_sell();
+
+                for (int i = 0; i < notifications; i++){
+                    k_put_text("You sold an item", 32, 21 + i);
+                }
                 break;
             case 43:
                 draw_drop();
                 break;
             case 44:
                 // draw_view side panel (under stats in display();
-                state = 4; // temporary redirect
+                //state = 4; // temporary redirect
+                k_put_text("Press [Q]/[E] & [Enter] to select ", 0, 0);
+
+                for (int i = 0; i < num_entities_o; i++){
+                    sprintf(tmp, "Index: %d Type: %d X: %d Y: %d", i, entities_o[i].type, entities_o[i].x, entities_o[i].y);
+                    k_put_text(tmp, 5, 1 + i);
+                }
+
+                k_put_text("->", 1, 1 + trade_index);
                 break;
-            case -6:
-                k_put_text(0,0,"Press 1 - 5 to load a save");
+            case 45:
+                sprintf(tmp, "Viewing Object [i:%d]", trade_index);
+                k_put_text(tmp, 0, 0);
+
+                sprintf(tmp, "Type: %d X: %d Y: %d VX: %d VY: %d", entities_o[trade_index].type, entities_o[trade_index].x, entities_o[trade_index].y, entities_o[trade_index].vx, entities_o[trade_index].vy);
+                k_put_text(tmp, 1, 2);
+
+                // when prettifying UI add code here for viewing preset string data from level struct
+
                 break;
-            case -7:
-                k_put_text(0,0,"Press 1 - 5 to select a slot to save to");
             default:
                 printf("Intercepted bad state %d \n", state);
                 state = 16; // go to rogue to catch problems
