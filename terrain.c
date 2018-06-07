@@ -12,6 +12,7 @@ void load_map(int index){
     num_entities = rogue_map_master[index].mapdat.num_entities;
     printf("Loading map %d with start of (%d, %d) and %d entities \n", index, rogue_map_master[index].coord.x, rogue_map_master[index].coord.y, rogue_map_master[index].mapdat.num_entities);
     int i = 0;
+    printf("Found %d entities \n", rogue_map_master[index].mapdat.num_entities);
     for ( ; i < rogue_map_master[index].mapdat.num_entities; i++){
         //entities[i] = rogue_map_master[index].mapdat.entities[i];
         entity_t entity_tmp;
@@ -162,4 +163,16 @@ void search_and_build(const tile_data * tiledata){
     } else {
         printf("SPAWINING NOTHING \n");
     }
+}
+
+bool searchQuest(int quest_id){
+    bool found = false;
+    for (int i = 0; i < num_active_quests; i++){
+        if (quest_a_registry[i].quest.id == quest_id){
+            found = true;
+            break;
+        }
+    }
+
+    return found;
 }

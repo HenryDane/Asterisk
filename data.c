@@ -261,14 +261,14 @@ bool load(int slot){
         // assemble quest
         /*quest_a_registry[i].quest.id*/ int id = fgetc(fp);
         int a = 0;
-        for ( ; a < NUM_QUESTS; a++){
+        for ( ; a < NUM_QUESTS_MAX; a++){
             if (id == quest_registry[a].id) {
                 printf("Found at %d (%d == %d) \n", a, id, quest_registry[a].id);
                 break;
             }
         }
 
-        if (a >= NUM_QUESTS){
+        if (a >= NUM_QUESTS_MAX){ // was NUM_QUESTS
             printf("Found quest with invalid ID value! \n");
             break;
         }

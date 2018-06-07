@@ -204,7 +204,7 @@ typedef int module_t;
 #define S_HEIGHT 576
 
 // number of maps
-#define NUM_MAPS 5
+#define NUM_MAPS 3
 
 // number of space maps
 #define NUM_LEVELS 4
@@ -223,9 +223,8 @@ typedef int module_t;
 
 #define NUM_CHESTS_MAX 1
 
-// number of quests
-#define NUM_QUESTS 1
-#define NUM_QUESTS_MAX 4
+// number of quests (moved to quest.c)
+#define NUM_QUESTS_MAX 1
 
 // number of cutscenes
 #define NUM_CUTSCENES 1
@@ -239,7 +238,7 @@ typedef int module_t;
 #define MAX_ENTITIES 32
 
 // length of quest text data
-#define QUEST_STR_DAT_LEN 160
+#define QUEST_STR_DAT_LEN 145
 
 // length of cutscene text data
 #define CUTSCENE_STR_DAT_LEN 160
