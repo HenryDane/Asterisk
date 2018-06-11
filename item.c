@@ -71,10 +71,11 @@ bool collect_item(item_t * item, int x, int y, int mapid){
 
 void use_item(int type){
     bool erase = false;
-    int i;
-    int j;
-    int w;
-    int h;
+    int i = 0;
+    int j = 0;
+    int w = 0;
+    int h = 0;
+
     switch (type){
         case 10: // medkit
             health += 250;
@@ -138,6 +139,8 @@ void use_item(int type){
             erase = true;
             break;
         default:
+            printf("using undefined item \n");
+            erase = false;
             break;
     }
 
@@ -272,6 +275,7 @@ void print_item(char * tmp, item_t * item){
                 break;
             default:
                 strcpy(tmp, "Invalid Item!");
+                break;
         }
 
 }

@@ -221,7 +221,7 @@ typedef int module_t;
 // define maximum number of hidden NPCS
 #define NUM_HIDDEN_NPCS_MAX 8
 
-#define NUM_CHESTS_MAX 1
+#define NUM_CHESTS_MAX 18
 
 // number of quests (moved to quest.c)
 #define NUM_QUESTS_MAX 1

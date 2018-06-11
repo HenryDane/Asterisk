@@ -22,4 +22,5 @@
 32 : Edit modules \
 37 : Sell item \
 43 : Drop item \
-44 : View ship \
+44 : Select ship \
+45 : View ship

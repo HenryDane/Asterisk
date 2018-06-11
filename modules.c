@@ -1,6 +1,7 @@
 #include "main.h"
 
 void add_module(module_t module){
+    printf("adding module \n");
     if (module < 0){
         printf("Bad module def \n");
         return;

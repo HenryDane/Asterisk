@@ -97,25 +97,35 @@ bool check_next_step(int x, int y){
             }
         }
     } else if (rogue_chest_master[master_index](x, y).id > 0) {
-        bool ok = true;
-        for(int i = 0; i < NUM_CHESTS_MAX; i++){
-            if (chests_consumed[i] == rogue_chest_master[master_index](x, y).id){
-                ok = false;
-                break;
-            } else if (chests_consumed[i] < 0){
-                chests_consumed[i] = rogue_chest_master[master_index](x, y).id;
-                break;
+        if (rogue_chest_master[master_index](x, y).num_items + num_dropped_items < NUM_DROPPED_MAX){
+            bool ok = true;
+            /*printf("doing chest check with id %d \n", rogue_chest_master[master_index](x, y).id);
+            printf("there are %d slots to check \n", NUM_CHESTS_MAX);*/
+            for(int i = 0; i < NUM_CHESTS_MAX; i++){
+                //printf("%d ", i);
+                if (chests_consumed[i] == rogue_chest_master[master_index](x, y).id){
+                    ok = false;
+                    //printf("\nbreak at index %d \n", i);
+                    break;
+                } else if (chests_consumed[i] < 0){
+                    chests_consumed[i] = rogue_chest_master[master_index](x, y).id;
+                    //printf("\n break at index %d \n", i);
+                    break;
+                }
             }
-        }
 
-        if (ok){
-            printf("hit chest \n");
-            printf("n. item %d \n", rogue_chest_master[master_index](x, y).num_items);
-            for(int i = 0; i < rogue_chest_master[master_index](x, y).num_items; i++){
-                drop_item(&rogue_chest_master[master_index](x, y).items[i], x, y, master_index);
+            if (ok){
+                printf("hit chest \n");
+                printf("n. item %d \n", rogue_chest_master[master_index](x, y).num_items);
+
+                for(int i = 0; i < rogue_chest_master[master_index](x, y).num_items; i++){
+                    drop_item(&rogue_chest_master[master_index](x, y).items[i], x, y, master_index);
+                }
+            } else {
+                printf("chest consumed \n");
             }
         } else {
-            printf("chest consumed \n");
+            printf("too few dropped item slots \n");
         }
     }
 

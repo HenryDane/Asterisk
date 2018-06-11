@@ -133,7 +133,6 @@ int main( ){
     master_index = 0;
     load_map(master_index);
 
-
     num_active_quests = 0; // no active quests
 
     int jump_x = 0;
@@ -181,6 +180,7 @@ int main( ){
                             state = 1;
                         } else if (state == -6){
                             load(1);
+                            state = 16;
                         } else if (state == -7){
                             save(1);
                         }
@@ -421,6 +421,7 @@ int main( ){
                             state = 16; // leave cutscene and (old) quest mode
                         } else if (state == 21){ // use item
                             if (trade_index >= 0 && trade_index < num_items){
+                                printf("using item at trade_index %d \n", trade_index);
                                 use_item(inventory[trade_index].type);
                             }
                         } else if (state == 1){
@@ -476,11 +477,29 @@ int main( ){
                     case sfKeyY:
                         if (state == 27) {
                             if (!searchQuest(npc_last.quest_id)){ // if quest is not active active
-                                quest_a_registry[num_active_quests].quest = quest_registry[npc_last.quest_id];
-                                quest_a_registry[num_active_quests].position = 0;
-                                printf("Added quest %d!\n", quest_a_registry[num_active_quests - 1].quest.id);
-                                num_active_quests++;
-                                state = 16;
+                                bool already_complete = false;
+                                for(int i = 0; i < NUM_QUESTS_MAX; i++){
+                                    if (quests_consumed[i] == npc_last.quest_id){
+                                        // quest is found, aborting;
+                                        already_complete = true;
+                                        break;
+                                    } else if (quests_consumed[i] < 0){
+                                        // found a free slot, marking quest as done and exiting
+                                        quests_consumed[i] = npc_last.quest_id;
+                                        break;
+                                    }
+                                }
+
+                                if (!already_complete){
+                                    quest_a_registry[num_active_quests].quest = quest_registry[npc_last.quest_id];
+                                    quest_a_registry[num_active_quests].position = 0;
+                                    printf("Added quest %d!\n", quest_a_registry[num_active_quests - 1].quest.id);
+                                    num_active_quests++;
+                                    state = 16;
+                                } else {
+                                    printf("Could not add quest \n");
+                                    state = 16;
+                                }
                             } else {
                                 printf("Quest %d already active \n", npc_last.quest_id);
                                 state = 29; // quest add fail
