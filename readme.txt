@@ -5,12 +5,13 @@
 This branch is the rework of Asterisk: Return to Deep Space. The original version is not on the `old` branch.
 
 ---- TODO ----
-make fake ROM/RAM check before title screen
-make title screen super pretty
-add game save/load
-add options
-create gamedata variable
-creat cutscene mechanics
+[C] make fake ROM/RAM check before title screen
+[C] make title screen super pretty
+[Sys] add game save/load
+[Sys] add options
+[Engine] create gamedata variable
+[Engine] create cutscene mechanics
+[Other] create gamedata generation utility
 
 ---- STATES ----
 0 -> intro window
@@ -35,3 +36,18 @@ creat cutscene mechanics
 24 -> view object
 30 -> victory
 31 -> game over
+
+---- PLOT ----
+Game follows character as he tries to find a cure for humanities travel crisis; humanity can not expand as much as they would like so they have resorted to building everywhere, including on random asteroids.
+
+Character needs to find seven NPCs, some of which are hostile and some of which are hidden, etc. These NPCs are/know of/have the key to the final area.
+
+The final area is a computer core on the Akkadian homeworld which contains the technology to unlock Spatial Drives, developed by the long-since collappsed Akkadian civilization.
+
+Much of the gameplay involves exploring asteroids and looking for NPCs. 
+
+Additionally there are side quests required for the player to get to certian areas and for them to get extra items/xp/cash.
+
+Player begins as a United Terran Federation (UTF/Empire) Space Marine landing on Kerald (a rebel stronghold). Player is thrown into a morally dubious conflict with a rebel group which is comprised of random untrained individuals. Player is able to fight (gameplay) to a victory of debatable quality and acquires quest from dialogue with an elderly NPC.
+
+Player then must choose to accept quest and go MIA from his squad (all dead but him) or kill the NPC and report back to base (NPC has button on big bad weapon (tm) -- "all clear" and then game goes to credits).

@@ -4,3 +4,6 @@ void put_text_hc(std::string s, int y);
 
 void text_style_normal();
 void text_style_menu_select();
+
+void init_sprites();
+void draw_all_sprites();

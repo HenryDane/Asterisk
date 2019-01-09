@@ -3,6 +3,7 @@
 #include "main.h"
 #include "draw.h"
 #include "data.h"
+#include "display.h"
 
 // global system variables
 int state = 0;
@@ -39,6 +40,12 @@ int main() {
     text.setFont(font);
     text.setCharacterSize(16);
     text.setFillColor(sf::Color(255, 255, 255));
+
+    // load graphics
+    init_sprites();
+
+    // load gamedata
+    setup_gamegata();
 
     std::cout << window.getSize().x << "," << window.getSize().y << std::endl;
 
@@ -163,7 +170,6 @@ int main() {
                     state = 10;
                     break;
                 case 10: // main mode (walking/exploring)
-
                     break;
                 default:
                     break;
@@ -218,6 +224,8 @@ int main() {
 		window.display();
 
     }
+
+    clean_gamedata();
 
     return 0;
 }

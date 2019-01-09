@@ -1,6 +1,30 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "main.h"
+#include "patch.h"
+
+#define NUM_SPRITES 6
+
+// yes i know this is memory intensive
+sf::Texture * textures;
+sf::Sprite * sprites;
+
+void init_sprites() {
+    textures = new sf::Texture[NUM_SPRITES];
+    sprites = new sf::Sprite[NUM_SPRITES];
+
+    for (int i = 0; i < NUM_SPRITES; i++) {
+        textures[i].loadFromFile("res/sprite" + patch::to_string(i) + ".bmp");
+        sprites[i] = sf::Sprite(textures[i]);
+        sprites[i].setPosition(i * 8, 0);
+    }
+}
+
+void draw_all_sprites() {
+    for (int i = 0; i < NUM_SPRITES; i++) {
+        renderTexture.draw(sprites[i]);
+    }
+}
 
 void put_text(std::string s, int x, int y){
     text.setString(s);

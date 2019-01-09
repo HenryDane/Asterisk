@@ -11,6 +11,8 @@ void draw_rogue(){
 }
 
 void draw_title_screen(){
+    draw_all_sprites();
+
     text.setCharacterSize(32);
     text.setFillColor(sf::Color(0, 127, 255));
     put_text_vhc("ASTETRISK");
@@ -91,6 +93,3 @@ void draw_help(){
     // NOT IMPLEMENTED
 }
 
-void draw_walkabout() {
-
-}
