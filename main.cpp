@@ -44,9 +44,6 @@ int main() {
     // load graphics
     init_sprites();
 
-    // load gamedata
-    setup_gamegata();
-
     std::cout << window.getSize().x << "," << window.getSize().y << std::endl;
 
     while (window.isOpen()) {
@@ -224,8 +221,6 @@ int main() {
 		window.display();
 
     }
-
-    clean_gamedata();
 
     return 0;
 }

@@ -7,3 +7,4 @@ void text_style_menu_select();
 
 void init_sprites();
 void draw_all_sprites();
+void draw_sprite(int t, int x, int y);

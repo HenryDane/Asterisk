@@ -26,6 +26,12 @@ void draw_all_sprites() {
     }
 }
 
+void draw_sprite(int t, int x, int y) {
+    if (t < 0 || t >= NUM_SPRITES) return; // slow, remove later
+    sprites[t].setPosition(x, y);
+    renderTexture.draw(sprites[t]);
+}
+
 void put_text(std::string s, int x, int y){
     text.setString(s);
     text.setPosition(x, y);

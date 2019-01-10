@@ -1,6 +1,7 @@
 #include "main.h"
 #include "display.h"
 #include "patch.h"
+#include "data.h"
 
 void draw_opening(){
     put_text_vhc("OPENING CUTSCENE PLACEHOLDER\nTIME=" + patch::to_string(scene_timer.getElapsedTime().asSeconds()));

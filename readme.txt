@@ -11,7 +11,10 @@ This branch is the rework of Asterisk: Return to Deep Space. The original versio
 [Sys] add options
 [Engine] create gamedata variable
 [Engine] create cutscene mechanics
+[Engine] add support for "inf" sized sectors by spawning at 0,0 and then having objects be kept in a list and using a special num_of and inf_regen flag instead of the current system
 [Other] create gamedata generation utility
+
+---- NOTES ----
 
 ---- STATES ----
 0 -> intro window

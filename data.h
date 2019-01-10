@@ -5,3 +5,5 @@ bool load_game(int slot);
 
 void setup_gamegata();
 void clean_gamedata();
+
+extern int _mapdata[64];
